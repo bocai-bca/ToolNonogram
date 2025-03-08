@@ -6,6 +6,10 @@ class_name Main
 static var fs: Main
 
 @onready var n_back_color: ColorRect = $BackColor as ColorRect
+@onready var n_game_grids: GameGrids = $GameGrids as GameGrids
 
 func _enter_tree() -> void:
 	fs = self
+
+func _ready() -> void:
+	n_back_color.size = get_window().size

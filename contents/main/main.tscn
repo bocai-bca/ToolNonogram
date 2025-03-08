@@ -1,8 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://dsyodv46dneyp"]
 
 [ext_resource type="Script" path="res://contents/main/main.gd" id="1_400j3"]
-
-[sub_resource type="TileSet" id="TileSet_2ejab"]
+[ext_resource type="PackedScene" uid="uid://dymxav2uetw0l" path="res://contents/game_grids/game_grids.tscn" id="2_3fq6y"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_400j3")
@@ -11,7 +10,4 @@ script = ExtResource("1_400j3")
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="BaseGrids" type="TileMapLayer" parent="."]
-tile_set = SubResource("TileSet_2ejab")
-collision_enabled = false
-navigation_enabled = false
+[node name="GameGrids" parent="." instance=ExtResource("2_3fq6y")]

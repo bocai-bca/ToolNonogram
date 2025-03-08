@@ -11,6 +11,9 @@ config_version=5
 [application]
 
 config/name="ToolNonogram"
+config/description="工具数织
+Copyright (C) 2025 BCASoft."
+run/main_scene="res://contents/main/main.tscn"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="BCASoft/ToolNonogram"
 config/features=PackedStringArray("4.3", "GL Compatibility")
