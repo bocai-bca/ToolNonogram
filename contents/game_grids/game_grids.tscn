@@ -6,6 +6,13 @@
 [node name="GameGrids" type="Node2D"]
 script = ExtResource("1_wfhjk")
 
+[node name="Button" type="Button" parent="."]
+self_modulate = Color(1, 1, 1, 0)
+offset_right = 8.0
+offset_bottom = 8.0
+action_mode = 0
+button_mask = 3
+
 [node name="GridMap" type="TileMapLayer" parent="."]
 tile_set = ExtResource("1_k0k3y")
 collision_enabled = false
