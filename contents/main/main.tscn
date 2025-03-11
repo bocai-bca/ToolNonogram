@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://dsyodv46dneyp"]
+[gd_scene load_steps=5 format=3 uid="uid://dsyodv46dneyp"]
 
-[ext_resource type="Script" path="res://contents/main/main.gd" id="1_400j3"]
+[ext_resource type="Script" uid="uid://ddw07f0fi354e" path="res://contents/main/main.gd" id="1_400j3"]
 [ext_resource type="PackedScene" uid="uid://dymxav2uetw0l" path="res://contents/game_grids/game_grids.tscn" id="2_3fq6y"]
+[ext_resource type="Script" uid="uid://bpdtfcjx711tw" path="res://contents/main/side_bar.gd" id="3_cwwyt"]
+[ext_resource type="PackedScene" uid="uid://bsgvi5i4do8uw" path="res://contents/side_button/side_button.tscn" id="4_u7q6r"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_400j3")
@@ -11,3 +13,12 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="GameGrids" parent="." instance=ExtResource("2_3fq6y")]
+
+[node name="SideBar" type="Node2D" parent="."]
+script = ExtResource("3_cwwyt")
+
+[node name="BarColor" type="ColorRect" parent="SideBar"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SideButton" parent="SideBar" instance=ExtResource("4_u7q6r")]
