@@ -18,6 +18,7 @@ size = Vector2(60, 120)
 script = ExtResource("1_lim3x")
 
 [node name="Body" type="CanvasGroup" parent="."]
+self_modulate = Color(0.8, 0.8, 0.8, 1)
 
 [node name="UpCapsule" type="MeshInstance2D" parent="Body"]
 position = Vector2(0, -30)
