@@ -14,28 +14,47 @@ const BAR_WIDTH_MULTI: float = 1.0 / 6.0
 const SHADOW_SCALE_X_BASE_MULTI: float = 2.0 / 1080.0
 ## 侧边栏顶部空隔乘数，基于视口纵向长度
 const BAR_TOP_SPACE_MULTI: float = 0.2
-## 侧边栏按钮默认纵向长度乘数，基于视口纵向宽度
+## 侧边栏按钮默认纵向长度乘数，基于视口纵向长度
 const BAR_BUTTON_HEIGHT_MULTI: float = 0.2
 ## 侧边栏按钮间隔乘数，基于视口纵向长度
 const BAR_BUTTONS_SPACING_MULTI: float = 0.05
 ## 侧边栏底部空隔乘数，基于视口纵向长度
 const BAR_BOTTOM_SPACE_MULTI: float = 0.1
-## 按钮最大缩放率
-const BUTTON_RESIZE_RATE_MAX: float = 1.0
+## 按钮的横向长度占据侧边栏横向长度的百分比，用于控制按钮的大小
+const BUTTON_WIDTH_OF_BAR_WIDTH_MULTI: float = 0.8
 
+## 按钮的默认长度，该值必须通过读取按钮实例的TextureButton的size属性获取。默认只在本节点ready时读取一次
+static var button_width_default: float
+## 按钮的当前长度，相当于经过变换计算后的button_width_default
+static var button_width: float
+## 表示侧边栏横向长度的变量，对其他类型而言应当只读
 static var bar_width: float = 180.0
 
+func _ready() -> void:
+	button_width_default = n_buttons[0].n_button.size.x #读取按钮实例的TextureButton的size属性
+
 func _process(delta: float) -> void:
-	var window_size: Vector2 = Vector2(get_window().size)
-	position = Vector2(window_size.x, window_size.y / 2.0)
-	n_bar_color.size = Vector2(window_size.y * BAR_WIDTH_MULTI, window_size.y)
-	n_bar_color.position = Vector2(-n_bar_color.size.x, n_bar_color.size.y / -2.0)
-	n_shadow.scale = Vector2(SHADOW_SCALE_X_BASE_MULTI * window_size.y, window_size.y)
-	n_shadow.position = Vector2(n_bar_color.position.x - n_shadow.texture.get_size().x * n_shadow.scale.x / 2.0, 0.0)
-	## 侧边按钮的排列和缩放
-	var buttons_space: Vector2 = Vector2((window_size.x * BAR_TOP_SPACE_MULTI + window_size.x * (1.0 - BAR_BOTTOM_SPACE_MULTI)) / 2.0, (1.0 - BAR_BOTTOM_SPACE_MULTI - BAR_TOP_SPACE_MULTI) * window_size.x) #用于放置所有按钮的按钮空间，x表示按钮空间的中点Y的值，y表示按钮空间的半长
-	var buttons_total_size: float = n_buttons.size() * window_size.x * BAR_BUTTON_HEIGHT_MULTI + clampi(n_buttons.size() - 1, 0, 114514) * window_size.x * BAR_BUTTONS_SPACING_MULTI #计算所有按钮所占据的空间纵向长度，包括它们之间的间隙
-	var resize_rate: float = buttons_space.y * 2 / buttons_total_size #求按钮缩放率，该值应被乘入按钮的缩放大小中
-	resize_rate = clampf(resize_rate, 0.0, BUTTON_RESIZE_RATE_MAX)
-	for n_button in n_buttons:
-		n_button.scale = Vector2.ONE * resize_rate
+	var window_size: Vector2 = Vector2(get_window().size) #获取窗口大小
+	position = Vector2(window_size.x, window_size.y / 2.0) #将本节点的位置移动到窗口右侧中心
+	n_bar_color.size = Vector2(window_size.y * BAR_WIDTH_MULTI, window_size.y) #计算并应用侧边栏颜色矩形的新大小，使其保持固定长宽比
+	bar_width = n_bar_color.size.x #将侧边栏颜色矩形的大小的X保存到本类型的成员变量中，以作缓存
+	n_bar_color.position = Vector2(-n_bar_color.size.x, n_bar_color.size.y / -2.0) #计算并应用侧边栏颜色矩形的新位置，使其显示在画面右侧
+	n_shadow.scale = Vector2(SHADOW_SCALE_X_BASE_MULTI * window_size.y, window_size.y) #计算并应用侧边栏阴影的新大小，使其保持固定长宽比
+	n_shadow.position = Vector2(n_bar_color.position.x - n_shadow.texture.get_size().x * n_shadow.scale.x / 2.0, 0.0) #计算并应用侧边栏阴影的新位置，使其显示在画面右侧
+	## 侧边按钮的缩放
+	var button_resize_rate: float = BUTTON_WIDTH_OF_BAR_WIDTH_MULTI * bar_width / button_width_default #按钮缩放率，该值基于侧边栏的横向长度求出，然后将其乘入按钮的scale以使按钮缩放至期望的大小
+	for n_button in n_buttons: #遍历所有按钮实例
+		n_button.scale = Vector2.ONE * button_resize_rate #应用按钮缩放率到按钮实例
+	##
+	## 侧边按钮的排列
+	var y_offset: float = 0.0 #创建一个局部变量，表示最后一个已记录更新的按钮所在的位置的Y距离0.0的偏移量
+	for i in n_buttons.size(): #以索引遍历所有按钮实例
+		if (i >= n_buttons.size()): #如果当前索引超出按钮实例列表
+			break #退出for
+		n_buttons[i].position = Vector2(n_bar_color.position.x / 2.0, y_offset) #设置按钮的位置
+		y_offset += button_width #给Y偏移量增加一个按钮的长度
+		if (i != n_buttons.size() - 1): #如果当前不是最后一个按钮实例
+			y_offset += BAR_BUTTONS_SPACING_MULTI * window_size.y #给Y偏移量增加一个按钮间隔空格的长度
+	for n_button in n_buttons: #遍历所有按钮实例
+		n_button.position.y -= y_offset / 2.0 #移动按钮实例的Y，使该按钮实例以全部按钮实例居中到侧边栏中心
+	##

@@ -14,6 +14,6 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
 	pass
-	
+
 func _process(delta: float) -> void:
 	n_back_color.size = get_window().size
