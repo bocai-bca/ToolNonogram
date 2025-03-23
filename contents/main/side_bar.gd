@@ -8,6 +8,8 @@ class_name SideBar
 	$SideButton_Misc as SideButton
 ]
 
+## 侧边栏背景颜色，施加给n_bar_color的color属性
+const BAR_COLOR_MODULATE: Color = Color(0.9, 0.9, 0.9, 1.0)
 ## 侧边栏宽度乘数，基于视口纵向长度
 const BAR_WIDTH_MULTI: float = 1.0 / 6.0
 ## 阴影缩放X基值乘数，基于视口纵向长度
@@ -32,6 +34,7 @@ static var bar_width: float = 180.0
 
 func _ready() -> void:
 	button_width_default = n_buttons[0].n_button.size.x #读取按钮实例的TextureButton的size属性
+	n_bar_color.color = BAR_COLOR_MODULATE #设置侧边栏颜色矩形的颜色
 
 func _process(delta: float) -> void:
 	var window_size: Vector2 = Vector2(get_window().size) #获取窗口大小

@@ -11,20 +11,20 @@ class_name SideButton
 
 ## 出厂默认大小，适用于100*100的图标尺寸
 const DEFAULT_HIT_RECT: Rect2 = Rect2(-60.0, -60.0, 120.0, 120.0)
-## 按钮体的调制(正常)
+## 按钮体的调制(正常)，施加给n_body
 const BUTTON_BODY_MODULATE: Color = Color(0.8, 0.8, 0.8, 1.0)
-## 按钮体的调制(悬浮)
-const BUTTON_BODY_MODULATE_HOVER: Color = Color(0.9, 0.9, 0.9, 1.0)
-## 按钮体的调制(按下)
+## 按钮体的调制(悬浮)，施加给n_body
+const BUTTON_BODY_MODULATE_HOVER: Color = Color(0.7, 0.7, 0.7, 1.0)
+## 按钮体的调制(按下)，施加给n_body
 const BUTTON_BODY_MODULATE_CLICK: Color = Color(0.5, 0.5, 0.5, 1.0)
-## 按钮图标的调制(正常)
+## 按钮图标的调制(正常)，施加给n_icon
 const BUTTON_ICON_MODULATE: Color = Color(0.0, 0.0, 0.0, 1.0)
 
 ## 判定框，对其赋值将影响本SideButton实例的视觉大小和按钮大小
 var hit_rect: Rect2 = DEFAULT_HIT_RECT:
-	get:
+	get: #读取
 		return hit_rect
-	set(value):
+	set(value): #设置
 		if (not is_node_ready()): #如果节点还没ready
 			## 报错并不进行操作
 			push_error("SideButton: Attribute \"hit_rect\" setting was cancelled, because root node hasn't ready yet.")
@@ -41,8 +41,10 @@ func _ready() -> void:
 	n_button.mouse_entered.connect(on_mouse_entered)
 	n_button.mouse_exited.connect(on_mouse_exited)
 
+#region 信号方法
 func on_mouse_entered() -> void:
-	pass
+	n_body.self_modulate = BUTTON_BODY_MODULATE_HOVER
 
 func on_mouse_exited() -> void:
-	pass
+	n_body.self_modulate = BUTTON_BODY_MODULATE
+#endregion
