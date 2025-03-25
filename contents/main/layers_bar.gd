@@ -1,0 +1,37 @@
+extends Node2D
+class_name LayersBar
+## 图层栏
+
+## 伪单例FakeSingleton
+static var fs: LayersBar
+
+@onready var n_back_color: ColorRect = $BackColor as ColorRect
+@onready var n_shadow: Sprite2D = $Shadow as Sprite2D
+
+## 图层栏背景颜色，施加给n_back_color的color属性
+const BAR_BACKGROUND_COLOR: Color = Color(0.5, 0.5, 0.5, 1.0)
+## 图层栏阴影调制，施加给n_shadow的self_modulate属性
+const BAR_SHADOW_MODULATE: Color = Color(0.0, 0.0, 0.0, 0.4)
+## 图层栏宽度乘数，基于视口纵向长度
+const BAR_WIDTH_MULTI: float = 1.0 / 8.0
+## 阴影缩放X基值乘数，基于视口纵向长度。设定合适的值以影响阴影的横向宽度，除数为默认窗口高度，被除数为想要的默认X缩放倍率(基于所使用纹理的尺寸的X)
+const SHADOW_SCALE_X_BASE_MULTI: float = 2.0 / 1080.0
+
+## 图层栏横向宽度
+static var bar_width: float = 135.0
+
+func _enter_tree() -> void:
+	fs = self
+
+func _ready() -> void:
+	n_back_color.color = BAR_BACKGROUND_COLOR #设置图层栏背景颜色
+	n_shadow.self_modulate = BAR_SHADOW_MODULATE #设置图层栏阴影的调制
+
+func _process(delta: float) -> void:
+	var window_size: Vector2 = Vector2(get_window().size) #获取窗口大小
+	## 00更新图层栏的大小
+	bar_width = window_size.y * BAR_WIDTH_MULTI #计算图层栏的横向宽度
+	n_back_color.size = Vector2(bar_width, window_size.y) #设置图层栏背景颜色矩形的大小
+	n_shadow.scale = Vector2(SHADOW_SCALE_X_BASE_MULTI * window_size.y, window_size.y) #设置阴影的大小
+	n_shadow.position = Vector2(bar_width - n_shadow.texture.get_size().x * n_shadow.scale.x / 2.0, window_size.y / 2.0) #设置阴影的位置
+	## /00
