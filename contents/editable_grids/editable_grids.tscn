@@ -3,7 +3,7 @@
 [ext_resource type="TileSet" uid="uid://3x76mo7fq5a5" path="res://contents/editable_grids/grids_tile_set.tres" id="1_k0k3y"]
 [ext_resource type="Script" uid="uid://cmiq4ni4mcnui" path="res://contents/editable_grids/editable_grids.gd" id="1_wfhjk"]
 
-[node name="GameGrids" type="Node2D"]
+[node name="EditableGrids" type="Node2D"]
 script = ExtResource("1_wfhjk")
 
 [node name="Button" type="Button" parent="."]

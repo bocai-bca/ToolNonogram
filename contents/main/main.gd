@@ -6,7 +6,7 @@ class_name Main
 static var fs: Main
 
 @onready var n_back_color: ColorRect = $BackColor as ColorRect
-@onready var n_editable_grids: EditableGrids = $EditableGrids as EditableGrids
+@onready var n_base_grids: EditableGrids = $BaseGrids as EditableGrids
 
 ## 窗口最小尺寸
 const WINDOW_MIN_SIZE: Vector2i = Vector2i(960, 540)

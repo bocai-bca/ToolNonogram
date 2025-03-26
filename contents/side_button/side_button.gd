@@ -2,6 +2,9 @@ extends Node2D
 class_name SideButton
 ## 侧边栏按钮。
 
+## 信号-按钮触发。将在本按钮被左键点击触发以后发出信号，请由需监听的类主动连接本按钮实例的信号
+signal button_trigged(button_name: StringName)
+
 @onready var n_body: CanvasGroup = $Body as CanvasGroup
 @onready var n_up_capsule: MeshInstance2D = $Body/UpCapsule as MeshInstance2D
 @onready var n_quad: MeshInstance2D = $Body/Quad as MeshInstance2D
@@ -16,10 +19,12 @@ const BUTTON_BODY_MODULATE: Color = Color(0.8, 0.8, 0.8, 1.0)
 ## 按钮体的调制(悬浮)，施加给n_body
 const BUTTON_BODY_MODULATE_HOVER: Color = Color(0.7, 0.7, 0.7, 1.0)
 ## 按钮体的调制(按下)，施加给n_body
-const BUTTON_BODY_MODULATE_CLICK: Color = Color(0.5, 0.5, 0.5, 1.0)
+const BUTTON_BODY_MODULATE_CLICK: Color = Color(0.6, 0.6, 0.6, 1.0)
 ## 按钮图标的调制(正常)，施加给n_icon
 const BUTTON_ICON_MODULATE: Color = Color(0.0, 0.0, 0.0, 1.0)
 
+## 按钮名称，充当按钮的标识符的StringName，将在按钮被触发时跟随信号一并发出
+@export var button_name: StringName
 ## 判定框，对其赋值将影响本SideButton实例的视觉大小和按钮大小
 var hit_rect: Rect2 = DEFAULT_HIT_RECT:
 	get: #读取
@@ -36,15 +41,34 @@ var hit_rect: Rect2 = DEFAULT_HIT_RECT:
 		(n_up_capsule.mesh as CapsuleMesh).radius = value.size.y / 4.0
 		n_up_capsule.position = Vector2(0.0, value.size.y / -4.0)
 		n_down_capsule.position = Vector2(0.0, value.size.y / 4.0)
+## 按下状态，表示本按钮当前是否是被按下的状态
+var is_down: bool = false
 
 func _ready() -> void:
 	n_button.mouse_entered.connect(on_mouse_entered)
 	n_button.mouse_exited.connect(on_mouse_exited)
+	n_button.button_down.connect(on_button_down)
+	n_button.button_up.connect(on_button_up)
 
 #region 信号方法
 func on_mouse_entered() -> void:
-	n_body.self_modulate = BUTTON_BODY_MODULATE_HOVER
+	if (not is_down):
+		n_body.self_modulate = BUTTON_BODY_MODULATE_HOVER
+	else:
+		n_body.self_modulate = BUTTON_BODY_MODULATE_CLICK
 
 func on_mouse_exited() -> void:
 	n_body.self_modulate = BUTTON_BODY_MODULATE
+
+func on_button_down() -> void:
+	is_down = true
+	n_body.self_modulate = BUTTON_BODY_MODULATE_CLICK
+
+func on_button_up() -> void:
+	is_down = false
+	if (n_button.is_hovered()):
+		n_body.self_modulate = BUTTON_BODY_MODULATE_HOVER
+		emit_signal("button_trigged", button_name) #发出信号，广播本按钮被触发
+	else:
+		n_body.self_modulate = BUTTON_BODY_MODULATE
 #endregion
