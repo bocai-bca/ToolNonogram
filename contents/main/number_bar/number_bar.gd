@@ -10,9 +10,9 @@ static var fs: NumberBar
 @onready var n_icon_background: ColorRect = $IconBackground as ColorRect
 @onready var n_icon: Sprite2D = $Icon as Sprite2D
 
-## 边框宽度率，影响边框厚度的乘数...(需要补充
-const FRAME_THICKNESS_RATE: float = 0.025 #此值代表边框(一条边)占据规定的空间的比率
-# 此乘数应用于什么基数是一个有待选择的问题，有两种选择：
+## 边框宽度率，影响边框厚度的乘数，基数为工具图标的边长
+const FRAME_THICKNESS_RATE: float = 0.025
+# 此乘数应用于什么基数是一个有待选择的问题，有两种选择：(目前选择1)
 # 	1.基于图标大小，这样边框相对于图标是固定粗细的，但是如果图标缩小，那么边框会一起缩得很细
 #	2.基于窗口大小，这样边框相对于窗口是固定粗细的，如果窗口分辨率太大的话，边框会一起变得很粗
 
@@ -25,8 +25,8 @@ func _enter_tree() -> void:
 func _process(delta: float) -> void:
 	position.x = LayersBar.bar_width #更新数字栏坐标使其贴靠到图层栏的右上角
 	## 00更新工具图标和图标背景
-	var frame_thickness: float = icon_size * FRAME_THICKNESS_RATE #此处起的边框粗细度计算需要斟酌，需要决定边框粗细使用什么方案计算
-	n_icon_background.size = Vector2(icon_size - 2.0 * frame_thickness, icon_size - 2.0 * frame_thickness)
-	n_icon_background.position = Vector2(frame_thickness, frame_thickness)
+	var frame_thickness: float = icon_size * FRAME_THICKNESS_RATE #通过工具图标背景的边长和边框厚度乘数求
+	n_icon_background.size = Vector2(icon_size - 2.0 * frame_thickness, icon_size - 2.0 * frame_thickness) #计算工具图标背景大小并应用
+	n_icon_background.position = Vector2(frame_thickness, frame_thickness) #根据工具图标背景的大小计算坐标并引用
 	# 此处接着写工具图标的变换
 	## /00
