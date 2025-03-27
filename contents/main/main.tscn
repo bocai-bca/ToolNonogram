@@ -55,6 +55,7 @@ offset_right = 1785.0
 offset_bottom = 263.25
 
 [node name="FillBackground_Side" type="ColorRect" parent="NumberBar"]
+visible = false
 offset_left = 6.75
 offset_top = 1080.0
 offset_right = 46.75
