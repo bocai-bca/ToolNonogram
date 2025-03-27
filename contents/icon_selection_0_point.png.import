@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dwjqbrpd8o0bf"
-path="res://.godot/imported/icon_hand_0.png-75314a0b09372c6f01ce3c220f397582.ctex"
+uid="uid://ntey0y2m0a17"
+path="res://.godot/imported/icon_selection_0_point.png-7d037954a17e95a776d4ccd4f4eb210f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://contents/side_button/icon_hand_0.png"
-dest_files=["res://.godot/imported/icon_hand_0.png-75314a0b09372c6f01ce3c220f397582.ctex"]
+source_file="res://contents/icon_selection_0_point.png"
+dest_files=["res://.godot/imported/icon_selection_0_point.png-7d037954a17e95a776d4ccd4f4eb210f.ctex"]
 
 [params]
 

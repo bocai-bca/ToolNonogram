@@ -8,6 +8,12 @@ static var fs: Main
 @onready var n_back_color: ColorRect = $BackColor as ColorRect
 @onready var n_base_grids: EditableGrids = $BaseGrids as EditableGrids
 
+const ICON_TEXTURES: Dictionary[StringName, CompressedTexture2D] = {
+	&"Interact_Point": preload("res://contents/icon_interact_0_point.png"),
+	&"Selection_Point": preload("res://contents/icon_selection_0_point.png"),
+	&"Hand": preload("res://contents/icon_hand_0.png"),
+}
+
 ## 窗口最小尺寸
 const WINDOW_SIZE_MINIMUM: Vector2i = Vector2i(960, 540)
 ## 窗口默认尺寸

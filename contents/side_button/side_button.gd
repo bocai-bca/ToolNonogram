@@ -9,7 +9,7 @@ signal button_trigged(button_name: StringName)
 @onready var n_up_capsule: MeshInstance2D = $Body/UpCapsule as MeshInstance2D
 @onready var n_quad: MeshInstance2D = $Body/Quad as MeshInstance2D
 @onready var n_down_capsule: MeshInstance2D = $Body/DownCapsule as MeshInstance2D
-@onready var n_icon: MeshInstance2D = $Icon as MeshInstance2D
+@onready var n_icon: Sprite2D = $Icon as Sprite2D
 @onready var n_button: TextureButton = $Button as TextureButton
 
 ## 出厂默认大小，适用于100*100的图标尺寸

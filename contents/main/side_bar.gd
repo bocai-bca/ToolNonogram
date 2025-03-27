@@ -2,15 +2,23 @@ extends Node2D
 class_name SideBar
 ## 侧边栏。
 
+## 需要重写按钮排列
+
 ## 伪单例FakeSingleton
 static var fs: SideBar
 
 @onready var n_bar_color: ColorRect = $BarColor as ColorRect
 @onready var n_shadow: Sprite2D = $Shadow as Sprite2D
-@onready var n_buttons: Array[SideButton] = [
-	$SideButton_Misc as SideButton
+@onready var n_buttons: Array[SideButton] = [ #参见BUTTONS_TEXTURES_NAME
+	$SideButton_InteractClass as SideButton,
+	$SideButton_SelectionClass as SideButton,
 ]
 
+## 按钮纹理名称列表，索引按序一对一对应于n_buttons数组中的每个元素的索引(例如本数组[0]对应n_buttons[0])，值对应于Main.ICON_TEXTURES常量的键，以此来捆绑n_buttons中的节点实例使用的纹理资源
+const BUTTONS_TEXTURES_NAME: PackedStringArray = [
+	"Interact_Point",
+	"Selection_Point"
+]
 ## 侧边栏背景颜色，施加给n_bar_color的color属性
 const BAR_COLOR_MODULATE: Color = Color(0.9, 0.9, 0.9, 1.0)
 ## 侧边栏阴影调制，施加给n_shadow的self_modulate属性
@@ -44,6 +52,9 @@ func _ready() -> void:
 	button_width_default = n_buttons[0].n_button.size.x #读取按钮实例的TextureButton的size属性
 	n_bar_color.color = BAR_COLOR_MODULATE #设置侧边栏颜色矩形的颜色
 	n_shadow.self_modulate = BAR_SHADOW_MODULATE #设置侧边栏阴影的调制
+	for i in n_buttons.size(): #按索引遍历n_buttons
+		n_buttons[i].n_icon.texture = Main.ICON_TEXTURES[BUTTONS_TEXTURES_NAME[i]] #设置按钮的纹理
+	
 
 func _process(delta: float) -> void:
 	var window_size: Vector2 = Vector2(get_window().size) #获取窗口大小
