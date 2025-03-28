@@ -12,7 +12,7 @@
 [sub_resource type="LabelSettings" id="LabelSettings_xbqcj"]
 line_spacing = 0.0
 font_size = 32
-font_color = Color(0, 0, 0, 1)
+font_color = Color(0.31, 0.31, 0.31, 1)
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_400j3")
@@ -104,17 +104,22 @@ color = Color(0.9, 0.9, 0.9, 1)
 [node name="SideButton_InteractClass" parent="SideBar" instance=ExtResource("4_u7q6r")]
 position = Vector2(-90, 0)
 button_name = &"SideButton_InteractClass"
+hover_tip_text = "工具类别
+交互"
 
 [node name="SideButton_SelectionClass" parent="SideBar" instance=ExtResource("4_u7q6r")]
 position = Vector2(-90, 0)
 button_name = &"SideButton_SelectionClass"
+hover_tip_text = "工具类别
+选区"
 
 [node name="TipText" type="Label" parent="SideBar"]
 offset_left = -180.0
 offset_top = -540.0
-offset_bottom = -450.0
+offset_bottom = -432.0
 text = "工具提示
 可显示两行"
 label_settings = SubResource("LabelSettings_xbqcj")
 horizontal_alignment = 1
 vertical_alignment = 1
+text_overrun_behavior = 1

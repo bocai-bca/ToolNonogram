@@ -25,14 +25,16 @@ const BUTTON_ICON_MODULATE: Color = Color(0.0, 0.0, 0.0, 1.0)
 
 ## 按钮名称，充当按钮的标识符的StringName，将在按钮被触发时跟随信号一并发出
 @export var button_name: StringName
+## 悬浮提示文本，当本按钮被鼠标悬浮时将显示在提示文本的文本
+@export_multiline var hover_tip_text: String
 ## 判定框，对其赋值将影响本SideButton实例的视觉大小和按钮大小
 var hit_rect: Rect2 = DEFAULT_HIT_RECT:
-	get: #读取
+	get:
 		return hit_rect
-	set(value): #设置
+	set(value):
 		if (not is_node_ready()): #如果节点还没ready
 			## 报错并不进行操作
-			push_error("SideButton: Attribute \"hit_rect\" setting was cancelled, because root node hasn't ready yet.")
+			push_error("SideButton: 已取消对属性\"hit_rect\"的设置，因为根节点尚未就绪。")
 			return
 		n_button.size = value.size
 		n_button.position = value.position
@@ -52,12 +54,16 @@ func _ready() -> void:
 
 #region 信号方法
 func on_mouse_entered() -> void:
+	SideBar.should_show_tip_text = true #给SideBar开启提示文本显示
+	SideBar.tip_text = hover_tip_text #给SideBar设置提示文本为本按钮的悬浮提示文本
 	if (not is_down):
 		n_body.self_modulate = BUTTON_BODY_MODULATE_HOVER
 	else:
 		n_body.self_modulate = BUTTON_BODY_MODULATE_CLICK
 
 func on_mouse_exited() -> void:
+	if (SideBar.tip_text == hover_tip_text): #如果SideBar此时的提示文本是本按钮的
+		SideBar.should_show_tip_text = false #关闭SideBar的提示文本显示
 	n_body.self_modulate = BUTTON_BODY_MODULATE
 
 func on_button_down() -> void:

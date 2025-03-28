@@ -2,8 +2,6 @@ extends Node2D
 class_name SideBar
 ## 侧边栏。
 
-## 需要重写按钮排列
-
 ## 伪单例FakeSingleton
 static var fs: SideBar
 
@@ -13,6 +11,7 @@ static var fs: SideBar
 	$SideButton_InteractClass as SideButton,
 	$SideButton_SelectionClass as SideButton,
 ]
+@onready var n_tip_text: Label = $TipText as Label
 
 ## 按钮纹理名称列表，索引按序一对一对应于n_buttons数组中的每个元素的索引(例如本数组[0]对应n_buttons[0])，值对应于Main.ICON_TEXTURES常量的键，以此来捆绑n_buttons中的节点实例使用的纹理资源
 const BUTTONS_TEXTURES_NAME: PackedStringArray = [
@@ -26,17 +25,17 @@ const BAR_SHADOW_MODULATE: Color = Color(0.0, 0.0, 0.0, 0.5)
 ## 侧边栏宽度乘数，基于视口纵向长度
 const BAR_WIDTH_MULTI: float = 1.0 / 6.0
 ## 阴影缩放X基值乘数，基于视口纵向长度。设定合适的值以影响阴影的横向宽度，除数为默认窗口高度，被除数为想要的默认X缩放倍率(基于所使用纹理的尺寸的X)
-const SHADOW_SCALE_X_BASE_MULTI: float = 2.0 / 1080.0
-## 侧边栏顶部空隔乘数，基于视口纵向长度
-const BAR_TOP_SPACE_MULTI: float = 0.2
-## 侧边栏按钮默认纵向长度乘数，基于视口纵向长度
-const BAR_BUTTON_HEIGHT_MULTI: float = 0.2
-## 侧边栏按钮间隔乘数，基于视口纵向长度
-const BAR_BUTTONS_SPACING_MULTI: float = 0.05
+const SHADOW_SCALE_X_BASE_MULTI: float = 2.0 / Main.WINDOW_SIZE_DEFAULT.y
+## 侧边栏顶部提示文本纵向宽度乘数，基于视口纵向长度
+const BAR_TEXT_SPACE_MULTI: float = 0.1
 ## 侧边栏底部空隔乘数，基于视口纵向长度
 const BAR_BOTTOM_SPACE_MULTI: float = 0.1
 ## 按钮的横向长度占据侧边栏横向长度的百分比，用于控制按钮的大小
 const BUTTON_WIDTH_OF_BAR_WIDTH_MULTI: float = 0.8
+## 侧边栏顶部提示文本的字体大小乘数，基于提示文本节点的size.x属性
+const BAR_TEXT_FONT_SIZE_MULTI: float = 32.0 / (BAR_WIDTH_MULTI * Main.WINDOW_SIZE_DEFAULT.y)
+## 侧边栏顶部提示文本的淡入或淡出速度，单位是alpha数值量每秒
+const BAR_TEXT_FADING_SPEED: float = 3.75
 
 ## 按钮的默认长度，该值必须通过读取按钮实例的TextureButton的size属性获取。默认只在本节点ready时读取一次
 static var button_width_default: float
@@ -44,6 +43,17 @@ static var button_width_default: float
 static var button_width: float
 ## 表示侧边栏横向长度的变量，对其他类型而言应当只读
 static var bar_width: float = 180.0
+## 表示现在是否应显示提示文本，由SideButton类型修改
+static var should_show_tip_text: bool = false
+## 应显示的提示文本，由SideButton类型修改
+static var tip_text: String:
+	get:
+		if (fs != null and fs.n_tip_text != null): #简单的防止fs和n_tip_text空引用的处理
+			return fs.n_tip_text.text
+		return "" #未能引用到节点时返回空字符串
+	set(value):
+		if (fs != null and fs.n_tip_text != null): #简单的防止fs和n_tip_text空引用的处理
+			fs.n_tip_text.text = value
 
 func _enter_tree() -> void:
 	fs = self #定义伪单例
@@ -54,7 +64,7 @@ func _ready() -> void:
 	n_shadow.self_modulate = BAR_SHADOW_MODULATE #设置侧边栏阴影的调制
 	for i in n_buttons.size(): #按索引遍历n_buttons
 		n_buttons[i].n_icon.texture = Main.ICON_TEXTURES[BUTTONS_TEXTURES_NAME[i]] #设置按钮的纹理
-	
+
 
 func _process(delta: float) -> void:
 	var window_size: Vector2 = Vector2(get_window().size) #获取窗口大小
@@ -67,19 +77,28 @@ func _process(delta: float) -> void:
 	n_shadow.position = Vector2(n_bar_color.position.x - n_shadow.texture.get_size().x * n_shadow.scale.x / 2.0, 0.0) #计算并应用侧边栏阴影的新位置，使其显示在画面右侧
 	## /00
 	## 01侧边按钮的缩放
-	var button_resize_rate: float = BUTTON_WIDTH_OF_BAR_WIDTH_MULTI * bar_width / button_width_default #按钮缩放率，该值基于侧边栏的横向长度求出，然后将其乘入按钮的scale以使按钮缩放至期望的大小
-	for n_button in n_buttons: #遍历所有按钮实例
-		n_button.scale = Vector2.ONE * button_resize_rate #应用按钮缩放率到按钮实例
+	var button_resize_rate: float = BUTTON_WIDTH_OF_BAR_WIDTH_MULTI * bar_width / button_width_default #按钮尺寸缩放率，该值基于侧边栏的横向长度求出，然后将其乘入按钮的scale以使按钮缩放至期望的大小
+	#本部分为优化性能合并到02区块中的for语句下执行
+	#for n_button in n_buttons: #遍历所有按钮实例
+	#	n_button.scale = Vector2.ONE * button_resize_rate #应用按钮尺寸缩放率到按钮实例
 	## /01
 	## 02侧边按钮的排列
-	var y_offset: float = 0.0 #创建一个局部变量，表示最后一个已记录更新的按钮所在的位置的Y距离0.0的偏移量
-	for i in n_buttons.size(): #以索引遍历所有按钮实例
-		if (i >= n_buttons.size()): #如果当前索引超出按钮实例列表
-			break #退出for
-		n_buttons[i].position = Vector2(n_bar_color.position.x / 2.0, y_offset) #设置按钮的位置
-		y_offset += button_width #给Y偏移量增加一个按钮的长度
-		if (i != n_buttons.size() - 1): #如果当前不是最后一个按钮实例
-			y_offset += BAR_BUTTONS_SPACING_MULTI * window_size.y #给Y偏移量增加一个按钮间隔空格的长度
+	var buttons_space: float = window_size.y * (1.0 - BAR_TEXT_SPACE_MULTI - BAR_BOTTOM_SPACE_MULTI) #取得按钮空间长度
+	var per_spacing: float = buttons_space / (n_buttons.size() + 1) #将按钮空间平均分割[按钮数量]刀，取其中的每个切断点作为按钮的位置
+	for i in n_buttons.size(): #按索引遍历按钮实例列表
+		n_buttons[i].position.y = (i + 1) * per_spacing - buttons_space / 2.0 #将按钮按序变换到每个分割点的位置，减半个按钮空间长度以居中按钮(而非让按钮从原点往下开始分布)
+	var retrans_multi: float = buttons_space / (per_spacing * n_buttons.size() + button_width) #计算变换率，该值将乘入每个按钮的坐标的Y，使按钮以原点为中心进行适当位置缩放，从而让按钮不超出限定空间且不影响总体之间的分布均匀度
 	for n_button in n_buttons: #遍历所有按钮实例
-		n_button.position.y -= y_offset / 2.0 #移动按钮实例的Y，使该按钮实例以全部按钮实例居中到侧边栏中心
+		n_button.scale = Vector2.ONE * button_resize_rate #应用按钮尺寸缩放率到按钮实例
+		n_button.position.y *= retrans_multi #将位置变换率应用到按钮
+		n_button.position.x = n_bar_color.position.x / 2.0 #设置按钮的X坐标
 	## /02
+	## 03更新提示文本
+	n_tip_text.position = n_bar_color.position #设置提示文本的位置
+	n_tip_text.size = Vector2(n_bar_color.size.x, window_size.y * BAR_TEXT_SPACE_MULTI) #设置提示文本的尺寸
+	n_tip_text.label_settings.font_size = BAR_TEXT_FONT_SIZE_MULTI * n_tip_text.size.x #设置提示文本的字体大小
+	if (should_show_tip_text): #如果当前应当显示提示文本
+		n_tip_text.self_modulate.a = move_toward(n_tip_text.self_modulate.a, 1.0, delta * BAR_TEXT_FADING_SPEED) #线性地将提示文本的不透明度变换到1.0
+	else: #否则(当前不应显示提示文本)
+		n_tip_text.self_modulate.a = move_toward(n_tip_text.self_modulate.a, 0.0, delta * BAR_TEXT_FADING_SPEED) #线性地将提示文本的不透明度变换到0.0
+	## /03
