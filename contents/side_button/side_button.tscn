@@ -1,37 +1,33 @@
-[gd_scene load_steps=4 format=3 uid="uid://bsgvi5i4do8uw"]
+[gd_scene load_steps=3 format=3 uid="uid://bsgvi5i4do8uw"]
 
 [ext_resource type="Script" uid="uid://day5i7ouy2701" path="res://contents/side_button/side_button.gd" id="1_lim3x"]
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_wdfnh"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b0ify"]
 resource_local_to_scene = true
-radius = 30.0
-height = 120.0
-radial_segments = 4
-rings = 4
-
-[sub_resource type="QuadMesh" id="QuadMesh_4pde0"]
-resource_local_to_scene = true
-size = Vector2(60, 120)
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 30
+corner_radius_top_right = 30
+corner_radius_bottom_right = 30
+corner_radius_bottom_left = 30
+corner_detail = 5
 
 [node name="SideButton" type="Node2D"]
 script = ExtResource("1_lim3x")
 
-[node name="Body" type="CanvasGroup" parent="."]
+[node name="Panel" type="Panel" parent="."]
 self_modulate = Color(0.8, 0.8, 0.8, 1)
-
-[node name="UpCapsule" type="MeshInstance2D" parent="Body"]
-position = Vector2(0, -30)
-rotation = 1.5708
-mesh = SubResource("CapsuleMesh_wdfnh")
-
-[node name="Quad" type="MeshInstance2D" parent="Body"]
-rotation = 1.5708
-mesh = SubResource("QuadMesh_4pde0")
-
-[node name="DownCapsule" type="MeshInstance2D" parent="Body"]
-position = Vector2(0, 30)
-rotation = 1.5708
-mesh = SubResource("CapsuleMesh_wdfnh")
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -60.0
+offset_top = -60.0
+offset_right = 60.0
+offset_bottom = 60.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_b0ify")
 
 [node name="Icon" type="Sprite2D" parent="."]
 self_modulate = Color(0, 0, 0, 1)

@@ -12,6 +12,7 @@ const ICON_TEXTURES: Dictionary[StringName, CompressedTexture2D] = {
 	&"Interact_Point": preload("res://contents/icon_interact_0_point.png"),
 	&"Selection_Point": preload("res://contents/icon_selection_0_point.png"),
 	&"Hand": preload("res://contents/icon_hand_0.png"),
+	&"Menu": preload("res://contents/icon_menu_0.png"),
 }
 
 ## 窗口最小尺寸
@@ -33,3 +34,11 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	n_back_color.size = get_window().size
+
+#region 信号方法
+static func on_button_trigged(button_name: StringName) -> void:
+	match (button_name): #匹配检查button_name
+		&"SideButton_Menu": #侧边栏按钮-菜单
+			pass
+			## 打开菜单
+#endregion

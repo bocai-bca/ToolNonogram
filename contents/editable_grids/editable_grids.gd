@@ -15,11 +15,11 @@ static var grid_size: Vector2i = Vector2i(5, 5) #网格实例的节点的初始�
 func _process(delta: float) -> void:
 	var window_size: Vector2 = Vector2(get_window().size) #获取窗口大小
 	## 00更新网格的变换
-	var free_height: float = window_size.y - NumberBar.icon_size #计算可用空间高度
+	var free_height: float = window_size.y - NumberBar.bar_width #计算可用空间高度
 	scale.y = free_height / (Main.grids_zoom_blocks * TILE_NORMAL_SIZE) #计算缩放的值
 	scale.x = scale.y #将缩放向量的Y复制到X
 	var actually_offset: Vector2 = display_offset * TILE_NORMAL_SIZE #计算实际的坐标移动偏移量
-	position = Vector2(LayersBar.bar_width + NumberBar.icon_size, NumberBar.icon_size) - actually_offset #计算坐标并应用
+	position = Vector2(LayersBar.bar_width + NumberBar.bar_width, NumberBar.bar_width) - actually_offset #计算坐标并应用
 	## /00
 
 ## 重新设置网格尺寸(未来会写显示不同内容的砖瓦图节点，那些节点不受本函数影响，本函数应当只负责改变背景的大小
