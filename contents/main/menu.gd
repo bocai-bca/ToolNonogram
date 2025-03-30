@@ -13,7 +13,7 @@ const MENU_BACKGROUND_COLOR: Color = Color(0.9, 0.9, 0.9, 1.0)
 ## 菜单尺寸缩放倍率，基于视口尺寸
 const MENU_SIZE: Vector2 = Vector2(0.9, 0.95)
 ## 菜单开关变换动画的过程时长，不可为零
-const MENU_ANIMATION_TIME: float = 0.8
+const MENU_ANIMATION_TIME: float = 0.6
 ## 菜单面板的圆角半径，需要手动根据theme[Panel/styles/panel].corner_radius_top_*设置，用于容器的尺寸的计算
 const MENU_THEME_PANEL_CORNER_RADIUS: float = 50.0
 

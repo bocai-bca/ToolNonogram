@@ -10,6 +10,7 @@ static var fs: SideBar
 @onready var n_buttons: Array[SideButton] = [ #参见BUTTONS_TEXTURES_NAME
 	$SideButton_InteractClass as SideButton,
 	$SideButton_SelectionClass as SideButton,
+	$SideButton_EditClass as SideButton,
 	$SideButton_Menu as SideButton
 ]
 @onready var n_tip_text: Label = $TipText as Label
@@ -18,6 +19,7 @@ static var fs: SideBar
 const BUTTONS_TEXTURES_NAME: PackedStringArray = [
 	"Interact_Point",
 	"Selection_Point",
+	"Edit_Point",
 	"Menu",
 ]
 ## 侧边栏背景颜色，施加给n_bar_color的color属性

@@ -12,6 +12,7 @@ static var fs: Main
 const ICON_TEXTURES: Dictionary[StringName, CompressedTexture2D] = {
 	&"Interact_Point": preload("res://contents/icon_interact_0_point.png"),
 	&"Selection_Point": preload("res://contents/icon_selection_0_point.png"),
+	&"Edit_Point": preload("res://contents/icon_edit_point_0.png"),
 	&"Hand": preload("res://contents/icon_hand_0.png"),
 	&"Menu": preload("res://contents/icon_menu_0.png"),
 }
