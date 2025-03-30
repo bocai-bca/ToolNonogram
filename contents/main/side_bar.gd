@@ -79,9 +79,6 @@ func _process(delta: float) -> void:
 	## /00
 	## 01侧边按钮的缩放
 	var button_resize_rate: float = BUTTON_WIDTH_OF_BAR_WIDTH_MULTI * bar_width / button_width_default #按钮尺寸缩放率，该值基于侧边栏的横向长度求出，然后将其乘入按钮的scale以使按钮缩放至期望的大小
-	#本部分为优化性能合并到02区块中的for语句下执行
-	#for n_button in n_buttons: #遍历所有按钮实例
-	#	n_button.scale = Vector2.ONE * button_resize_rate #应用按钮尺寸缩放率到按钮实例
 	## /01
 	## 02侧边按钮的排列
 	var buttons_space: float = window_size.y * (1.0 - BAR_TEXT_SPACE_MULTI - BAR_BOTTOM_SPACE_MULTI) #取得按钮空间长度

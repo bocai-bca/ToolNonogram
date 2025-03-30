@@ -34,9 +34,10 @@ var hit_rect: Rect2 = DEFAULT_HIT_RECT:
 		return hit_rect
 	set(value):
 		if (not is_node_ready()): #如果节点还没ready
-			## 报错并不进行操作
+			## 00报错并不进行操作
 			push_error("SideButton: 已取消对属性\"hit_rect\"的设置，因为：根节点尚未就绪。")
 			return
+			## /00
 		n_button.size = value.size
 		n_button.position = value.position
 		#(n_quad.mesh as QuadMesh).size = Vector2(value.size.x, value.size.y / 2.0)

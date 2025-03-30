@@ -1,15 +1,19 @@
-[gd_scene load_steps=3 format=3 uid="uid://bsgvi5i4do8uw"]
+[gd_scene load_steps=4 format=3 uid="uid://bsgvi5i4do8uw"]
 
 [ext_resource type="Script" uid="uid://day5i7ouy2701" path="res://contents/side_button/side_button.gd" id="1_lim3x"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b0ify"]
-resource_local_to_scene = true
 bg_color = Color(1, 1, 1, 1)
 corner_radius_top_left = 30
 corner_radius_top_right = 30
 corner_radius_bottom_right = 30
 corner_radius_bottom_left = 30
 corner_detail = 5
+shadow_color = Color(0, 0, 0, 0.121569)
+shadow_size = 10
+
+[sub_resource type="Theme" id="Theme_b0ify"]
+Panel/styles/panel = SubResource("StyleBoxFlat_b0ify")
 
 [node name="SideButton" type="Node2D"]
 script = ExtResource("1_lim3x")
@@ -27,7 +31,7 @@ offset_right = 60.0
 offset_bottom = 60.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_b0ify")
+theme = SubResource("Theme_b0ify")
 
 [node name="Icon" type="Sprite2D" parent="."]
 self_modulate = Color(0, 0, 0, 1)
