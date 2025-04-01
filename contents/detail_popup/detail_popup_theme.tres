@@ -1,0 +1,14 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://eqtfln2mgj5a"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h7cra"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 50
+corner_radius_top_right = 50
+corner_radius_bottom_right = 50
+corner_radius_bottom_left = 50
+shadow_color = Color(0, 0, 0, 0.498039)
+shadow_size = 108
+
+[resource]
+default_font_size = 64
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_h7cra")

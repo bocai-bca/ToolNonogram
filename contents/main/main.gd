@@ -5,24 +5,29 @@ class_name Main
 ## 伪单例FakeSingleton
 static var fs: Main
 
-@onready var n_back_color: ColorRect = $BackColor as ColorRect
-@onready var n_base_grids: EditableGrids = $BaseGrids as EditableGrids
+#@onready var n_back_color: ColorRect = $BackColor as ColorRect
+@onready var n_paper_area: Node2D = $PaperArea as Node2D
+@onready var n_base_click: TextureButton = $PaperArea/BaseClick as TextureButton
+@onready var n_base_grids: EditableGrids = $PaperArea/BaseGrids as EditableGrids
 @onready var n_menu_cover_button: TextureButton = $MenuCoverButton as TextureButton
 
 const ICON_TEXTURES: Dictionary[StringName, CompressedTexture2D] = {
 	&"Interact_Point": preload("res://contents/icon_interact_0_point.png"),
 	&"Selection_Point": preload("res://contents/icon_selection_0_point.png"),
 	&"Edit_Point": preload("res://contents/icon_edit_point_0.png"),
+	&"Lock_Point": preload("res://contents/icon_lock_point_0.png"),
 	&"Hand": preload("res://contents/icon_hand_0.png"),
 	&"Menu": preload("res://contents/icon_menu_0.png"),
 }
 
 ## 窗口最小尺寸
-const WINDOW_SIZE_MINIMUM: Vector2i = Vector2i(960, 540)
+const WINDOW_SIZE_MINIMUM: Vector2i = Vector2i(960, 720)
 ## 窗口默认尺寸
 const WINDOW_SIZE_DEFAULT: Vector2i = Vector2i(1920, 1080)
 ## 默认题纸上的工具图标占画面纵向宽度比率
 const NUMBER_BAR_ICON_SIZE_RATE: float = 0.25
+## 砖瓦一般大小(边长)，单位是像素，该值需要手动参考tile_set中的砖瓦像素尺寸设定值。用于参与网格的变换计算
+const TILE_NORMAL_SIZE: float = 16.0
 
 ## 当前菜单是否处于开启状态
 static var is_menu_open: bool:
@@ -49,7 +54,7 @@ func _ready() -> void:
 	pass
 
 func _process(delta: float) -> void:
-	n_back_color.size = get_window().size
+	n_paper_area.position = Vector2(LayersBar.bar_width, 0.0) #更新题纸区域的坐标
 
 #region 信号方法
 static func on_button_trigged(button_name: StringName) -> void:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://dsyodv46dneyp"]
+[gd_scene load_steps=17 format=4 uid="uid://dsyodv46dneyp"]
 
 [ext_resource type="Script" uid="uid://ddw07f0fi354e" path="res://contents/main/main.gd" id="1_400j3"]
 [ext_resource type="PackedScene" uid="uid://dymxav2uetw0l" path="res://contents/editable_grids/editable_grids.tscn" id="2_3fq6y"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://bf2qbkvh1j7yp" path="res://contents/main/layers_bar.gd" id="4_a22sp"]
 [ext_resource type="Texture2D" uid="uid://by3xy64q5cx0k" path="res://contents/white_fadeout_64.png" id="4_dg2sw"]
 [ext_resource type="PackedScene" uid="uid://bsgvi5i4do8uw" path="res://contents/side_button/side_button.tscn" id="4_u7q6r"]
+[ext_resource type="TileSet" uid="uid://3x76mo7fq5a5" path="res://contents/grids_tile_set.tres" id="6_5huld"]
 [ext_resource type="Texture2D" uid="uid://dwjqbrpd8o0bf" path="res://contents/icon_hand_0.png" id="6_xbqcj"]
 [ext_resource type="Script" uid="uid://cenox043hlynv" path="res://contents/main/menu.gd" id="9_wy7hg"]
 
@@ -15,14 +16,21 @@ line_spacing = 0.0
 font_size = 32
 font_color = Color(0.31, 0.31, 0.31, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5huld"]
-bg_color = Color(0.8, 0.8, 0.8, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_41udy"]
+bg_color = Color(0.7, 0.7, 0.7, 1)
 corner_radius_top_left = 30
 corner_radius_top_right = 30
 corner_radius_bottom_right = 30
 corner_radius_bottom_left = 30
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1a5w3"]
+corner_radius_top_left = 30
+corner_radius_top_right = 30
+corner_radius_bottom_right = 30
+corner_radius_bottom_left = 30
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5huld"]
+bg_color = Color(0.8, 0.8, 0.8, 1)
 corner_radius_top_left = 30
 corner_radius_top_right = 30
 corner_radius_bottom_right = 30
@@ -41,21 +49,25 @@ Button/colors/font_color = Color(0, 0, 0, 1)
 Button/colors/font_hover_color = Color(0, 0, 0, 1)
 Button/colors/font_hover_pressed_color = Color(0, 0, 0, 1)
 Button/colors/font_pressed_color = Color(0, 0, 0, 1)
-Button/styles/hover = SubResource("StyleBoxFlat_5huld")
-Button/styles/hover_pressed = SubResource("StyleBoxFlat_5huld")
+Button/styles/hover = SubResource("StyleBoxFlat_41udy")
+Button/styles/hover_pressed = SubResource("StyleBoxFlat_1a5w3")
 Button/styles/normal = SubResource("StyleBoxFlat_5huld")
 Button/styles/pressed = SubResource("StyleBoxFlat_1a5w3")
+Label/colors/font_color = Color(0, 0, 0, 1)
 Panel/styles/panel = SubResource("StyleBoxFlat_wy7hg")
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_400j3")
 
-[node name="BackColor" type="ColorRect" parent="."]
-offset_right = 1920.0
-offset_bottom = 1080.0
+[node name="PaperArea" type="Node2D" parent="."]
+position = Vector2(135, 0)
 
-[node name="BaseGrids" parent="." instance=ExtResource("2_3fq6y")]
-position = Vector2(405, 270)
+[node name="BaseClick" type="TextureButton" parent="PaperArea"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="BaseGrids" parent="PaperArea" instance=ExtResource("2_3fq6y")]
+position = Vector2(270, 270)
 scale = Vector2(10.125, 10.125)
 
 [node name="LayersBar" type="Node2D" parent="."]
@@ -87,17 +99,40 @@ offset_bottom = 1080.0
 color = Color(0, 0, 0, 1)
 
 [node name="FillBackground_Up" type="ColorRect" parent="NumberBar"]
-offset_left = 1080.0
+offset_left = 270.0
 offset_top = 6.75
 offset_right = 1785.0
 offset_bottom = 263.25
+color = Color(0.75, 0.75, 0.75, 1)
 
 [node name="FillBackground_Side" type="ColorRect" parent="NumberBar"]
-visible = false
 offset_left = 6.75
-offset_top = 1080.0
-offset_right = 46.75
-offset_bottom = 1120.0
+offset_top = 270.0
+offset_right = 263.25
+offset_bottom = 1080.0
+color = Color(0.75, 0.75, 0.75, 1)
+
+[node name="NumberGrids_Up" type="TileMapLayer" parent="NumberBar"]
+self_modulate = Color(0, 0, 0, 1)
+texture_filter = 1
+position = Vector2(270, 0)
+scale = Vector2(10.125, 10.125)
+tile_map_data = PackedByteArray("AAAAAAAAAAADAAAAAAAAAAEAAAADAAAAAAABAAAAAAADAAAAAAABAAEAAAADAAAAAAACAAAAAAADAAAAAAACAAEAAAADAAAAAAADAAAAAAADAAAAAAADAAEAAAADAAAAAAAEAAAAAAADAAAAAAAEAAEAAAADAAAAAAA=")
+tile_set = ExtResource("6_5huld")
+occlusion_enabled = false
+collision_enabled = false
+navigation_enabled = false
+
+[node name="NumberGrids_Side" type="TileMapLayer" parent="NumberBar"]
+self_modulate = Color(0, 0, 0, 1)
+texture_filter = 1
+position = Vector2(0, 270)
+scale = Vector2(10.125, 10.125)
+tile_map_data = PackedByteArray("AAAAAAAAAAAAAAEAAAAAAAEAAAAAAAEAAAAAAAIAAAAAAAEAAAAAAAMAAAAAAAEAAAAAAAQAAAAAAAEAAAABAAQAAAAAAAEAAAABAAMAAAAAAAEAAAABAAIAAAAAAAEAAAABAAEAAAAAAAEAAAABAAAAAAAAAAEAAAA=")
+tile_set = ExtResource("6_5huld")
+occlusion_enabled = false
+collision_enabled = false
+navigation_enabled = false
 
 [node name="IconFillBackground" type="ColorRect" parent="NumberBar"]
 offset_left = 6.75
@@ -114,6 +149,13 @@ texture = ExtResource("6_xbqcj")
 [node name="SideBar" type="Node2D" parent="."]
 position = Vector2(1920, 540)
 script = ExtResource("3_cwwyt")
+
+[node name="MenuCoverButton2" type="TextureButton" parent="SideBar"]
+offset_left = -180.0
+offset_top = -540.0
+offset_bottom = 540.0
+mouse_filter = 2
+mouse_force_pass_scroll_events = false
 
 [node name="Shadow" type="Sprite2D" parent="SideBar"]
 self_modulate = Color(0, 0, 0, 0.5)
@@ -151,6 +193,12 @@ position = Vector2(-90, 0)
 button_name = &"SideButton_EditClass"
 hover_tip_text = "工具类别
 擦写"
+
+[node name="SideButton_LockClass" parent="SideBar" instance=ExtResource("4_u7q6r")]
+position = Vector2(-90, 0)
+button_name = &"SideButton_LockClass"
+hover_tip_text = "工具类别
+锁定"
 
 [node name="SideButton_Menu" parent="SideBar" instance=ExtResource("4_u7q6r")]
 position = Vector2(-90, 0)
@@ -198,7 +246,87 @@ offset_top = 50.0
 offset_right = 1678.0
 offset_bottom = 1026.0
 
-[node name="CloseMenuButton" type="Button" parent="Menu/MenuContainer"]
+[node name="MenuButton_CloseMenu" type="Button" parent="Menu/MenuContainer"]
 layout_mode = 2
 focus_mode = 0
 text = "关闭菜单"
+
+[node name="HSeparator_Paper" type="HSeparator" parent="Menu/MenuContainer"]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+
+[node name="SubTitle_Paper" type="Label" parent="Menu/MenuContainer"]
+layout_mode = 2
+text = "题纸"
+vertical_alignment = 1
+
+[node name="PaperButtons" type="GridContainer" parent="Menu/MenuContainer"]
+layout_mode = 2
+columns = 3
+
+[node name="MenuButton_New" type="Button" parent="Menu/MenuContainer/PaperButtons"]
+custom_minimum_size = Vector2(540, 0)
+layout_mode = 2
+focus_mode = 0
+text = "新建..."
+
+[node name="MenuButtton_Open" type="Button" parent="Menu/MenuContainer/PaperButtons"]
+custom_minimum_size = Vector2(540, 0)
+layout_mode = 2
+focus_mode = 0
+text = "打开..."
+
+[node name="MenuButton_Save" type="Button" parent="Menu/MenuContainer/PaperButtons"]
+custom_minimum_size = Vector2(540, 0)
+layout_mode = 2
+focus_mode = 0
+text = "保存"
+
+[node name="MenuButton_Clear" type="Button" parent="Menu/MenuContainer/PaperButtons"]
+layout_mode = 2
+focus_mode = 0
+text = "清空网格"
+
+[node name="MenuButton_Sandboxize" type="Button" parent="Menu/MenuContainer/PaperButtons"]
+layout_mode = 2
+focus_mode = 0
+text = "沙盒化/修改尺寸"
+
+[node name="MenuButton_CreatePuzzle" type="Button" parent="Menu/MenuContainer/PaperButtons"]
+layout_mode = 2
+focus_mode = 0
+text = "从画布创建题目"
+
+[node name="HSeparator_Misc" type="HSeparator" parent="Menu/MenuContainer"]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+
+[node name="SubTitle_Misc" type="Label" parent="Menu/MenuContainer"]
+layout_mode = 2
+text = "其他"
+
+[node name="MiscButtons" type="HBoxContainer" parent="Menu/MenuContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="MenuButton_Settings" type="Button" parent="Menu/MenuContainer/MiscButtons"]
+custom_minimum_size = Vector2(812, 0)
+layout_mode = 2
+focus_mode = 0
+text = "设置"
+
+[node name="MenuButton_About" type="Button" parent="Menu/MenuContainer/MiscButtons"]
+custom_minimum_size = Vector2(812, 0)
+layout_mode = 2
+focus_mode = 0
+text = "关于【工具数织】"
+
+[node name="TextLengthTestButton" type="Button" parent="Menu"]
+visible = false
+layout_mode = 0
+offset_right = 456.0
+offset_bottom = 96.0
+focus_mode = 0
+mouse_filter = 2
+disabled = true
+text = "从画布创建题目"

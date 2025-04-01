@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ci1aslcy2xpd5"
-path="res://.godot/imported/grids_tile_set.png-8a3d45eb1b766cd856cce67020c1af0f.ctex"
+uid="uid://vygok748owox"
+path="res://.godot/imported/icon_lock_point_0.png-5004dd9ffac5f9f7ab02f3b46769a48d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://contents/editable_grids/grids_tile_set.png"
-dest_files=["res://.godot/imported/grids_tile_set.png-8a3d45eb1b766cd856cce67020c1af0f.ctex"]
+source_file="res://contents/icon_lock_point_0.png"
+dest_files=["res://.godot/imported/icon_lock_point_0.png-5004dd9ffac5f9f7ab02f3b46769a48d.ctex"]
 
 [params]
 

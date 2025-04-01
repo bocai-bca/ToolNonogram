@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://d2i2dshe57uds"]
+
+[ext_resource type="Theme" uid="uid://eqtfln2mgj5a" path="res://contents/detail_popup/detail_popup_theme.tres" id="1_8ixkk"]
+[ext_resource type="Script" uid="uid://b6no0gqbsd6li" path="res://contents/detail_popup/detail_popup.gd" id="2_8aanj"]
+
+[node name="DetailPopup" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -768.0
+offset_top = -432.0
+offset_right = -1152.0
+offset_bottom = -648.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_8ixkk")
+script = ExtResource("2_8aanj")

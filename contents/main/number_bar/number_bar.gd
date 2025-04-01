@@ -2,10 +2,7 @@ extends Node2D
 class_name NumberBar
 ## 数字栏。涵盖题目数字横行、竖列和工具图标的节点树枝
 
-## 目前有一个争议，就是图标的缩放方法、边框的缩放方法。边框目前打算跟随网格的缩放，使得全局的边框统一。图标打算也像网格一样保存一个变量记录缩放率，然后跟随窗口的变化一起变化
-## 对于接下来的修改，只需要改一下边框厚度乘数这个量的取值方式即可，其他计算全都依靠该变量
-
-## 边框的厚度接下来可能完全取决于砖瓦的边框，请思考如何控制砖瓦边框的厚度
+## 由于决定采取全面使用TileMapLayer的计划，边框的厚度将由TileSet决定，之前的策略需要颠覆，以后需考虑从代码中删去FRAME_THICKNESS_RATE及其相关的计算
 
 ## 伪单例FakeSingleton
 static var fs: NumberBar
@@ -16,6 +13,8 @@ static var fs: NumberBar
 @onready var n_fill_background_side: ColorRect = $FillBackground_Side as ColorRect
 @onready var n_icon_fill_background: ColorRect = $IconFillBackground as ColorRect
 @onready var n_icon: Sprite2D = $Icon as Sprite2D
+@onready var n_number_grids_up: TileMapLayer = $NumberGrids_Up as TileMapLayer
+@onready var n_number_grids_side: TileMapLayer = $NumberGrids_Side as TileMapLayer
 
 ## 边框宽度率，影响边框厚度的乘数，基数为工具图标的边长
 const FRAME_THICKNESS_RATE: float = 0.025
@@ -30,6 +29,8 @@ const ZOOM_RATE_DEFAULT: float = 0.2
 const ZOOM_RATE_BOUND: Vector2 = Vector2(0.1, 0.4)
 ## 工具图标的图标纹理显示节点n_icon相对于整个工具图标区域(含边框)的缩放比率
 const ICON_DISPLAY_SCALE_RATE: float = 0.95
+## 数字栏填充颜色，目前该颜色不会自动应用在节点上，是一个代码层面未被使用的常量
+const NUMBER_BAR_FILL_COLOR: Color = Color(1.0, 1.0, 1.0, 1.0)
 
 ## 数字栏的宽度(纵向或横向)，也是工具图标大小，单位是一条边的长度(涵盖边框)。
 static var bar_width: float = Main.WINDOW_SIZE_DEFAULT.y * ZOOM_RATE_DEFAULT
@@ -68,7 +69,14 @@ func _process(delta: float) -> void:
 	## 02更新边框背景和填充背景
 	n_frame_background_up.size = Vector2(window_size.x - position.x, bar_width) #更新顶部边框背景的尺寸
 	n_frame_background_side.size = Vector2(bar_width, window_size.y) #更新侧边边框背景的尺寸
-	n_fill_background_up.position = Vector2(window_size.y + frame_thickness, frame_thickness) #更新顶部填充背景的坐标
-	n_fill_background_up.size = Vector2(clampf(window_size.x - frame_thickness - window_size.y - LayersBar.bar_width, 0.0, window_size.x), bar_width - 2.0 * frame_thickness) #更新顶部填充背景的尺寸
-	#n_fill_background_side.position = Vector2() #更新侧边填充背景的坐标 #本行貌似不需要，先注释掉了
+	n_fill_background_up.position = Vector2(bar_width, frame_thickness) #更新顶部填充背景的坐标
+	n_fill_background_up.size = Vector2(window_size.x - LayersBar.bar_width - bar_width, bar_width - 2.0 * frame_thickness) #更新顶部填充背景的尺寸
+	n_fill_background_side.position = Vector2(frame_thickness, bar_width) #更新侧边填充背景的坐标
+	n_fill_background_side.size = Vector2(bar_width - 2.0 * frame_thickness, window_size.y - bar_width) #更新侧边填充背景的尺寸
 	## /02
+	## 03更新砖瓦图
+	n_number_grids_up.scale = (window_size.y - NumberBar.bar_width) / (Main.grids_zoom_blocks * Main.TILE_NORMAL_SIZE) *  Vector2.ONE #计算并应用顶部砖瓦图的缩放
+	n_number_grids_up.position = Vector2(EditableGrids.display_offset.x * Main.TILE_NORMAL_SIZE + bar_width, 0.0) #计算并应用顶部砖瓦图的位置
+	n_number_grids_side.scale = n_number_grids_up.scale #直接拿来顶部砖瓦图的缩放用
+	n_number_grids_side.position = Vector2(0.0, EditableGrids.display_offset.x * Main.TILE_NORMAL_SIZE + bar_width) #计算并应用侧边砖瓦图的位置
+	## /03
