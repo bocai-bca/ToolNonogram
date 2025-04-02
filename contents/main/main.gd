@@ -7,8 +7,6 @@ static var fs: Main
 
 #@onready var n_back_color: ColorRect = $BackColor as ColorRect
 @onready var n_paper_area: Node2D = $PaperArea as Node2D
-@onready var n_base_click: TextureButton = $PaperArea/BaseClick as TextureButton
-@onready var n_base_grids: EditableGrids = $PaperArea/BaseGrids as EditableGrids
 @onready var n_menu_cover_button: TextureButton = $MenuCoverButton as TextureButton
 
 const ICON_TEXTURES: Dictionary[StringName, CompressedTexture2D] = {
@@ -21,7 +19,7 @@ const ICON_TEXTURES: Dictionary[StringName, CompressedTexture2D] = {
 }
 
 ## 窗口最小尺寸
-const WINDOW_SIZE_MINIMUM: Vector2i = Vector2i(960, 720)
+const WINDOW_SIZE_MINIMUM: Vector2i = Vector2i(960, 540)
 ## 窗口默认尺寸
 const WINDOW_SIZE_DEFAULT: Vector2i = Vector2i(1920, 1080)
 ## 默认题纸上的工具图标占画面纵向宽度比率

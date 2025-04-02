@@ -1,7 +1,8 @@
-[gd_scene load_steps=17 format=4 uid="uid://dsyodv46dneyp"]
+[gd_scene load_steps=19 format=4 uid="uid://dsyodv46dneyp"]
 
 [ext_resource type="Script" uid="uid://ddw07f0fi354e" path="res://contents/main/main.gd" id="1_400j3"]
 [ext_resource type="PackedScene" uid="uid://dymxav2uetw0l" path="res://contents/editable_grids/editable_grids.tscn" id="2_3fq6y"]
+[ext_resource type="Script" uid="uid://dbl3l383nbyrl" path="res://contents/main/paper_area.gd" id="2_41udy"]
 [ext_resource type="Script" uid="uid://bpdtfcjx711tw" path="res://contents/main/side_bar.gd" id="3_cwwyt"]
 [ext_resource type="Script" uid="uid://couw0oaslh2af" path="res://contents/main/number_bar/number_bar.gd" id="3_sl0nd"]
 [ext_resource type="Script" uid="uid://bf2qbkvh1j7yp" path="res://contents/main/layers_bar.gd" id="4_a22sp"]
@@ -15,6 +16,8 @@
 line_spacing = 0.0
 font_size = 32
 font_color = Color(0.31, 0.31, 0.31, 1)
+
+[sub_resource type="Theme" id="Theme_41udy"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_41udy"]
 bg_color = Color(0.7, 0.7, 0.7, 1)
@@ -61,10 +64,15 @@ script = ExtResource("1_400j3")
 
 [node name="PaperArea" type="Node2D" parent="."]
 position = Vector2(135, 0)
+script = ExtResource("2_41udy")
 
 [node name="BaseClick" type="TextureButton" parent="PaperArea"]
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 1605.0
+offset_bottom = 1080.0
+focus_mode = 0
+action_mode = 0
+button_mask = 5
+ignore_texture_size = true
 
 [node name="BaseGrids" parent="PaperArea" instance=ExtResource("2_3fq6y")]
 position = Vector2(270, 270)
@@ -217,6 +225,11 @@ horizontal_alignment = 1
 vertical_alignment = 1
 text_overrun_behavior = 1
 
+[node name="ToolPanel" type="Panel" parent="SideBar"]
+offset_right = 40.0
+offset_bottom = 40.0
+theme = SubResource("Theme_41udy")
+
 [node name="MenuCoverButton" type="TextureButton" parent="."]
 offset_right = 1920.0
 offset_bottom = 1080.0
@@ -250,10 +263,6 @@ offset_bottom = 1026.0
 layout_mode = 2
 focus_mode = 0
 text = "关闭菜单"
-
-[node name="HSeparator_Paper" type="HSeparator" parent="Menu/MenuContainer"]
-self_modulate = Color(1, 1, 1, 0)
-layout_mode = 2
 
 [node name="SubTitle_Paper" type="Label" parent="Menu/MenuContainer"]
 layout_mode = 2
@@ -297,9 +306,27 @@ layout_mode = 2
 focus_mode = 0
 text = "从画布创建题目"
 
-[node name="HSeparator_Misc" type="HSeparator" parent="Menu/MenuContainer"]
-self_modulate = Color(1, 1, 1, 0)
+[node name="SubTitle_Autofill" type="Label" parent="Menu/MenuContainer"]
 layout_mode = 2
+text = "自动填充"
+
+[node name="AutofillButtons" type="HBoxContainer" parent="Menu/MenuContainer"]
+layout_mode = 2
+
+[node name="MenuButton_AutofillClose" type="Button" parent="Menu/MenuContainer/AutofillButtons"]
+custom_minimum_size = Vector2(540, 0)
+layout_mode = 2
+text = "关闭"
+
+[node name="MenuButton_AutofillNormal" type="Button" parent="Menu/MenuContainer/AutofillButtons"]
+custom_minimum_size = Vector2(540, 0)
+layout_mode = 2
+text = "一般"
+
+[node name="MenuButton_AutofillSmart" type="Button" parent="Menu/MenuContainer/AutofillButtons"]
+custom_minimum_size = Vector2(540, 0)
+layout_mode = 2
+text = "智能"
 
 [node name="SubTitle_Misc" type="Label" parent="Menu/MenuContainer"]
 layout_mode = 2
@@ -320,6 +347,9 @@ custom_minimum_size = Vector2(812, 0)
 layout_mode = 2
 focus_mode = 0
 text = "关于【工具数织】"
+
+[node name="LengthTest" type="Control" parent="Menu/MenuContainer"]
+layout_mode = 2
 
 [node name="TextLengthTestButton" type="Button" parent="Menu"]
 visible = false
