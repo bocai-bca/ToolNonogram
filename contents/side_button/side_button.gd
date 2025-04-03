@@ -2,13 +2,11 @@ extends Node2D
 class_name SideButton
 ## 侧边栏按钮。
 
+## 现在要研究的是如何给侧边按钮定义一套可用和不可用系统，使其优雅地在不可用时不可见、不可交互
+
 ## 信号-按钮触发。将在本按钮被左键点击触发以后发出信号，请由需监听的类主动连接本按钮实例的信号
 signal button_trigged(button_name: StringName)
 
-#@onready var n_body: CanvasGroup = $Body as CanvasGroup
-#@onready var n_up_capsule: MeshInstance2D = $Body/UpCapsule as MeshInstance2D
-#@onready var n_quad: MeshInstance2D = $Body/Quad as MeshInstance2D
-#@onready var n_down_capsule: MeshInstance2D = $Body/DownCapsule as MeshInstance2D
 @onready var n_panel: Panel = $Panel as Panel
 @onready var n_icon: Sprite2D = $Icon as Sprite2D
 @onready var n_button: TextureButton = $Button as TextureButton
@@ -40,14 +38,11 @@ var hit_rect: Rect2 = DEFAULT_HIT_RECT:
 			## /00
 		n_button.size = value.size
 		n_button.position = value.position
-		#(n_quad.mesh as QuadMesh).size = Vector2(value.size.x, value.size.y / 2.0)
-		#(n_up_capsule.mesh as CapsuleMesh).height = value.size.x
-		#(n_up_capsule.mesh as CapsuleMesh).radius = value.size.y / 4.0
-		#n_up_capsule.position = Vector2(0.0, value.size.y / -4.0)
-		#n_down_capsule.position = Vector2(0.0, value.size.y / 4.0)
 		n_panel.size = value.size.x * Vector2.ONE
 ## 按下状态，表示本按钮当前是否是被按下的状态
 var is_down: bool = false
+## 可用性，为false时按钮不可点击也不可见
+var is_enable: bool = true
 
 func _ready() -> void:
 	n_button.mouse_entered.connect(on_mouse_entered)

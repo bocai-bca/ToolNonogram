@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=4 uid="uid://dsyodv46dneyp"]
+[gd_scene load_steps=20 format=4 uid="uid://dsyodv46dneyp"]
 
 [ext_resource type="Script" uid="uid://ddw07f0fi354e" path="res://contents/main/main.gd" id="1_400j3"]
 [ext_resource type="PackedScene" uid="uid://dymxav2uetw0l" path="res://contents/editable_grids/editable_grids.tscn" id="2_3fq6y"]
@@ -17,7 +17,15 @@ line_spacing = 0.0
 font_size = 32
 font_color = Color(0.31, 0.31, 0.31, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k1fi1"]
+bg_color = Color(0.95, 0.95, 0.95, 1)
+corner_radius_bottom_left = 100
+shadow_color = Color(0, 0, 0, 0.247059)
+shadow_size = 100
+
 [sub_resource type="Theme" id="Theme_41udy"]
+default_font_size = 32
+Panel/styles/panel = SubResource("StyleBoxFlat_k1fi1")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_41udy"]
 bg_color = Color(0.7, 0.7, 0.7, 1)
@@ -225,10 +233,15 @@ horizontal_alignment = 1
 vertical_alignment = 1
 text_overrun_behavior = 1
 
-[node name="ToolPanel" type="Panel" parent="SideBar"]
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="ToolClassPanel" type="Panel" parent="SideBar"]
+offset_left = -180.0
+offset_top = -540.0
+offset_bottom = 486.0
 theme = SubResource("Theme_41udy")
+
+[node name="ClassButton_0" parent="SideBar/ToolClassPanel" instance=ExtResource("4_u7q6r")]
+position = Vector2(90, 540)
+button_name = &"ClassButton_0"
 
 [node name="MenuCoverButton" type="TextureButton" parent="."]
 offset_right = 1920.0

@@ -15,6 +15,26 @@ static var fs: SideBar
 	$SideButton_Menu as SideButton
 ]
 @onready var n_tip_text: Label = $TipText as Label
+@onready var n_tool_class_panel: Panel = $ToolClassPanel as Panel #工具类别层(中间层)面板
+## 工具类别层按钮，简称为类别按钮，这些按钮没有固定的图标、按钮名、悬浮文本，全在变更焦点类别时被赋予，必要时还会隐藏
+@onready var n_class_buttons: Array[SideButton] = [
+	$ToolClassPanel/ClassButton_0 as SideButton
+]
+
+## 侧边栏焦点所在层次
+enum FocusPanel{
+	ROOT, #根部(最浅层)
+	TOOL_CLASS, #工具类别(中间层)
+	TOOL_DETAIL, #工具详情(最深层)
+}
+## 侧边栏焦点所在类别
+enum FocusClass{
+	NONE, #无
+	INTERACT, #交互
+	SELECTION, #选区
+	EDIT, #擦写
+	LOCK, #锁定
+}
 
 ## 按钮纹理名称列表，索引按序一对一对应于n_buttons数组中的每个元素的索引(例如本数组[0]对应n_buttons[0])，值对应于Main.ICON_TEXTURES常量的键，以此来捆绑n_buttons中的节点实例使用的纹理资源
 const BUTTONS_TEXTURES_NAME: PackedStringArray = [
@@ -42,6 +62,16 @@ const BUTTON_WIDTH_OF_BAR_WIDTH_MULTI: float = 0.8
 const BAR_TEXT_FONT_SIZE_MULTI: float = 32.0 / (BAR_WIDTH_MULTI * Main.WINDOW_SIZE_DEFAULT.y)
 ## 侧边栏顶部提示文本的淡入或淡出速度，单位是alpha数值量每秒
 const BAR_TEXT_FADING_SPEED: float = 3.75
+## 侧边栏子层面板圆角半径乘数，基于视口纵向长度
+const TOOL_PANEL_CORNER_RADIUS_MULTI: float = 100.0 / Main.WINDOW_SIZE_DEFAULT.y
+## 侧边栏子层面板纵向长度乘数，基于视口纵向长度
+const TOOL_PANEL_HEIGHT_MULTI: float = 0.95
+## 侧边栏子层面板阴影尺寸乘数，基于视口纵向长度
+const TOOL_PANEL_SHADOW_SIZE_MULTI: float = 100.0 / Main.WINDOW_SIZE_DEFAULT.y
+## 侧边栏子层面板开关动画时间，单位是秒
+const TOOL_PANEL_ANIMATION_TIME: float = 0.8
+## 侧边栏子层面板开关动画缓动曲线值
+const TOOL_PANEL_ANIMATION_EASE_CURVE: float = 5.0
 
 ## 按钮的默认长度，该值必须通过读取按钮实例的TextureButton的size属性获取。默认只在本节点ready时读取一次
 static var button_width_default: float
@@ -60,6 +90,16 @@ static var tip_text: String:
 	set(value):
 		if (fs != null and fs.n_tip_text != null): #防空引用
 			fs.n_tip_text.text = value
+## 侧边栏的焦点处于哪个面板层上
+static var focus_panel: FocusPanel = FocusPanel.ROOT
+## 侧边栏的焦点处于哪个工具类别上
+static var focus_class: FocusClass = FocusClass.NONE
+## 侧边栏工具类别层(中间层)面板开关倒计时器
+static var tool_class_panel_animation_timer: float = 0.0
+## 侧边栏工具详情层(最深层)面板开关倒计时器
+static var tool_detail_panel_animation_timer: float = 0.0
+## 记录正在被工具类别层使用的类别按钮，方便进行排列
+static var class_buttons_using: Array[SideButton]
 
 func _enter_tree() -> void:
 	fs = self #定义伪单例
@@ -106,3 +146,33 @@ func _process(delta: float) -> void:
 	else: #否则(当前不应显示提示文本)
 		n_tip_text.self_modulate.a = move_toward(n_tip_text.self_modulate.a, 0.0, delta * BAR_TEXT_FADING_SPEED) #线性地将提示文本的不透明度变换到0.0
 	## /03
+	## 04深层面板更新
+	n_tool_class_panel.size = Vector2(bar_width, window_size.y * TOOL_PANEL_HEIGHT_MULTI) #更新工具类别层面板的尺寸
+	var tool_class_panel_pos_open: Vector2 = Vector2(-bar_width, -0.5 * window_size.y) #计算出工具类别面板在完全展开时的坐标
+	var tool_class_panel_pos_close: Vector2 = Vector2(window_size.y * TOOL_PANEL_SHADOW_SIZE_MULTI, -0.5 * window_size.y) #计算出工具类别面板在完全收起时的坐标
+	var stylebox_editing: StyleBoxFlat #创建一个StyleBox变量用于修改
+	## 	05工具类别层StyleBox更新
+	stylebox_editing = n_tool_class_panel.theme.get_stylebox(&"panel", &"Panel") as StyleBoxFlat #获取工具类别层的StyleBox
+	stylebox_editing.shadow_size = window_size.y * TOOL_PANEL_SHADOW_SIZE_MULTI #设置StyleBox的阴影尺寸
+	stylebox_editing.corner_radius_bottom_left = window_size.y * TOOL_PANEL_CORNER_RADIUS_MULTI #设置StyleBox的圆角半径
+	n_tool_class_panel.theme.set_stylebox(&"panel", &"Panel", stylebox_editing) #将修改好的StyleBox保存回工具类别层节点
+	## 	/05
+	## 	06工具详细层StyleBox更新
+	## 	/06
+	## 	07深层面板位置更新
+	tool_class_panel_animation_timer = move_toward(tool_class_panel_animation_timer, 0.0, delta) #工具类别层面板动画倒计时更新
+	tool_detail_panel_animation_timer = move_toward(tool_detail_panel_animation_timer, 0.0, delta) #工具详细层面板动画倒计时更新
+	match (focus_panel): #匹配焦点所在的面板层次
+		FocusPanel.ROOT: #底部，类别层详细层均不展开
+			n_tool_class_panel.position = tool_class_panel_pos_close.lerp(tool_class_panel_pos_open, ease(tool_class_panel_animation_timer / TOOL_PANEL_ANIMATION_TIME, TOOL_PANEL_ANIMATION_EASE_CURVE)) #计算工具类别层面板的坐标，因为是倒计时所以向量插值的起点和终点取反，实际终点为收起
+			#### 工具详细层的坐标
+		FocusPanel.TOOL_CLASS: #类别层，类别层展开而详细层收起
+			n_tool_class_panel.position = tool_class_panel_pos_open.lerp(tool_class_panel_pos_close, ease(tool_class_panel_animation_timer / TOOL_PANEL_ANIMATION_TIME, TOOL_PANEL_ANIMATION_EASE_CURVE)) #计算工具类别层面板的坐标，因为是倒计时所以向量插值的起点和终点取反，实际终点为展开
+			#### 工具详细层的坐标
+		FocusPanel.TOOL_DETAIL: #详细层，类别层详细层均展开
+			n_tool_class_panel.position = tool_class_panel_pos_open.lerp(tool_class_panel_pos_close, ease(tool_class_panel_animation_timer / TOOL_PANEL_ANIMATION_TIME, TOOL_PANEL_ANIMATION_EASE_CURVE)) #计算工具类别层面板的坐标，因为是倒计时所以向量插值的起点和终点取反，实际终点为展开
+			#### 工具详细层的坐标
+	## 	/07
+	## 	08工具类别层按钮排列
+	## 	/08
+	## /04

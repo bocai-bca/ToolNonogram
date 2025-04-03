@@ -40,6 +40,8 @@ const MENU_BACKGROUND_COLOR: Color = Color(0.9, 0.9, 0.9, 1.0)
 const MENU_SIZE: Vector2 = Vector2(0.9, 0.95)
 ## 菜单开关变换动画的过程时长，不可为零
 const MENU_ANIMATION_TIME: float = 0.6
+## 菜单开关变换动画的缓动曲线值，参见ease()
+const MENU_ANIMATION_EASE_CURVE: float = 5.0
 ## 菜单面板的圆角半径，需要手动根据theme[Panel/styles/panel].corner_radius_top_*设置，用于容器的尺寸的计算
 const MENU_THEME_PANEL_CORNER_RADIUS: float = 50.0
 ## 题纸系列按钮的网格列数，需要手动根据节点PaperButtons的columns设置，不可小于1，用于按钮的最小宽度计算
@@ -100,9 +102,9 @@ func _process(delta: float) -> void:
 	var close_target_pos: Vector2 = Vector2(window_size.x * (1.0 - MENU_SIZE.x) / 2.0, window_size.y + shadow_size) #计算菜单完全收起时的坐标
 	animation_timer = move_toward(animation_timer, 0.0, delta) #更新倒计时
 	if (Main.is_menu_open): #如果当前菜单是开启状态
-		position = open_target_pos.lerp(close_target_pos, ease(animation_timer / MENU_ANIMATION_TIME, 5.0)) #使坐标从关闭状态变换到开启状态，由于计时器是反着计时的，为0.0时才是终点，所以move_toward时需要将起点和终点取反
+		position = open_target_pos.lerp(close_target_pos, ease(animation_timer / MENU_ANIMATION_TIME, MENU_ANIMATION_EASE_CURVE)) #使坐标从关闭状态变换到开启状态，由于计时器是反着计时的，为0.0时才是终点，所以move_toward时需要将起点和终点取反
 	else: #否则(当前菜单是关闭状态)
-		position = close_target_pos.lerp(open_target_pos, ease(animation_timer / MENU_ANIMATION_TIME, 5.0)) #使坐标从关闭状态变换到开启状态，由于计时器是反着计时的，为0.0时才是终点，所以move_toward时需要将起点和终点取反
+		position = close_target_pos.lerp(open_target_pos, ease(animation_timer / MENU_ANIMATION_TIME, MENU_ANIMATION_EASE_CURVE)) #使坐标从关闭状态变换到开启状态，由于计时器是反着计时的，为0.0时才是终点，所以move_toward时需要将起点和终点取反
 	size = MENU_SIZE * window_size #计算并应用尺寸
 	## /00
 	## 01更新菜单容器的位置和尺寸
