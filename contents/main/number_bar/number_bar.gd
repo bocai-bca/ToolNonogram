@@ -5,7 +5,12 @@ class_name NumberBar
 ## 由于决定采取全面使用TileMapLayer的计划，边框的厚度将由TileSet决定，之前的策略需要颠覆，以后需考虑从代码中删去FRAME_THICKNESS_RATE及其相关的计算
 
 ## 伪单例FakeSingleton
-static var fs: NumberBar
+static var fs: NumberBar:
+	get:
+		if (fs == null): #如果fs为空
+			push_error("NumberBar: 在试图获取fs时无法返回有效值，因为：解引用fs时返回null。")
+			return null
+		return fs
 
 @onready var n_frame_background_up: ColorRect = $FrameBackground_Up as ColorRect
 @onready var n_frame_background_side: ColorRect = $FrameBackground_Side as ColorRect

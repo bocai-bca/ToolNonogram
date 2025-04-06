@@ -42,7 +42,19 @@ var hit_rect: Rect2 = DEFAULT_HIT_RECT:
 ## 按下状态，表示本按钮当前是否是被按下的状态
 var is_down: bool = false
 ## 可用性，为false时按钮不可点击也不可见
-var is_enable: bool = true
+var is_enable: bool:
+	get:
+		return is_enable
+	set(value):
+		if (n_button == null):
+			push_error("SideButton: 已取消对属性\"is_enable\"的设置，因为：解引用n_button时返回null。")
+			return
+		n_button.disabled = not value
+		if (not value):
+			on_mouse_exited()
+			visible = false
+		else:
+			visible = true
 
 func _ready() -> void:
 	n_button.mouse_entered.connect(on_mouse_entered)
@@ -50,6 +62,7 @@ func _ready() -> void:
 	n_button.button_down.connect(on_button_down)
 	n_button.button_up.connect(on_button_up)
 	button_trigged.connect(Main.on_button_trigged, CONNECT_DEFERRED) #将本节点的按钮触发信号连接到Main.on_button_trigged()方法
+	is_enable = true
 
 #region 信号方法
 func on_mouse_entered() -> void:

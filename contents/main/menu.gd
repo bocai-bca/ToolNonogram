@@ -5,7 +5,12 @@ class_name Main_Menu
 ## 本类中大量使用了对节点的引用，以及节点列表。后续可以考虑如何优化这里
 
 ## 伪单例FakeSingleton
-static var fs: Main_Menu
+static var fs: Main_Menu:
+	get:
+		if (fs == null): #如果fs为空
+			push_error("Main_Menu: 在试图获取fs时无法返回有效值，因为：解引用fs时返回null。")
+			return null
+		return fs
 
 @onready var n_menu_container: VBoxContainer = $MenuContainer as VBoxContainer
 @onready var n_menu_button_close_menu: Button = $MenuContainer/MenuButton_CloseMenu as Button
@@ -123,7 +128,7 @@ func _process(delta: float) -> void:
 		n_autofill_button.add_theme_font_size_override(&"font_size", clampf(n_autofill_button.custom_minimum_size.x / test_text_length(n_autofill_button.text), 0.0, 1.0) * DEFAULT_FONT_SIZE) #计算并设置使文本能完全放置在按钮中所需的最大字体大小
 	var minimum_width_for_per_misc_button: float = (menu_container_size.x - BUTTONS_SPACING_X * (MISC_BUTTONS_COLUMNS - 1)) / MISC_BUTTONS_COLUMNS #计算每个属于其他系列的按钮的最小宽度属性的值
 	for n_misc_button in n_menu_buttons_misc: #遍历所有属于其他系列的按钮
-		n_misc_button.custom_minimum_size = Vector2(minimum_width_for_per_misc_button, 0.0) #设置自定义最小尺寸		
+		n_misc_button.custom_minimum_size = Vector2(minimum_width_for_per_misc_button, 0.0) #设置自定义最小尺寸
 		n_misc_button.add_theme_font_size_override(&"font_size", clampf(n_misc_button.custom_minimum_size.x / test_text_length(n_misc_button.text), 0.0, 1.0) * DEFAULT_FONT_SIZE) #计算并设置使文本能完全放置在按钮中所需的最大字体大小
 	## 	03纵向缩放。此处一些尺寸计算需要与先前横向缩放的数值取最小值
 	if (menu_elements_length == -1.0): #如果元素长度未被初始化
@@ -142,7 +147,7 @@ func _process(delta: float) -> void:
 	## 	/03
 	## /02
 	n_menu_container.size = menu_container_size #设置菜单容器尺寸
-	
+
 
 ## 测试文本长度，测试置于菜单按钮中的文本想要显示全所需的长度，返回该长度。测试节点使用默认主题字体大小，该值应当与常量DEFAULT_FONT_SIZE相同。
 ## 本方法必须在ready之后调用，如果在ready之前调用或其他原因导致调用本方法时n_text_length_test_button为null，本方法将报错并返回0.0

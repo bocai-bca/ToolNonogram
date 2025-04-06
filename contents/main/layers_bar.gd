@@ -3,7 +3,12 @@ class_name LayersBar
 ## 图层栏
 
 ## 伪单例FakeSingleton
-static var fs: LayersBar
+static var fs: LayersBar:
+	get:
+		if (fs == null): #如果fs为空
+			push_error("LayersBar: 在试图获取fs时无法返回有效值，因为：解引用fs时返回null。")
+			return null
+		return fs
 
 @onready var n_back_color: ColorRect = $BackColor as ColorRect
 @onready var n_shadow: Sprite2D = $Shadow as Sprite2D

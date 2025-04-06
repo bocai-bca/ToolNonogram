@@ -3,11 +3,29 @@ class_name Main
 ## 主场景根类
 
 ## 伪单例FakeSingleton
-static var fs: Main
+static var fs: Main:
+	get:
+		if (fs == null): #如果fs为空
+			push_error("Main: 在试图获取fs时无法返回有效值，因为：解引用fs时返回null。")
+			return null
+		return fs
 
 #@onready var n_back_color: ColorRect = $BackColor as ColorRect
 @onready var n_paper_area: Node2D = $PaperArea as Node2D
 @onready var n_menu_cover_button: TextureButton = $MenuCoverButton as TextureButton
+
+enum ErrorHandle{
+
+}
+## 工具数织报错原因类型
+enum ErrorType{
+	NULL_REFERENCE, #解引用时取得意外的空引用
+
+}
+## 焦点所在的工具，联动于SideBar的工具详细层
+enum FocusTool{
+	NONE, #无，也是拖手工具
+}
 
 const ICON_TEXTURES: Dictionary[StringName, CompressedTexture2D] = {
 	&"Interact_Point": preload("res://contents/icon_interact_0_point.png"),
@@ -16,6 +34,7 @@ const ICON_TEXTURES: Dictionary[StringName, CompressedTexture2D] = {
 	&"Lock_Point": preload("res://contents/icon_lock_point_0.png"),
 	&"Hand": preload("res://contents/icon_hand_0.png"),
 	&"Menu": preload("res://contents/icon_menu_0.png"),
+	&"Back": preload("res://contents/icon_back_0.png"),
 }
 
 ## 窗口最小尺寸
@@ -43,6 +62,8 @@ static var is_menu_open: bool:
 			fs.n_menu_cover_button.mouse_filter = Control.MOUSE_FILTER_IGNORE #关闭菜单遮掩按钮的鼠标输入拦截
 ## 当前答题网格缩放格数，单位为格。代表当前画面长宽比下横向能显示多少列格子
 static var grids_zoom_blocks: int = 5
+## 焦点工具，联动于SideBar
+static var focus_tool: FocusTool = FocusTool.NONE
 
 func _enter_tree() -> void:
 	fs = self #定义伪单例
@@ -54,11 +75,25 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	n_paper_area.position = Vector2(LayersBar.bar_width, 0.0) #更新题纸区域的坐标
 
+func push_error_format(source_class_name: String, error_handle: ErrorHandle, error_type: ErrorType) -> void:
+	pass #### 以后写
+
 #region 信号方法
+## 任意按钮被点击时触发信号对应的捕获方法，按钮名具有以下前缀：SideButton表侧边栏底层按钮，MenuButton表菜单按钮，ClassButton表工具类别层按钮，DetailButton表工具详细层按钮
 static func on_button_trigged(button_name: StringName) -> void:
 	match (button_name): #匹配检查button_name
+		&"SideButton_InteractClass": #侧边栏按钮-交互类
+			SideBar.fs.switch_focus(SideBar.FocusClass.INTERACT, FocusTool.NONE) #将侧边栏焦点切换到类别层的交互类
+		&"SideButton_SelectionClass": #侧边栏按钮-选区类
+			SideBar.fs.switch_focus(SideBar.FocusClass.SELECTION, FocusTool.NONE) #将侧边栏焦点切换到类别层的选区类
+		&"SideButton_EditClass": #侧边栏按钮-擦写类
+			SideBar.fs.switch_focus(SideBar.FocusClass.EDIT, FocusTool.NONE) #将侧边栏焦点切换到类别层的擦写类
+		&"SideButton_LockClass": #侧边栏按钮-锁定类
+			SideBar.fs.switch_focus(SideBar.FocusClass.LOCK, FocusTool.NONE) #将侧边栏焦点切换到类别层的锁定类
 		&"SideButton_Menu": #侧边栏按钮-菜单
 			is_menu_open = true #打开菜单
 		&"MenuButton_CloseMenu": #菜单按钮-关闭菜单
 			is_menu_open = false #关闭菜单
+		&"ClassButton_Back": #侧边栏工具类别层按钮-返回底部
+			SideBar.fs.switch_focus(SideBar.FocusClass.NONE, FocusTool.NONE) #将侧边栏焦点切换到底部
 #endregion

@@ -240,8 +240,24 @@ offset_bottom = 486.0
 theme = SubResource("Theme_41udy")
 
 [node name="ClassButton_0" parent="SideBar/ToolClassPanel" instance=ExtResource("4_u7q6r")]
-position = Vector2(90, 540)
+position = Vector2(90, 864)
 button_name = &"ClassButton_0"
+
+[node name="ClassButton_1" parent="SideBar/ToolClassPanel" instance=ExtResource("4_u7q6r")]
+position = Vector2(90, 690)
+button_name = &"ClassButton_1"
+
+[node name="ClassButton_2" parent="SideBar/ToolClassPanel" instance=ExtResource("4_u7q6r")]
+position = Vector2(90, 540)
+button_name = &"ClassButton_2"
+
+[node name="ClassButton_3" parent="SideBar/ToolClassPanel" instance=ExtResource("4_u7q6r")]
+position = Vector2(90, 540)
+button_name = &"ClassButton_3"
+
+[node name="ClassButton_4" parent="SideBar/ToolClassPanel" instance=ExtResource("4_u7q6r")]
+position = Vector2(90, 540)
+button_name = &"ClassButton_4"
 
 [node name="MenuCoverButton" type="TextureButton" parent="."]
 offset_right = 1920.0
