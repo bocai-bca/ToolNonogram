@@ -23,6 +23,7 @@ static var fs: SideBar:
 ]
 @onready var n_tip_text: Label = $TipText as Label
 @onready var n_tool_class_panel: Panel = $ToolClassPanel as Panel #工具类别层(中间层)面板
+@onready var n_tool_detail_panel: Panel = $ToolDetailPanel as Panel #工具详细层(最深层)面板
 ## 工具类别层按钮，简称为类别按钮，这些按钮没有固定的图标、按钮名、悬浮文本，全在变更焦点类别时被赋予，必要时还会隐藏
 @onready var n_class_buttons: Array[SideButton] = [
 	$ToolClassPanel/ClassButton_0 as SideButton,
@@ -31,6 +32,9 @@ static var fs: SideBar:
 	$ToolClassPanel/ClassButton_3 as SideButton,
 	$ToolClassPanel/ClassButton_4 as SideButton,
 ]
+## 工具详细层按钮，简称为工具按钮，这些按钮没有固定的图标、按钮名、悬浮文本、排列方式，全在变更焦点类别时被赋予，必要时还会隐藏
+@onready var n_detail_buttons: Array[SideButton] = []
+@onready var n_detail_button_back: SideButton = $ToolDetailPanel/DetailButton_Back as SideButton
 
 ## 侧边栏焦点所在层次
 enum Panels{
@@ -45,6 +49,13 @@ enum FocusClass{
 	SELECTION, #选区
 	EDIT, #擦写
 	LOCK, #锁定
+}
+## 详细层按钮类型
+enum DetailButtonType{
+	BACK, #返回按钮
+	COLOR_SWITCH, #颜色切换按钮
+	MULTI_BUTTON, #多按钮
+	SINGLE_BUTTON, #单按钮
 }
 
 ## 按钮纹理名称列表，索引按序一对一对应于n_buttons数组中的每个元素的索引(例如本数组[0]对应n_buttons[0])，值对应于Main.ICON_TEXTURES常量的键，以此来捆绑n_buttons中的节点实例使用的纹理资源
@@ -87,34 +98,41 @@ const TOOL_PANEL_ANIMATION_EASE_CURVE: float = 5.0
 const TOOL_CLASS_PANEL_BUTTON_BOTTOM_Y_MULTI: float = 0.8
 ## 侧边栏工具类别层按钮之间的Y间隔乘数，基于视口纵向长度
 const TOOL_CLASS_PANEL_BUTTON_Y_SPACING_MULTI: float = 0.025
+## 侧边栏工具详细层最顶部的按钮的Y的乘数，基于详细层面板纵向尺寸长度。即纵向尺寸长度*本值=最顶部按钮的Y
+const TOOL_DETAIL_PANEL_BUTTON_TOP_Y_MULTI: float = 0.15
+## 侧边栏工具详细层的返回按钮的Y的乘数，基于详细层面板纵向尺寸长度
+const TOOL_DETAIL_PANEL_BACK_BUTTON_Y_MULTI: float = ((Main.WINDOW_SIZE_DEFAULT.y * TOOL_PANEL_HEIGHT_MULTI) - BAR_WIDTH_MULTI * BUTTON_WIDTH_OF_BAR_WIDTH_MULTI * 0.5 - 0.5 * (BAR_WIDTH_MULTI * Main.WINDOW_SIZE_DEFAULT.y - BAR_WIDTH_MULTI * BUTTON_WIDTH_OF_BAR_WIDTH_MULTI)) / (Main.WINDOW_SIZE_DEFAULT.y * TOOL_PANEL_HEIGHT_MULTI)
 
 ## [只读]工具类别层交互类按钮的数据列表，按按钮由上到下的顺序排序
 static var INTERACT_CLASS_BUTTONS_DATA_LIST: Array[ClassButtonDataObject] = [
-	ClassButtonDataObject.new(&"ClassButton_Back", &"Back"),
-	ClassButtonDataObject.new(&"ClassButton_Back", &"Back"),
-	ClassButtonDataObject.new(&"ClassButton_Back", &"Back"),
 	ClassButtonDataObject.new(&"ClassButton_Back", &"Back"),
 ]
 ## [只读]工具类别层选区类按钮的数据列表，按按钮由上到下的顺序排序
 static var SELECTION_CLASS_BUTTONS_DATA_LIST: Array[ClassButtonDataObject] = [
 	ClassButtonDataObject.new(&"ClassButton_Back", &"Back"),
-	ClassButtonDataObject.new(&"ClassButton_Back", &"Back"),
-	ClassButtonDataObject.new(&"ClassButton_Back", &"Back"),
 ]
 ## [只读]工具类别层擦写类按钮的数据列表，按按钮由上到下的顺序排序
 static var EDIT_CLASS_BUTTONS_DATA_LIST: Array[ClassButtonDataObject] = [
-	ClassButtonDataObject.new(&"ClassButton_Back", &"Back"),
+	ClassButtonDataObject.new(&"ClassButton_Brush", &"Back"),
 	ClassButtonDataObject.new(&"ClassButton_Back", &"Back"),
 ]
 ## [只读]工具类别层锁定类按钮的数据列表，按按钮由上到下的顺序排序
 static var LOCK_CLASS_BUTTONS_DATA_LIST: Array[ClassButtonDataObject] = [
 	ClassButtonDataObject.new(&"ClassButton_Back", &"Back"),
 ]
+## [只读]笔刷工具的详细层数据列表
+static var TOOL_DETAIL_DATA_LIST_BRUSH: Array[DetailButtonDataObject] = [
+	DetailButtonDataObject.new(DetailButtonType.BACK, ),
+]
 
 ## 按钮的默认长度，该值必须通过读取按钮实例的TextureButton的size属性获取。默认只在本节点ready时读取一次
 static var button_width_default: float
 ## 按钮的当前长度，相当于经过变换计算后的button_width_default
 static var button_width: float
+## [只读]按钮尺寸缩放率，该值基于侧边栏的横向长度求出，然后将其乘入按钮的scale以使按钮缩放至期望的大小
+static var button_resize_rate: float:
+	get:
+		return button_width / button_width_default
 ## 表示侧边栏横向长度的变量，对其他类型而言应当只读
 static var bar_width: float = 180.0
 ## 表示现在是否应显示提示文本，由SideButton类型修改
@@ -138,6 +156,8 @@ static var tool_class_panel_animation_timer: float = 0.0
 static var tool_detail_panel_animation_timer: float = 0.0
 ## 记录正在被工具类别层使用的类别按钮，方便进行排列
 static var class_buttons_using: Array[SideButton]
+## 记录正在被工具详细层使用的详细层按钮，方便进行排列
+static var detail_buttons_using: Array[Node2D]
 
 func _enter_tree() -> void:
 	fs = self #定义伪单例
@@ -161,7 +181,6 @@ func _process(delta: float) -> void:
 	## /00
 	## 01侧边按钮的缩放
 	button_width = BUTTON_WIDTH_OF_BAR_WIDTH_MULTI * bar_width #算出按钮宽度并存储到变量button_width
-	var button_resize_rate: float = button_width / button_width_default #按钮尺寸缩放率，该值基于侧边栏的横向长度求出，然后将其乘入按钮的scale以使按钮缩放至期望的大小
 	## /01
 	## 02侧边按钮的排列
 	var buttons_space: float = window_size.y * (1.0 - BAR_TEXT_SPACE_MULTI - BAR_BOTTOM_SPACE_MULTI) #取得按钮空间长度
@@ -187,56 +206,129 @@ func _process(delta: float) -> void:
 	## /03
 	## 04深层面板更新
 	n_tool_class_panel.size = Vector2(bar_width, window_size.y * TOOL_PANEL_HEIGHT_MULTI) #更新工具类别层面板的尺寸
+	n_tool_detail_panel.size = n_tool_class_panel.size #更新工具详细层面板的尺寸
 	var tool_class_panel_pos_open: Vector2 = Vector2(-bar_width, -0.5 * window_size.y) #计算出工具类别面板在完全展开时的坐标
 	var tool_class_panel_pos_close: Vector2 = Vector2(window_size.y * TOOL_PANEL_SHADOW_SIZE_MULTI, -0.5 * window_size.y) #计算出工具类别面板在完全收起时的坐标
+	var tool_detail_panel_pos_open: Vector2 = Vector2(-bar_width, -0.5 * window_size.y + (1.0 - TOOL_PANEL_HEIGHT_MULTI) * window_size.y) #计算出工具详细面板在完全展开时的坐标
+	var tool_detail_panel_pos_close: Vector2 = Vector2(window_size.y * TOOL_PANEL_SHADOW_SIZE_MULTI, -0.5 * window_size.y + (1.0 - TOOL_PANEL_HEIGHT_MULTI) * window_size.y)
 	var stylebox_editing: StyleBoxFlat #创建一个StyleBox变量用于修改
 	## 	05工具类别层StyleBox更新
 	stylebox_editing = n_tool_class_panel.theme.get_stylebox(&"panel", &"Panel") as StyleBoxFlat #获取工具类别层的StyleBox
 	stylebox_editing.shadow_size = window_size.y * TOOL_PANEL_SHADOW_SIZE_MULTI #设置StyleBox的阴影尺寸
 	stylebox_editing.corner_radius_bottom_left = window_size.y * TOOL_PANEL_CORNER_RADIUS_MULTI #设置StyleBox的圆角半径
 	n_tool_class_panel.theme.set_stylebox(&"panel", &"Panel", stylebox_editing) #将修改好的StyleBox保存回工具类别层节点
+	stylebox_editing = n_tool_detail_panel.theme.get_stylebox(&"panel", &"Panel") as StyleBoxFlat #获取工具详细层的StyleBox
+	stylebox_editing.shadow_size = window_size.y * TOOL_PANEL_SHADOW_SIZE_MULTI #设置StyleBox的阴影尺寸
+	stylebox_editing.corner_radius_top_left = window_size.y * TOOL_PANEL_CORNER_RADIUS_MULTI #设置StyleBox的圆角半径
+	n_tool_detail_panel.theme.set_stylebox(&"panel", &"Panel", stylebox_editing) #将修改好的StyleBox保存回工具详细层节点
 	## 	/05
 	## 	06工具详细层StyleBox更新
 	## 	/06
 	## 	07深层面板位置更新
 	tool_class_panel_animation_timer = move_toward(tool_class_panel_animation_timer, 0.0, delta) #工具类别层面板动画倒计时更新
 	tool_detail_panel_animation_timer = move_toward(tool_detail_panel_animation_timer, 0.0, delta) #工具详细层面板动画倒计时更新
+	var class_panel_ease_weight: float = ease(tool_class_panel_animation_timer / TOOL_PANEL_ANIMATION_TIME, TOOL_PANEL_ANIMATION_EASE_CURVE) #算好类别层插值点
+	var detail_panel_ease_weight: float = ease(tool_detail_panel_animation_timer / TOOL_PANEL_ANIMATION_TIME, TOOL_PANEL_ANIMATION_EASE_CURVE) #算好详细层插值点
 	match (focus_panel): #匹配焦点所在的面板层次
 		Panels.ROOT: #底部，类别层详细层均不展开
-			n_tool_class_panel.position = tool_class_panel_pos_close.lerp(tool_class_panel_pos_open, ease(tool_class_panel_animation_timer / TOOL_PANEL_ANIMATION_TIME, TOOL_PANEL_ANIMATION_EASE_CURVE)) #计算工具类别层面板的坐标，因为是倒计时所以向量插值的起点和终点取反，实际终点为收起
-			#### 工具详细层的坐标
+			n_tool_class_panel.position = tool_class_panel_pos_close.lerp(tool_class_panel_pos_open, class_panel_ease_weight) #计算工具类别层面板的坐标，因为是倒计时所以向量插值的起点和终点取反，实际终点为收起
+			n_tool_detail_panel.position = tool_detail_panel_pos_close.lerp(tool_detail_panel_pos_open, detail_panel_ease_weight) #计算工具详细层面板的坐标，因为是倒计时所以向量插值的起点和终点取反，实际终点为收起
 		Panels.TOOL_CLASS: #类别层，类别层展开而详细层收起
-			n_tool_class_panel.position = tool_class_panel_pos_open.lerp(tool_class_panel_pos_close, ease(tool_class_panel_animation_timer / TOOL_PANEL_ANIMATION_TIME, TOOL_PANEL_ANIMATION_EASE_CURVE)) #计算工具类别层面板的坐标，因为是倒计时所以向量插值的起点和终点取反，实际终点为展开
-			#### 工具详细层的坐标
+			n_tool_class_panel.position = tool_class_panel_pos_open.lerp(tool_class_panel_pos_close, class_panel_ease_weight) #计算工具类别层面板的坐标，因为是倒计时所以向量插值的起点和终点取反，实际终点为展开
+			n_tool_detail_panel.position = tool_detail_panel_pos_close.lerp(tool_detail_panel_pos_open, detail_panel_ease_weight) #计算工具详细层面板的坐标，因为是倒计时所以向量插值的起点和终点取反，实际终点为收起
 		Panels.TOOL_DETAIL: #详细层，类别层详细层均展开
-			n_tool_class_panel.position = tool_class_panel_pos_open.lerp(tool_class_panel_pos_close, ease(tool_class_panel_animation_timer / TOOL_PANEL_ANIMATION_TIME, TOOL_PANEL_ANIMATION_EASE_CURVE)) #计算工具类别层面板的坐标，因为是倒计时所以向量插值的起点和终点取反，实际终点为展开
-			#### 工具详细层的坐标
+			n_tool_class_panel.position = tool_class_panel_pos_open.lerp(tool_class_panel_pos_close, class_panel_ease_weight) #计算工具类别层面板的坐标，因为是倒计时所以向量插值的起点和终点取反，实际终点为展开
+			n_tool_detail_panel.position = tool_detail_panel_pos_open.lerp(tool_detail_panel_pos_close, detail_panel_ease_weight) #计算工具详细层面板的坐标，因为是倒计时所以向量插值的起点和终点取反，实际终点为展开
 	## 	/07
 	## 	08工具类别层按钮排列
-	var button_y_offset: float = window_size.y * TOOL_CLASS_PANEL_BUTTON_Y_SPACING_MULTI #计算出一份按钮间隔长度
+	var button_y_offset_between: float = window_size.y * TOOL_CLASS_PANEL_BUTTON_Y_SPACING_MULTI #计算出一份按钮间隔长度
 	for i in class_buttons_using.size(): #按索引遍历使用中的类别层按钮节点数组。注意此处需要逆着索引从下往上排列
 		var j: int = class_buttons_using.size() - 1 - i #总数-1=索引总数，索引总数-索引数i=逆序索引数j
 		class_buttons_using[j].position = Vector2(
 			n_tool_class_panel.size.x / 2.0, #计算按钮的X坐标
-			window_size.y * TOOL_CLASS_PANEL_BUTTON_BOTTOM_Y_MULTI - (button_y_offset + button_width) * j #计算按钮的Y坐标
+			window_size.y * TOOL_CLASS_PANEL_BUTTON_BOTTOM_Y_MULTI - (button_y_offset_between + button_width) * j #计算按钮的Y坐标
 		) #计算并应用按钮的Y坐标
-		class_buttons_using[j].scale = Vector2.ONE * button_resize_rate #直接拿上面算好的按钮缩放率下来用，爽
+		class_buttons_using[j].scale = Vector2.ONE * button_resize_rate #把按钮缩放率当尺寸来用，应用到按钮的尺寸上
 	## 	/08
+	## 	09工具详细层按钮排列
+	n_detail_button_back.position = Vector2(n_tool_detail_panel.size.x / 2.0, TOOL_DETAIL_PANEL_BACK_BUTTON_Y_MULTI * n_tool_detail_panel.size.y) #设置返回按钮的位置，该按钮位置是固定的，不受到详细层其他按钮的排列的影响
+	## 	/09
 	## /04
 
 ## 切换焦点的高级封装，用于切换层次面板的展开和收起、按钮名称和纹理的设置、一些游戏系统变量的设置，理论上不允许出现输入的两个参数是不相符的层次连接关系的状况。目前还有焦点工具相关的操作没写
 func switch_focus(target_class: FocusClass, target_detail: Main.FocusTool) -> void:
-	Main.focus_tool = target_detail #将焦点工具设为传入参数
+	#### 要做的事情：判断类别层和详细层何时需要打开或收起，并在其需要动的时候动，不需要动的时候不动。面板的开关与否是由焦点决定的，本函数只在改变了焦点的时候
+	## 00穷举判断面板是否应当切换开关状态
+	var new_should_class_panel_open: bool #一个布尔型，记录接下来的类别层面板是否应该打开
+	var current_class_panel_open: bool #一个布尔型，记录当前的类别曾面板是否是打开状态
+	#if (focus_panel == Panels.ROOT): #如果原本的焦点面板是底部，代表原本类别层面板是关闭状态
+		#if (target_class != FocusClass.NONE): #如果目标焦点类别不是无，代表接下来类别层面板应当打开
+			##### 此处打开类别层面板
+			#tool_class_panel_animation_timer = TOOL_PANEL_ANIMATION_TIME #重设工具类别层面板的动画计时器
+			#focus_panel = Panels.TOOL_CLASS
+	#else: #否则(原本的焦点面板不是底部，代表原本类别层面板是打开状态)
+		#if (target_class == FocusClass.NONE): #如果目标焦点类别是无，代表接下来类别层面板应当关闭
+			##### 此处关闭类别层面板
+			#tool_class_panel_animation_timer = TOOL_PANEL_ANIMATION_TIME #重设工具类别层面板的动画计时器
+			#focus_panel = Panels.ROOT
+	#if (Main.focus_tool == Main.FocusTool.NONE): #如果原本的焦点工具为无，代表原本详细层面板是关闭状态
+		#if (target_detail != Main.FocusTool.NONE): #如果目标焦点工具不是无，代表接下来详细层面板应当打开
+			##### 此处打开详细层面板
+			#tool_detail_panel_animation_timer = TOOL_PANEL_ANIMATION_TIME #重设工具详细层面板的动画计时器
+			#focus_panel = Panels.TOOL_DETAIL
+	#else: #否则(原本的焦点工具不是无，代表原本详细层面板是打开状态)
+		#if (target_detail == Main.FocusTool.NONE): #如果目标焦点工具为无，代表接下来详细层面板应当关闭
+			##### 此处关闭详细层面板
+			#tool_detail_panel_animation_timer = TOOL_PANEL_ANIMATION_TIME #重设工具详细层面板的动画计时器
+			#focus_panel = Panels.TOOL_CLASS
+			#if (target_class == FocusClass.NONE):
+				#focus_panel = Panels.ROOT
+	var new_focus_panel: Panels = get_new_focus_panel(target_class, target_detail) #获取接下来的焦点面板
+	if (focus_panel != new_focus_panel): #如果焦点面板需要变动
+		match (focus_panel):
+			Panels.ROOT:
+				match (new_focus_panel):
+					Panels.TOOL_CLASS:
+						## 打开类别层面板
+						tool_class_panel_animation_timer = TOOL_PANEL_ANIMATION_TIME
+					Panels.TOOL_DETAIL:
+						## 打开类别层和详细层面板
+						tool_class_panel_animation_timer = TOOL_PANEL_ANIMATION_TIME
+						tool_detail_panel_animation_timer = TOOL_PANEL_ANIMATION_TIME
+			Panels.TOOL_CLASS:
+				match (new_focus_panel):
+					Panels.ROOT:
+						## 关闭类别层面板
+						tool_class_panel_animation_timer = TOOL_PANEL_ANIMATION_TIME
+					Panels.TOOL_DETAIL:
+						## 打开详细层面板
+						tool_detail_panel_animation_timer = TOOL_PANEL_ANIMATION_TIME
+			Panels.TOOL_DETAIL:
+				## 关闭类别层和详细层面板
+				tool_class_panel_animation_timer = TOOL_PANEL_ANIMATION_TIME
+				tool_detail_panel_animation_timer = TOOL_PANEL_ANIMATION_TIME
 	switch_class_buttons_using(target_class) #将类别层按钮切换到目标类别
-	focus_panel = Panels.TOOL_CLASS #设置焦点面板为类别层
-	if (target_class == FocusClass.NONE): #如果焦点类别为无，意味着焦点在底部
-		focus_panel = Panels.ROOT #设置焦点面板为底部
-	if (target_detail != Main.FocusTool.NONE): #如果工具焦点类别不为无，意味着工具不是拖手，则需要展开详细层面板
-		pass #### 展开详细层面板
-		focus_panel = Panels.TOOL_DETAIL #设置焦点面板为详细层
-	if (focus_class != target_class): #如果目标焦点类别与原本的焦点类别不同
-		tool_class_panel_animation_timer = TOOL_PANEL_ANIMATION_TIME #重设工具类别层面板的动画计时器
+	Main.focus_tool = target_detail #将焦点工具设为传入参数
 	focus_class = target_class #将焦点工具类别设为传入参数
+	focus_panel = new_focus_panel #将焦点面板设为接下来应当处于的面板
+	#
+	#focus_panel = Panels.TOOL_CLASS #设置焦点面板为类别层
+	#if (target_class == FocusClass.NONE): #如果焦点类别为无，意味着焦点在底部
+		#focus_panel = Panels.ROOT #设置焦点面板为底部
+	#if (target_detail != Main.FocusTool.NONE): #如果工具焦点类别不为无，意味着工具不是拖手，则需要展开详细层面板
+		#if (focus_panel != Panels.TOOL_DETAIL): #如果原本所在的焦点面板不是详细层
+			#tool_detail_panel_animation_timer = TOOL_PANEL_ANIMATION_TIME #重设工具详情层面板的动画计时器
+		#focus_panel = Panels.TOOL_DETAIL #设置焦点面板为详细层
+	#if (focus_class != target_class): #如果目标焦点类别与原本的焦点类别不同
+		#tool_class_panel_animation_timer = TOOL_PANEL_ANIMATION_TIME #重设工具类别层面板的动画计时器
+	#
+	#if (target_class == FocusClass.NONE): #如果目标焦点类别为无(底部)
+		#if (focus_panel == Panels.TOOL_CLASS): #如果原本的焦点面板为类别层
+			#tool_class_panel_animation_timer = TOOL_PANEL_ANIMATION_TIME #重设工具类别层面板的动画计时器
+		#if (focus_panel == Panels.TOOL_DETAIL): #如果原本的焦点面板为详细层
+			#tool_class_panel_animation_timer = TOOL_PANEL_ANIMATION_TIME #重设工具类别层面板的动画计时器
+			#tool_detail_panel_animation_timer = TOOL_PANEL_ANIMATION_TIME #重设工具详情层面板的动画计时器
+		#focus_panel = Panels.ROOT #将焦点面板设为底部
 
 ## 将工具类别层的按钮切换到特定类别焦点的布局上，将更新按钮使用列表、按钮的启用与否、按钮的名称和纹理(不是节点名)，不影响如focus_class等存在于本类中而非按钮中的变量
 func switch_class_buttons_using(target_focus_class: FocusClass) -> void:
@@ -248,28 +340,46 @@ func switch_class_buttons_using(target_focus_class: FocusClass) -> void:
 			return
 		FocusClass.INTERACT: #交互
 			for i in INTERACT_CLASS_BUTTONS_DATA_LIST.size(): #按索引遍历交互类按钮表
-				n_class_buttons[i].is_enable = true #启用按钮
-				class_buttons_using.append(n_class_buttons[i]) #将按钮添加到使用列表
-				n_class_buttons[i].n_icon.texture = Main.ICON_TEXTURES[INTERACT_CLASS_BUTTONS_DATA_LIST[i].texture_name] #设置纹理
-				n_class_buttons[i].button_name = INTERACT_CLASS_BUTTONS_DATA_LIST[i].button_name #设置按钮名称
+				var j: int = INTERACT_CLASS_BUTTONS_DATA_LIST.size() - i - 1 #逆序索引
+				n_class_buttons[j].is_enable = true #启用按钮
+				class_buttons_using.append(n_class_buttons[j]) #将按钮添加到使用列表
+				n_class_buttons[j].n_icon.texture = Main.ICON_TEXTURES[INTERACT_CLASS_BUTTONS_DATA_LIST[j].texture_name] #设置纹理
+				n_class_buttons[j].button_name = INTERACT_CLASS_BUTTONS_DATA_LIST[j].button_name #设置按钮名称
 		FocusClass.SELECTION: #选区
 			for i in SELECTION_CLASS_BUTTONS_DATA_LIST.size(): #按索引遍历选区类按钮表
-				n_class_buttons[i].is_enable = true #启用按钮
+				var j: int = SELECTION_CLASS_BUTTONS_DATA_LIST.size() - i - 1 #逆序索引
+				n_class_buttons[j].is_enable = true #启用按钮
 				class_buttons_using.append(n_class_buttons[i]) #将按钮添加到使用列表
-				n_class_buttons[i].n_icon.texture = Main.ICON_TEXTURES[SELECTION_CLASS_BUTTONS_DATA_LIST[i].texture_name] #设置纹理
-				n_class_buttons[i].button_name = SELECTION_CLASS_BUTTONS_DATA_LIST[i].button_name #设置按钮名称
+				n_class_buttons[j].n_icon.texture = Main.ICON_TEXTURES[SELECTION_CLASS_BUTTONS_DATA_LIST[j].texture_name] #设置纹理
+				n_class_buttons[j].button_name = SELECTION_CLASS_BUTTONS_DATA_LIST[j].button_name #设置按钮名称
 		FocusClass.EDIT: #擦写
 			for i in EDIT_CLASS_BUTTONS_DATA_LIST.size(): #按索引遍历选区类按钮表
-				n_class_buttons[i].is_enable = true #启用按钮
-				class_buttons_using.append(n_class_buttons[i]) #将按钮添加到使用列表
-				n_class_buttons[i].n_icon.texture = Main.ICON_TEXTURES[EDIT_CLASS_BUTTONS_DATA_LIST[i].texture_name] #设置纹理
-				n_class_buttons[i].button_name = EDIT_CLASS_BUTTONS_DATA_LIST[i].button_name #设置按钮名称
+				var j: int = EDIT_CLASS_BUTTONS_DATA_LIST.size() - i - 1 #逆序索引
+				n_class_buttons[j].is_enable = true #启用按钮
+				class_buttons_using.append(n_class_buttons[j]) #将按钮添加到使用列表
+				n_class_buttons[j].n_icon.texture = Main.ICON_TEXTURES[EDIT_CLASS_BUTTONS_DATA_LIST[j].texture_name] #设置纹理
+				n_class_buttons[j].button_name = EDIT_CLASS_BUTTONS_DATA_LIST[j].button_name #设置按钮名称
 		FocusClass.LOCK: #锁定
 			for i in LOCK_CLASS_BUTTONS_DATA_LIST.size(): #按索引遍历选区类按钮表
-				n_class_buttons[i].is_enable = true #启用按钮
-				class_buttons_using.append(n_class_buttons[i]) #将按钮添加到使用列表
-				n_class_buttons[i].n_icon.texture = Main.ICON_TEXTURES[LOCK_CLASS_BUTTONS_DATA_LIST[i].texture_name] #设置纹理
-				n_class_buttons[i].button_name = LOCK_CLASS_BUTTONS_DATA_LIST[i].button_name #设置按钮名称
+				var j: int = LOCK_CLASS_BUTTONS_DATA_LIST.size() - i - 1 #逆序索引
+				n_class_buttons[j].is_enable = true #启用按钮
+				class_buttons_using.append(n_class_buttons[j]) #将按钮添加到使用列表
+				n_class_buttons[j].n_icon.texture = Main.ICON_TEXTURES[LOCK_CLASS_BUTTONS_DATA_LIST[j].texture_name] #设置纹理
+				n_class_buttons[j].button_name = LOCK_CLASS_BUTTONS_DATA_LIST[j].button_name #设置按钮名称
+
+## 切换详细层按钮的使用和布局，作用与switch_class_buttons_using()类似，不过是面向详细层的
+func switch_detail_button_using() -> void:
+	pass
+
+## 根据给定的焦点类别和工具，返回一个应当处于的焦点面板。当给定参数不符合理应情况时，返回的结果可能不正确
+static func get_new_focus_panel(new_focus_class: FocusClass, new_focus_detail: Main.FocusTool) -> Panels:
+	if (new_focus_class == FocusClass.NONE):
+		return Panels.ROOT
+	else:
+		if (new_focus_detail == Main.FocusTool.NONE):
+			return Panels.TOOL_CLASS
+		else:
+			return Panels.TOOL_DETAIL
 
 ## 工具类别层按钮数据对象，一个实例代表一个按钮的数据，用于放置在一个数组里和其他实例一起代表一个类别中的所有工具按钮的实例化数据
 class ClassButtonDataObject:
@@ -278,3 +388,13 @@ class ClassButtonDataObject:
 	func _init(new_button_name: StringName, new_texture_name: StringName) -> void:
 		button_name = new_button_name
 		texture_name = new_texture_name
+
+## 工具详细层按钮数据对象，一个实例代表一个按钮的数据，用法与类别层按钮数据对象类似
+class DetailButtonDataObject:
+	var button_type: DetailButtonType #按钮类别
+	var button_names: Array[StringName] #一个按钮名称列表，用于发出信号时跟随标识参数，对应Main.on_button_trigged()
+	var texture_names: Array[StringName] #一个纹理名称列表
+	func _init(new_button_type: DetailButtonType, new_button_names: Array[StringName] = [], new_texture_names: Array[StringName] = []) -> void:
+		button_type = new_button_type
+		button_names = new_button_names
+		texture_names = new_texture_names

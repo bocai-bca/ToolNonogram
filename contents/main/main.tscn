@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=4 uid="uid://dsyodv46dneyp"]
+[gd_scene load_steps=22 format=4 uid="uid://dsyodv46dneyp"]
 
 [ext_resource type="Script" uid="uid://ddw07f0fi354e" path="res://contents/main/main.gd" id="1_400j3"]
 [ext_resource type="PackedScene" uid="uid://dymxav2uetw0l" path="res://contents/editable_grids/editable_grids.tscn" id="2_3fq6y"]
@@ -26,6 +26,16 @@ shadow_size = 100
 [sub_resource type="Theme" id="Theme_41udy"]
 default_font_size = 32
 Panel/styles/panel = SubResource("StyleBoxFlat_k1fi1")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fhatg"]
+bg_color = Color(0.95, 0.95, 0.95, 1)
+corner_radius_top_left = 100
+shadow_color = Color(0, 0, 0, 0.247059)
+shadow_size = 100
+
+[sub_resource type="Theme" id="Theme_g83xj"]
+default_font_size = 32
+Panel/styles/panel = SubResource("StyleBoxFlat_fhatg")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_41udy"]
 bg_color = Color(0.7, 0.7, 0.7, 1)
@@ -234,8 +244,9 @@ vertical_alignment = 1
 text_overrun_behavior = 1
 
 [node name="ToolClassPanel" type="Panel" parent="SideBar"]
-offset_left = -180.0
+offset_left = 100.0
 offset_top = -540.0
+offset_right = 280.0
 offset_bottom = 486.0
 theme = SubResource("Theme_41udy")
 
@@ -258,6 +269,18 @@ button_name = &"ClassButton_3"
 [node name="ClassButton_4" parent="SideBar/ToolClassPanel" instance=ExtResource("4_u7q6r")]
 position = Vector2(90, 540)
 button_name = &"ClassButton_4"
+
+[node name="ToolDetailPanel" type="Panel" parent="SideBar"]
+offset_left = 480.0
+offset_top = -486.0
+offset_right = 660.0
+offset_bottom = 540.0
+theme = SubResource("Theme_g83xj")
+
+[node name="DetailButton_Back" parent="SideBar/ToolDetailPanel" instance=ExtResource("4_u7q6r")]
+position = Vector2(90, 936)
+button_name = &"DetailButton_Back"
+hover_tip_text = "返回"
 
 [node name="MenuCoverButton" type="TextureButton" parent="."]
 offset_right = 1920.0
@@ -345,16 +368,19 @@ layout_mode = 2
 [node name="MenuButton_AutofillClose" type="Button" parent="Menu/MenuContainer/AutofillButtons"]
 custom_minimum_size = Vector2(540, 0)
 layout_mode = 2
+focus_mode = 0
 text = "关闭"
 
 [node name="MenuButton_AutofillNormal" type="Button" parent="Menu/MenuContainer/AutofillButtons"]
 custom_minimum_size = Vector2(540, 0)
 layout_mode = 2
+focus_mode = 0
 text = "一般"
 
 [node name="MenuButton_AutofillSmart" type="Button" parent="Menu/MenuContainer/AutofillButtons"]
 custom_minimum_size = Vector2(540, 0)
 layout_mode = 2
+focus_mode = 0
 text = "智能"
 
 [node name="SubTitle_Misc" type="Label" parent="Menu/MenuContainer"]

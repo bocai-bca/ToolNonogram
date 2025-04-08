@@ -25,6 +25,7 @@ enum ErrorType{
 ## 焦点所在的工具，联动于SideBar的工具详细层
 enum FocusTool{
 	NONE, #无，也是拖手工具
+	BRUSH, #笔刷工具
 }
 
 const ICON_TEXTURES: Dictionary[StringName, CompressedTexture2D] = {
@@ -96,4 +97,8 @@ static func on_button_trigged(button_name: StringName) -> void:
 			is_menu_open = false #关闭菜单
 		&"ClassButton_Back": #侧边栏工具类别层按钮-返回底部
 			SideBar.fs.switch_focus(SideBar.FocusClass.NONE, FocusTool.NONE) #将侧边栏焦点切换到底部
+		&"ClassButton_Brush": #侧边栏工具类别层按钮-笔刷工具
+			SideBar.fs.switch_focus(SideBar.FocusClass.EDIT, FocusTool.BRUSH) #将侧边栏焦点切换到底部
+		&"DetailButton_Back": #侧边栏工具详细层按钮-返回类别层
+			SideBar.fs.switch_focus(SideBar.focus_class, FocusTool.NONE) #将侧边栏焦点切换到上一级焦点类别
 #endregion
