@@ -27,7 +27,7 @@ const BUTTON_ICON_MODULATE: Color = Color(0.0, 0.0, 0.0, 1.0)
 ## 悬浮提示文本，当本按钮被鼠标悬浮时将显示在提示文本的文本
 @export_multiline var hover_tip_text: String
 ## 判定框，对其赋值将影响本SideButton实例的视觉大小和按钮大小
-var hit_rect: Rect2 = DEFAULT_HIT_RECT:
+var hit_rect: Rect2:
 	get:
 		return hit_rect
 	set(value):
@@ -61,6 +61,7 @@ func _ready() -> void:
 	n_button.mouse_exited.connect(on_mouse_exited)
 	n_button.button_down.connect(on_button_down)
 	n_button.button_up.connect(on_button_up)
+	hit_rect = DEFAULT_HIT_RECT
 	button_trigged.connect(Main.on_button_trigged, CONNECT_DEFERRED) #将本节点的按钮触发信号连接到Main.on_button_trigged()方法
 	is_enable = true
 
@@ -90,5 +91,4 @@ func on_button_up() -> void:
 		emit_signal("button_trigged", button_name) #发出信号，广播本按钮被触发
 	else:
 		n_panel.self_modulate = BUTTON_BODY_MODULATE
-		pass
 #endregion

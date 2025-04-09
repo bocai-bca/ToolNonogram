@@ -25,7 +25,18 @@ enum ErrorType{
 ## 焦点所在的工具，联动于SideBar的工具详细层
 enum FocusTool{
 	NONE, #无，也是拖手工具
+	SCALER, #缩放工具
+	RULER, #量尺工具
+	UNDO_REDO, #撤销重做
+	SELECTION_FAST_EDIT, #选区快速编辑
+	SELECTION_EDIT_MANUALLY, #选区精确编辑
+	SELECTION_UNDO_REDO, #选区撤销重做
+	SELECTION_END, #选区结束
 	BRUSH, #笔刷工具
+	ERASER, #擦除工具
+	FILL, #填充工具
+	LOCK, #锁定工具
+	SMART_LOCK, #智能锁定
 }
 
 const ICON_TEXTURES: Dictionary[StringName, CompressedTexture2D] = {
@@ -97,8 +108,10 @@ static func on_button_trigged(button_name: StringName) -> void:
 			is_menu_open = false #关闭菜单
 		&"ClassButton_Back": #侧边栏工具类别层按钮-返回底部
 			SideBar.fs.switch_focus(SideBar.FocusClass.NONE, FocusTool.NONE) #将侧边栏焦点切换到底部
+		&"ClassButton_Scaler": #侧边栏工具类别层按钮-缩放工具
+			SideBar.fs.switch_focus(SideBar.FocusClass.INTERACT, FocusTool.SCALER) #将侧边栏焦点切换到交互-缩放工具
 		&"ClassButton_Brush": #侧边栏工具类别层按钮-笔刷工具
-			SideBar.fs.switch_focus(SideBar.FocusClass.EDIT, FocusTool.BRUSH) #将侧边栏焦点切换到底部
+			SideBar.fs.switch_focus(SideBar.FocusClass.EDIT, FocusTool.BRUSH) #将侧边栏焦点切换到擦写-笔刷工具
 		&"DetailButton_Back": #侧边栏工具详细层按钮-返回类别层
 			SideBar.fs.switch_focus(SideBar.focus_class, FocusTool.NONE) #将侧边栏焦点切换到上一级焦点类别
 #endregion

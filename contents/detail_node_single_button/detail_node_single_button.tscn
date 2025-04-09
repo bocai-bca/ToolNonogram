@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://bgiwo43b8kyco"]
+
+[ext_resource type="Theme" uid="uid://k6rgopet47kw" path="res://contents/detail_node_theme.tres" id="1_3sfpt"]
+[ext_resource type="Script" uid="uid://b83an0ei80ua7" path="res://contents/detail_node_single_button/detail_node_single_button.gd" id="2_2moml"]
+[ext_resource type="Texture2D" uid="uid://bfb1q05fil7la" path="res://contents/icon_back_0.png" id="3_j7w3q"]
+
+[node name="DetailNode_SingleButton" type="Button"]
+custom_minimum_size = Vector2(0, 120)
+offset_right = 120.0
+offset_bottom = 120.0
+focus_mode = 0
+theme = ExtResource("1_3sfpt")
+script = ExtResource("2_2moml")
+
+[node name="Icon" type="Sprite2D" parent="."]
+self_modulate = Color(0, 0, 0, 1)
+position = Vector2(60, 60)
+texture = ExtResource("3_j7w3q")

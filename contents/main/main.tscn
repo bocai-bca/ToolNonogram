@@ -11,11 +11,7 @@
 [ext_resource type="TileSet" uid="uid://3x76mo7fq5a5" path="res://contents/grids_tile_set.tres" id="6_5huld"]
 [ext_resource type="Texture2D" uid="uid://dwjqbrpd8o0bf" path="res://contents/icon_hand_0.png" id="6_xbqcj"]
 [ext_resource type="Script" uid="uid://cenox043hlynv" path="res://contents/main/menu.gd" id="9_wy7hg"]
-
-[sub_resource type="LabelSettings" id="LabelSettings_xbqcj"]
-line_spacing = 0.0
-font_size = 32
-font_color = Color(0.31, 0.31, 0.31, 1)
+[ext_resource type="LabelSettings" uid="uid://vocixu51rmfu" path="res://contents/main/sidebar_label_settings.tres" id="11_1a5w3"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k1fi1"]
 bg_color = Color(0.95, 0.95, 0.95, 1)
@@ -238,7 +234,7 @@ offset_top = -540.0
 offset_bottom = -432.0
 text = "工具提示
 可显示两行"
-label_settings = SubResource("LabelSettings_xbqcj")
+label_settings = ExtResource("11_1a5w3")
 horizontal_alignment = 1
 vertical_alignment = 1
 text_overrun_behavior = 1
@@ -249,6 +245,17 @@ offset_top = -540.0
 offset_right = 280.0
 offset_bottom = 486.0
 theme = SubResource("Theme_41udy")
+
+[node name="TipText" type="Label" parent="SideBar/ToolClassPanel"]
+layout_mode = 0
+offset_right = 180.0
+offset_bottom = 108.0
+text = "工具类别
+可显示两行"
+label_settings = ExtResource("11_1a5w3")
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 1
 
 [node name="ClassButton_0" parent="SideBar/ToolClassPanel" instance=ExtResource("4_u7q6r")]
 position = Vector2(90, 864)
@@ -272,15 +279,23 @@ button_name = &"ClassButton_4"
 
 [node name="ToolDetailPanel" type="Panel" parent="SideBar"]
 offset_left = 480.0
-offset_top = -486.0
+offset_top = -432.0
 offset_right = 660.0
 offset_bottom = 540.0
 theme = SubResource("Theme_g83xj")
 
-[node name="DetailButton_Back" parent="SideBar/ToolDetailPanel" instance=ExtResource("4_u7q6r")]
-position = Vector2(90, 936)
+[node name="DetailNode_Back" parent="SideBar/ToolDetailPanel" instance=ExtResource("4_u7q6r")]
+position = Vector2(90, 882)
 button_name = &"DetailButton_Back"
-hover_tip_text = "返回"
+hover_tip_text = "返回
+"
+
+[node name="ButtonsContainer" type="VBoxContainer" parent="SideBar/ToolDetailPanel"]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 100.0
+offset_right = 150.0
+offset_bottom = 972.0
 
 [node name="MenuCoverButton" type="TextureButton" parent="."]
 offset_right = 1920.0
