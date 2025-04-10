@@ -5,11 +5,15 @@
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_vqbfr"]
 resource_name = "网格砖瓦图集"
 texture = ExtResource("1_ji0kj")
+texture_region_size = Vector2i(160, 160)
 1:0/0 = 0
 2:0/0 = 0
 0:0/0 = 0
 3:0/0 = 0
 0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
 
 [resource]
+tile_size = Vector2i(160, 160)
 sources/0 = SubResource("TileSetAtlasSource_vqbfr")

@@ -10,17 +10,18 @@ script = ExtResource("1_wfhjk")
 offset_right = 1920.0
 offset_bottom = 1080.0
 
-[node name="Button" type="Button" parent="."]
-self_modulate = Color(1, 1, 1, 0)
-offset_right = 8.0
-offset_bottom = 8.0
-action_mode = 0
-button_mask = 3
-
 [node name="GridMap" type="TileMapLayer" parent="."]
 self_modulate = Color(0, 0, 0, 1)
 texture_filter = 1
 tile_map_data = PackedByteArray("AAAAAAAAAAACAAAAAAAAAAEAAAACAAAAAAAAAAIAAAACAAAAAAAAAAMAAAACAAAAAAAAAAQAAAACAAAAAAABAAAAAAACAAAAAAABAAEAAAACAAAAAAABAAIAAAACAAAAAAABAAMAAAACAAAAAAABAAQAAAACAAAAAAACAAAAAAACAAAAAAACAAEAAAACAAAAAAACAAIAAAACAAAAAAACAAMAAAACAAAAAAACAAQAAAACAAAAAAADAAAAAAACAAAAAAADAAEAAAACAAAAAAADAAIAAAACAAAAAAADAAMAAAACAAAAAAADAAQAAAACAAAAAAAEAAAAAAACAAAAAAAEAAEAAAACAAAAAAAEAAIAAAACAAAAAAAEAAMAAAACAAAAAAAEAAQAAAACAAAAAAA=")
+tile_set = ExtResource("1_k0k3y")
+occlusion_enabled = false
+collision_enabled = false
+navigation_enabled = false
+
+[node name="EditMap" type="TileMapLayer" parent="."]
+self_modulate = Color(0, 0, 0, 1)
+texture_filter = 1
 tile_set = ExtResource("1_k0k3y")
 occlusion_enabled = false
 collision_enabled = false

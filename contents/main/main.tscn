@@ -90,7 +90,6 @@ ignore_texture_size = true
 
 [node name="BaseGrids" parent="PaperArea" instance=ExtResource("2_3fq6y")]
 position = Vector2(270, 270)
-scale = Vector2(10.125, 10.125)
 
 [node name="LayersBar" type="Node2D" parent="."]
 script = ExtResource("4_a22sp")
@@ -138,7 +137,6 @@ color = Color(0.75, 0.75, 0.75, 1)
 self_modulate = Color(0, 0, 0, 1)
 texture_filter = 1
 position = Vector2(270, 0)
-scale = Vector2(10.125, 10.125)
 tile_map_data = PackedByteArray("AAAAAAAAAAADAAAAAAAAAAEAAAADAAAAAAABAAAAAAADAAAAAAABAAEAAAADAAAAAAACAAAAAAADAAAAAAACAAEAAAADAAAAAAADAAAAAAADAAAAAAADAAEAAAADAAAAAAAEAAAAAAADAAAAAAAEAAEAAAADAAAAAAA=")
 tile_set = ExtResource("6_5huld")
 occlusion_enabled = false
@@ -149,7 +147,6 @@ navigation_enabled = false
 self_modulate = Color(0, 0, 0, 1)
 texture_filter = 1
 position = Vector2(0, 270)
-scale = Vector2(10.125, 10.125)
 tile_map_data = PackedByteArray("AAAAAAAAAAAAAAEAAAAAAAEAAAAAAAEAAAAAAAIAAAAAAAEAAAAAAAMAAAAAAAEAAAAAAAQAAAAAAAEAAAABAAQAAAAAAAEAAAABAAMAAAAAAAEAAAABAAIAAAAAAAEAAAABAAEAAAAAAAEAAAABAAAAAAAAAAEAAAA=")
 tile_set = ExtResource("6_5huld")
 occlusion_enabled = false
@@ -284,18 +281,18 @@ offset_right = 660.0
 offset_bottom = 540.0
 theme = SubResource("Theme_g83xj")
 
-[node name="DetailNode_Back" parent="SideBar/ToolDetailPanel" instance=ExtResource("4_u7q6r")]
-position = Vector2(90, 882)
-button_name = &"DetailButton_Back"
-hover_tip_text = "返回
-"
-
 [node name="ButtonsContainer" type="VBoxContainer" parent="SideBar/ToolDetailPanel"]
 layout_mode = 0
 offset_left = 30.0
 offset_top = 100.0
 offset_right = 150.0
 offset_bottom = 972.0
+
+[node name="DetailNode_Back" parent="SideBar/ToolDetailPanel" instance=ExtResource("4_u7q6r")]
+position = Vector2(90, 882)
+button_name = &"DetailButton_Back"
+hover_tip_text = "返回
+"
 
 [node name="MenuCoverButton" type="TextureButton" parent="."]
 offset_right = 1920.0

@@ -56,7 +56,7 @@ const WINDOW_SIZE_DEFAULT: Vector2i = Vector2i(1920, 1080)
 ## 默认题纸上的工具图标占画面纵向宽度比率
 const NUMBER_BAR_ICON_SIZE_RATE: float = 0.25
 ## 砖瓦一般大小(边长)，单位是像素，该值需要手动参考tile_set中的砖瓦像素尺寸设定值。用于参与网格的变换计算
-const TILE_NORMAL_SIZE: float = 16.0
+const TILE_NORMAL_SIZE: float = 160.0
 
 ## 当前菜单是否处于开启状态
 static var is_menu_open: bool:
