@@ -26,7 +26,7 @@ const SHADOW_SCALE_X_BASE_MULTI: float = 2.0 / 1080.0
 static var bar_width: float = 135.0
 
 func _enter_tree() -> void:
-	fs = self
+	fs = self #定义伪单例
 
 func _ready() -> void:
 	n_back_color.color = BAR_BACKGROUND_COLOR #设置图层栏背景颜色

@@ -2,14 +2,27 @@ extends Node2D
 class_name PaperArea
 ## 题纸区域。用于组织和管理所有题纸显示层和处理输入
 
+## 伪单例FakeSingleton
+static var fs: PaperArea:
+	get:
+		if (fs == null): #如果fs为空
+			push_error("PaperArea: 在试图获取fs时无法返回有效值，因为：解引用fs时返回null。")
+			return null
+		return fs
+
 @onready var n_base_click: TextureButton = $BaseClick as TextureButton
 @onready var n_base_grids: EditableGrids = $BaseGrids as EditableGrids
 @onready var n_hover_grids: Array[EditableGrids] = [
 	
 ]
 
+## 偏移量动画倒计时器，即为0时到达终点。这个计时器本该在EditableGrids类里以和相关的静态成员一起搭配使用，但是EditableGrids是非单例的类，不宜在它的_process中更新计时器，因此委托在此处进行
+static var grids_animation_timer: float = 0.0
 ## 点击状态实例
 static var click_state: ClickState = ClickState.new()
+
+func _process(delta: float) -> void:
+	grids_animation_timer = move_toward(grids_animation_timer, 0.0, delta) #从EditableGrids的_process()方法中接替进行动画计时器更新任务
 
 func _physics_process(delta: float) -> void:
 	## 00更新点击状态
@@ -20,7 +33,11 @@ func _physics_process(delta: float) -> void:
 		Main.FocusTool.BRUSH: #笔刷工具
 			if (click_state.is_pressing() and click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS): #如果鼠标正被点击，且按下位置处于答题网格中
 				if (EditableGrids.is_pos_in_grid(click_state.current_pos)): #如果鼠标所在的坐标有效
-					n_base_grids.write_block(click_state.current_pos)
+					n_base_grids.write_slot(click_state.current_pos, EditableGrids.FillType.BLOCK)
+		Main.FocusTool.ERASER: #擦除工具
+			if (click_state.is_pressing() and click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS): #如果鼠标正被点击，且按下位置处于答题网格中
+				if (EditableGrids.is_pos_in_grid(click_state.current_pos)): #如果鼠标所在的坐标有效
+					n_base_grids.clear_slot(click_state.current_pos)
 
 ## 更新点击状态
 func update_click_state() -> void:

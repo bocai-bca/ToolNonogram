@@ -40,10 +40,11 @@ enum FocusTool{
 }
 
 const ICON_TEXTURES: Dictionary[StringName, CompressedTexture2D] = {
-	&"Interact_Point": preload("res://contents/icon_interact_0_point.png"),
-	&"Selection_Point": preload("res://contents/icon_selection_0_point.png"),
-	&"Edit_Point": preload("res://contents/icon_edit_point_0.png"),
-	&"Lock_Point": preload("res://contents/icon_lock_point_0.png"),
+	&"Class_Interact": preload("res://contents/icon_class_interact_0.png"),
+	&"Class_Selection": preload("res://contents/icon_class_selection_0.png"),
+	&"Class_Edit": preload("res://contents/icon_class_edit_0.png"),
+	&"Class_Lock": preload("res://contents/icon_class_lock_0.png"),
+	&"Detail_Brush": preload("res://contents/icon_detail_brush_0.png"),
 	&"Hand": preload("res://contents/icon_hand_0.png"),
 	&"Menu": preload("res://contents/icon_menu_0.png"),
 	&"Back": preload("res://contents/icon_back_0.png"),
@@ -76,6 +77,8 @@ static var is_menu_open: bool:
 static var grids_zoom_blocks: int = 5
 ## 焦点工具，联动于SideBar
 static var focus_tool: FocusTool = FocusTool.NONE
+## 各工具的详细层状态。随着将来添加越来越多的工具，请尽量考虑将工具的详细层配置数据存放在此成员中
+static var tools_detail_state: ToolsDetailState = ToolsDetailState.new()
 
 func _enter_tree() -> void:
 	fs = self #定义伪单例
@@ -108,10 +111,26 @@ static func on_button_trigged(button_name: StringName) -> void:
 			is_menu_open = false #关闭菜单
 		&"ClassButton_Back": #侧边栏工具类别层按钮-返回底部
 			SideBar.fs.switch_focus(SideBar.FocusClass.NONE, FocusTool.NONE) #将侧边栏焦点切换到底部
+			NumberBar.icon_texture = ICON_TEXTURES[&"Hand"] #将工具提示图标设为拖手图标
 		&"ClassButton_Scaler": #侧边栏工具类别层按钮-缩放工具
 			SideBar.fs.switch_focus(SideBar.FocusClass.INTERACT, FocusTool.SCALER) #将侧边栏焦点切换到交互-缩放工具
 		&"ClassButton_Brush": #侧边栏工具类别层按钮-笔刷工具
 			SideBar.fs.switch_focus(SideBar.FocusClass.EDIT, FocusTool.BRUSH) #将侧边栏焦点切换到擦写-笔刷工具
+		&"ClassButton_Eraser": #侧边栏工具类别层按钮-擦除工具
+			SideBar.fs.switch_focus(SideBar.FocusClass.EDIT, FocusTool.ERASER) #将侧边栏焦点切换到擦写-擦除工具
 		&"DetailButton_Back": #侧边栏工具详细层按钮-返回类别层
 			SideBar.fs.switch_focus(SideBar.focus_class, FocusTool.NONE) #将侧边栏焦点切换到上一级焦点类别
+			NumberBar.icon_texture = ICON_TEXTURES[&"Hand"] #将工具提示图标设为拖手图标
+		&"DetailButton_ScaleLarge": #侧边栏工具详细层按钮-放大
+			EditableGrids.update_animation_data(EditableGrids.display_offset, clampi(grids_zoom_blocks - 1, 1, EditableGrids.global_grid_size.y)) #调用题纸网格类的更新动画方法
+		&"DetailButton_ScaleSmall": #侧边栏工具详细层按钮-缩小
+			EditableGrids.update_animation_data(EditableGrids.display_offset, clampi(grids_zoom_blocks + 1, 1, EditableGrids.global_grid_size.y)) #调用题纸网格类的更新动画方法
+		&"DetailButton_BrushModeBrush": #侧边栏工具详细层按钮-笔刷工具.模式.画笔
+			pass
+		&"DetailButton_BrushModePencil": #侧边栏工具详细层按钮-笔刷工具.模式.铅笔
+			pass
+		&"DetailButton_EraserModeCloth": #侧边栏工具详细层按钮-擦除工具.模式.抹布
+			pass
+		&"DetailButton_EraserModeEraser": #侧边栏工具详细层按钮-擦除工具.模式.橡皮
+			pass
 #endregion

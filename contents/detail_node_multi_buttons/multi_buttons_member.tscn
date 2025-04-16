@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://cb2py2ys46eug"]
+
+[ext_resource type="Script" uid="uid://de6t7xeobaxu3" path="res://contents/detail_node_multi_buttons/multi_buttons_member.gd" id="1_nofrk"]
+
+[node name="MultiButtonsMember" type="Button"]
+offset_right = 120.0
+offset_bottom = 120.0
+focus_mode = 0
+script = ExtResource("1_nofrk")
+
+[node name="Icon" type="Sprite2D" parent="."]
+self_modulate = Color(0, 0, 0, 1)
+position = Vector2(60, 60)

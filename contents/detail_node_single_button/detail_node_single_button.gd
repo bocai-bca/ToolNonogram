@@ -14,10 +14,14 @@ static var cps: PackedScene = preload("res://contents/detail_node_single_button/
 
 ## 默认尺寸，需要根据根节点的size属性手动设置，用于图标的缩放计算
 const DEFAULT_SIZE: Vector2 = Vector2(120.0, 120.0)
+## 按钮圆角半径乘数，基于视口纵向长度
+const CORNER_RADIUS_MULTI: float = 30.0 / Main.WINDOW_SIZE_DEFAULT.y
 
 ## 按钮名称
 var button_name: StringName
+## 悬浮文本
 var hover_tip_text: String
+## 图标资源，用来在按钮添加到场景树之前为按钮指定纹理
 var icon_texture: CompressedTexture2D
 
 func _ready() -> void:
@@ -26,11 +30,22 @@ func _ready() -> void:
 	button_down.connect(on_button_down)
 	button_up.connect(on_button_up)
 	n_icon.texture = icon_texture
+	button_trigged.connect(Main.on_button_trigged, CONNECT_DEFERRED) #将本节点的按钮触发信号连接到Main.on_button_trigged()方法
 
 func _process(delta: float) -> void:
-	custom_minimum_size.y = size.x
-	n_icon.scale = Vector2(size.x / DEFAULT_SIZE.x, size.y / DEFAULT_SIZE.y)
+	var window_size: Vector2 = Vector2(get_window().size) #获取窗口大小
+	custom_minimum_size.y = size.x #使按钮长宽比变为1:1
+	n_icon.scale = Vector2(size.x / DEFAULT_SIZE.x, size.y / DEFAULT_SIZE.y) #计算图标的缩放变换，为按钮根节点的实际尺寸除以默认尺寸，该结果乘入图标的缩放中即可将图标缩放至按钮相当
 	n_icon.position = Vector2(size.x / 2.0, size.y / 2.0)
+	var style_boxes: Array[StyleBoxFlat] #创建一个列表用于存储StyleBox
+	for style_box_name in theme.get_stylebox_list("Button"): #遍历Button类的所有StyleBox
+		style_boxes.append(theme.get_stylebox(style_box_name, "Button") as StyleBoxFlat) #获取一个StyleBox并添加到列表中
+	for style_box in style_boxes: #遍历所有获取到的StyleBox
+		## 设置每个边角的圆角半径
+		style_box.corner_radius_bottom_left = window_size.y * CORNER_RADIUS_MULTI
+		style_box.corner_radius_bottom_right = style_box.corner_radius_bottom_left
+		style_box.corner_radius_top_left = style_box.corner_radius_bottom_left
+		style_box.corner_radius_top_right = style_box.corner_radius_bottom_left
 
 ## 类场景实例化方法
 static func create(new_button_name: StringName, new_texture: CompressedTexture2D, new_tip_text: String) -> DetailNode_SingleButton:

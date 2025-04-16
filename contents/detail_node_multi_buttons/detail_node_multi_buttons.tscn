@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://b1xwlx26et3q7"]
+
+[ext_resource type="Theme" uid="uid://chpwktahl7vy0" path="res://contents/detail_node_multi_buttons/button_theme.tres" id="1_1fhto"]
+[ext_resource type="Script" uid="uid://dght6rrdaxpne" path="res://contents/detail_node_multi_buttons/detail_node_multi_buttons.gd" id="1_8ohil"]
+
+[node name="DetailNodeMultiButtons" type="VBoxContainer"]
+offset_right = 120.0
+offset_bottom = 40.0
+theme = ExtResource("1_1fhto")
+script = ExtResource("1_8ohil")

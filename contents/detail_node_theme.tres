@@ -1,14 +1,7 @@
-[gd_resource type="Theme" load_steps=5 format=3 uid="uid://k6rgopet47kw"]
+[gd_resource type="Theme" load_steps=4 format=3 uid="uid://k6rgopet47kw"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4wgfd"]
 bg_color = Color(0.7, 0.7, 0.7, 1)
-corner_radius_top_left = 30
-corner_radius_top_right = 30
-corner_radius_bottom_right = 30
-corner_radius_bottom_left = 30
-corner_detail = 5
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rwohq"]
 corner_radius_top_left = 30
 corner_radius_top_right = 30
 corner_radius_bottom_right = 30
@@ -37,6 +30,5 @@ Button/colors/font_hover_color = Color(0, 0, 0, 1)
 Button/colors/font_hover_pressed_color = Color(0, 0, 0, 1)
 Button/colors/font_pressed_color = Color(0, 0, 0, 1)
 Button/styles/hover = SubResource("StyleBoxFlat_4wgfd")
-Button/styles/hover_pressed = SubResource("StyleBoxFlat_rwohq")
 Button/styles/normal = SubResource("StyleBoxFlat_4nfs0")
 Button/styles/pressed = SubResource("StyleBoxFlat_3fujf")

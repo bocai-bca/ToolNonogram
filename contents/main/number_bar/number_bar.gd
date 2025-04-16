@@ -80,8 +80,8 @@ func _process(delta: float) -> void:
 	n_fill_background_side.size = Vector2(bar_width - 2.0 * frame_thickness, window_size.y - bar_width) #更新侧边填充背景的尺寸
 	## /02
 	## 03更新砖瓦图
-	n_number_grids_up.scale = (window_size.y - NumberBar.bar_width) / (Main.grids_zoom_blocks * Main.TILE_NORMAL_SIZE) *  Vector2.ONE #计算并应用顶部砖瓦图的缩放
-	n_number_grids_up.position = Vector2(EditableGrids.display_offset.x * Main.TILE_NORMAL_SIZE + bar_width, 0.0) #计算并应用顶部砖瓦图的位置
+	n_number_grids_up.scale = (window_size.y - NumberBar.bar_width) / (EditableGrids.animate_now_zoom_blocks * Main.TILE_NORMAL_SIZE) *  Vector2.ONE #计算并应用顶部砖瓦图的缩放
+	n_number_grids_up.position = Vector2(EditableGrids.animate_now_offset.x + bar_width, 0.0) #计算并应用顶部砖瓦图的位置
 	n_number_grids_side.scale = n_number_grids_up.scale #直接拿来顶部砖瓦图的缩放用
-	n_number_grids_side.position = Vector2(0.0, EditableGrids.display_offset.x * Main.TILE_NORMAL_SIZE + bar_width) #计算并应用侧边砖瓦图的位置
+	n_number_grids_side.position = Vector2(0.0, EditableGrids.animate_now_offset.x + bar_width) #计算并应用侧边砖瓦图的位置
 	## /03

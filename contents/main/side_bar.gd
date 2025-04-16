@@ -54,19 +54,19 @@ enum FocusClass{
 }
 ## 详细层节点类型
 enum DetailNodeType{
-	COLOR_SWITCH, #颜色切换按钮
-	MULTI_BUTTON, #多按钮
+	MULTI_BUTTONS, #多按钮
 	SINGLE_BUTTON, #单按钮
 	BOOL_SWITCH, #二元切换按钮
+	COLOR_SWITCH, #颜色切换按钮
 	SPACING, #分隔线
 }
 
 ## 按钮纹理名称列表，索引按序一对一对应于n_buttons数组中的每个元素的索引(例如本数组[0]对应n_buttons[0])，值对应于Main.ICON_TEXTURES常量的键，以此来捆绑n_buttons中的节点实例使用的纹理资源
 const BUTTONS_TEXTURES_NAME: Array[StringName] = [
-	&"Interact_Point",
-	&"Selection_Point",
-	&"Edit_Point",
-	&"Lock_Point",
+	&"Class_Interact",
+	&"Class_Selection",
+	&"Class_Edit",
+	&"Class_Lock",
 	&"Menu",
 ]
 ## 侧边栏背景颜色，施加给n_bar_color的color属性
@@ -125,7 +125,7 @@ static var SELECTION_CLASS_BUTTONS_DATA_LIST: Array[ClassButtonDataObject] = [
 ]
 ## [只读]工具类别层擦写类按钮的数据列表，按按钮由上到下的顺序排序
 static var EDIT_CLASS_BUTTONS_DATA_LIST: Array[ClassButtonDataObject] = [
-	ClassButtonDataObject.new(&"ClassButton_Brush", &"Back", "擦写\n笔刷工具"),
+	ClassButtonDataObject.new(&"ClassButton_Brush", &"Detail_Brush", "擦写\n笔刷工具"),
 	ClassButtonDataObject.new(&"ClassButton_Eraser", &"Back", "擦写\n擦除工具"),
 	ClassButtonDataObject.new(&"ClassButton_Fill", &"Back", "擦写\n填充工具"),
 	ClassButtonDataObject.new(&"ClassButton_Back", &"Back", "返回\n"),
@@ -136,9 +136,18 @@ static var LOCK_CLASS_BUTTONS_DATA_LIST: Array[ClassButtonDataObject] = [
 	ClassButtonDataObject.new(&"ClassButton_SmartLock", &"Back", "锁定\n智能锁定"),
 	ClassButtonDataObject.new(&"ClassButton_Back", &"Back", "返回\n"),
 ]
+## [只读]缩放工具的详细层数据列表
+static var TOOL_DETAIL_DATA_LIST_SCALER: Array[DetailNodeDataObject] = [
+	DetailNodeDataObject.new(DetailNodeType.SINGLE_BUTTON, [&"DetailButton_ScaleLarge"], [&"Back"], ["放大\n"]),
+	DetailNodeDataObject.new(DetailNodeType.SINGLE_BUTTON, [&"DetailButton_ScaleSmall"], [&"Back"], ["缩小\n"])
+]
 ## [只读]笔刷工具的详细层数据列表
 static var TOOL_DETAIL_DATA_LIST_BRUSH: Array[DetailNodeDataObject] = [
-	DetailNodeDataObject.new(DetailNodeType.SINGLE_BUTTON, [&"DetailButton_Back"], [&"Back"], ["笔刷模式\n画笔"])
+	DetailNodeDataObject.new(DetailNodeType.MULTI_BUTTONS, [&"DetailButton_Back", &"DetailButton_Back"], [&"Detail_Brush", &"Detail_Brush"], ["笔刷模式\n画笔", "笔刷模式\n铅笔"])
+]
+## [只读]擦除工具的详细层数据列表
+static var TOOL_DETAIL_DATA_LIST_ERASER: Array[DetailNodeDataObject] = [
+	DetailNodeDataObject.new(DetailNodeType.MULTI_BUTTONS, [&"DetailButton_Back", &"DetailButton_Back"], [&"Back", &"Back"], ["擦除模式\n抹布", "擦除模式\n橡皮"])
 ]
 
 ## 按钮的默认长度，该值必须通过读取按钮实例的TextureButton的size属性获取。默认只在本节点ready时读取一次
@@ -276,7 +285,7 @@ func _process(delta: float) -> void:
 	## 	09工具详细层按钮排列
 	n_detail_button_back.scale = Vector2.ONE * button_resize_rate #将按钮缩放率应用在详细层返回按钮上
 	n_detail_button_back.position = Vector2(n_tool_detail_panel.size.x / 2.0, TOOL_DETAIL_PANEL_BACK_BUTTON_Y_MULTI * n_tool_detail_panel.size.y) #设置返回按钮的位置，该按钮位置是固定的，不受到详细层其他按钮的排列的影响
-	n_detail_nodes_container.size = Vector2(button_resize_rate * button_width, n_tool_detail_panel.size.y - window_size.y * TOOL_PANEL_CORNER_RADIUS_MULTI)
+	n_detail_nodes_container.size = Vector2(button_width, n_tool_detail_panel.size.y - window_size.y * TOOL_PANEL_CORNER_RADIUS_MULTI)
 	n_detail_nodes_container.position = Vector2((n_tool_detail_panel.size.x - n_detail_nodes_container.size.x) / 2.0, window_size.y * TOOL_PANEL_CORNER_RADIUS_MULTI)
 	## 	/09
 	## /04
@@ -374,8 +383,12 @@ func switch_detail_button_using(target_focus_tool: Main.FocusTool) -> void:
 	match (target_focus_tool): #匹配目标焦点工具
 		Main.FocusTool.NONE: #无(拖手工具)
 			new_node_task_list = [] #将实例化列表设为一个空列表
+		Main.FocusTool.SCALER: #缩放工具
+			new_node_task_list = TOOL_DETAIL_DATA_LIST_SCALER #将实例化任务列表设为缩放工具数据列表
 		Main.FocusTool.BRUSH: #笔刷工具
 			new_node_task_list = TOOL_DETAIL_DATA_LIST_BRUSH #将实例化任务列表设为笔刷数据列表
+		Main.FocusTool.ERASER: #擦除工具
+			new_node_task_list = TOOL_DETAIL_DATA_LIST_ERASER #将实例化任务列表设为擦除工具数据列表
 	#### 实例化节点到场景树中
 	for new_node_task in new_node_task_list: #遍历实例化任务列表
 		var new_node: Control
@@ -389,26 +402,32 @@ func switch_detail_button_using(target_focus_tool: Main.FocusTool) -> void:
 
 ## 详细层按钮节点创建方法，输入一个详细层节点数据对象，返回一个按钮节点
 static func create_detail_button(button_data: DetailNodeDataObject) -> Control:
+	if (button_data.button_names.size() < 1):
+		push_error("SideBar: 详细层按钮节点创建方法将返回null，因为：在创建按钮类型\"DetailNodeType.SINGLE_BUTTON\"时不能接受空的按钮名称数组。")
+		return null
+	if (button_data.texture_names.size() < 1):
+		push_error("SideBar: 详细层按钮节点创建方法将返回null，因为：在创建按钮类型\"DetailNodeType.SINGLE_BUTTON\"时不能接受空的按钮纹理名称数组。")
+		return null
+	if (not Main.ICON_TEXTURES.has_all(button_data.texture_names)):
+		push_error("SideBar: 详细层按钮节点创建方法将返回null，因为：给定的按钮纹理名称数组中存在无法在\"Main.ICON_TEXTURES\"中索引到结果的元素。")
+		return null
 	match (button_data.node_type):
-		DetailNodeType.SPACING: #分隔线
-			push_error("SideBar: 详细层按钮节点创建方法将返回null，因为：本方法无法创建给定的按钮类型\"DetailButtonType.SPACING\"。")
-			return null
 		DetailNodeType.SINGLE_BUTTON: #单按钮
-			if (button_data.button_names.size() < 1):
-				push_error("SideBar: 详细层按钮节点创建方法将返回null，因为：在创建按钮类型\"DetailNodeType.SINGLE_BUTTON\"时不能接受空的按钮名称数组。")
-				return null
-			if (button_data.texture_names.size() < 1):
-				push_error("SideBar: 详细层按钮节点创建方法将返回null，因为：在创建按钮类型\"DetailNodeType.SINGLE_BUTTON\"时不能接受空的按钮纹理名称数组。")
-				return null
-			if (not Main.ICON_TEXTURES.has_all(button_data.texture_names)):
-				push_error("SideBar: 详细层按钮节点创建方法将返回null，因为：给定的按钮纹理名称数组中存在无法在\"Main.ICON_TEXTURES\"中索引到结果的元素。")
-				return null
 			var node: DetailNode_SingleButton = DetailNode_SingleButton.create(button_data.button_names[0], Main.ICON_TEXTURES[button_data.texture_names[0]], button_data.tip_texts[0])
 			if (node == null):
 				push_error("SideBar: 详细层按钮节点创建方法将返回null，因为：类型\"DetailNode_SingleButton\"的类场景实例化方法返回了null。")
 			return node
-		DetailNodeType.MULTI_BUTTON: #多按钮
-			return null ####
+		DetailNodeType.MULTI_BUTTONS: #多按钮
+			if (not (button_data.button_names.size() == button_data.texture_names.size() and button_data.texture_names.size() == button_data.tip_texts.size())): #如果按钮数据中的三个数组元素的元素数量不匹配
+				push_error("SideBar: 详细层按钮节点创建方法将返回null，因为：给定的详细层按钮数据对象中包含的数组成员不具有相同的元素数量。")
+				return null
+			var textures: Array[CompressedTexture2D] #创建一个列表用于存放纹理资源
+			for texture_name in button_data.texture_names: #遍历按钮纹理名称
+				textures.append(Main.ICON_TEXTURES[texture_name]) #获取纹理资源并添加到纹理资源列表
+			var node: DetailNode_MultiButtons = DetailNode_MultiButtons.create(button_data.button_names, textures, button_data.tip_texts)
+			if (node == null):
+				push_error("SideBar: 详细层按钮节点创建方法将返回null，因为：类型\"DetailNode_MultiButtons\"的类场景实例化方法返回了null。")
+			return node
 		DetailNodeType.COLOR_SWITCH: #颜色切换按钮
 			return null ####
 		DetailNodeType.BOOL_SWITCH: #二元切换按钮
