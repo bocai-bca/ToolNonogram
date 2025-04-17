@@ -16,6 +16,7 @@ var button_name: StringName
 var hover_tip_text: String
 ## 图标资源，用来在按钮添加到场景树之前为按钮指定纹理
 var icon_texture: CompressedTexture2D
+## 可用性，为false时按钮不可点击
 
 func _ready() -> void:
 	mouse_entered.connect(on_mouse_entered)

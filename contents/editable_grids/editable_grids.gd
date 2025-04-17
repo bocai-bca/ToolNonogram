@@ -63,6 +63,10 @@ func write_slot(pos: Vector2i, fill_type: FillType) -> void:
 func clear_slot(pos: Vector2i) -> void:
 	n_edit_map.erase_cell(pos)
 
+## 进行凌驾于动画之上的网格实际偏移量更新，使用拖手工具拖拽网格时需每帧调用此方法。参数请传入一个鼠标于一帧内在屏幕上坐标的移动量
+static func update_offset_on_grabbing(offset_delta: Vector2) -> void:
+	pass ####继续写
+
 ## 更新动画数据，调用此方法来设定新的动画缓动目标值，包含网格的缩放和偏移量，设置动画的新目标值会重置动画计时器，因此请勿尽可能降低调用此方法的频率
 static func update_animation_data(new_display_offset: Vector2i, new_zoom_blocks: int) -> void:
 	animate_start_offset = animate_now_offset #将起始偏移量设为当前的实际偏移量

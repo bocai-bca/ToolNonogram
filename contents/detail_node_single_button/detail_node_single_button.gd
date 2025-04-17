@@ -47,6 +47,10 @@ func _process(delta: float) -> void:
 		style_box.corner_radius_top_left = style_box.corner_radius_bottom_left
 		style_box.corner_radius_top_right = style_box.corner_radius_bottom_left
 
+## 检查自身是否需要禁用并更新禁用状态
+func check_disable() -> void:
+	disabled = Main.button_disable_check(button_name)
+
 ## 类场景实例化方法
 static func create(new_button_name: StringName, new_texture: CompressedTexture2D, new_tip_text: String) -> DetailNode_SingleButton:
 	var node: DetailNode_SingleButton = cps.instantiate()

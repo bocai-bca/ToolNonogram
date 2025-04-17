@@ -30,6 +30,8 @@ func _physics_process(delta: float) -> void:
 	## /00
 	## 01所有工具的行为
 	match (Main.focus_tool): #匹配焦点工具
+		Main.FocusTool.NONE: #拖手工具
+			pass
 		Main.FocusTool.BRUSH: #笔刷工具
 			if (click_state.is_pressing() and click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS): #如果鼠标正被点击，且按下位置处于答题网格中
 				if (EditableGrids.is_pos_in_grid(click_state.current_pos)): #如果鼠标所在的坐标有效

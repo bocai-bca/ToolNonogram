@@ -5,7 +5,7 @@ class_name DetailNode_MultiButtons
 ## 类场景封包ClassPackedScene
 static var cps: PackedScene = preload("res://contents/detail_node_multi_buttons/detail_node_multi_buttons.tscn") as PackedScene
 
-## 按钮的样式盒，每个数组中容纳三个元素，分别代表: 正常、悬浮、按下
+## 按钮的样式盒，每个数组中容纳四个元素，分别代表: 正常、悬浮、按下、禁用
 static var top_button_styleboxes: Array[StyleBoxFlat]
 static var middle_button_styleboxes: Array[StyleBoxFlat]
 static var bottom_button_styleboxes: Array[StyleBoxFlat]
@@ -18,25 +18,43 @@ const CORNER_RADIUS_MULTI: float = 30.0 / Main.WINDOW_SIZE_DEFAULT.y
 static func _static_init() -> void:
 	var stylebox_top_normal: StyleBoxFlat = StyleBoxFlat.new()
 	stylebox_top_normal.bg_color = Color(0.8, 0.8, 0.8, 1.0)
+	stylebox_top_normal.corner_detail = 5
 	var stylebox_top_hover: StyleBoxFlat = StyleBoxFlat.new()
 	stylebox_top_hover.bg_color = Color(0.7, 0.7, 0.7, 1.0)
+	stylebox_top_hover.corner_detail = 5
 	var stylebox_top_pressed: StyleBoxFlat = StyleBoxFlat.new()
 	stylebox_top_pressed.bg_color = Color(0.6, 0.6, 0.6, 1.0)
-	top_button_styleboxes = [stylebox_top_normal, stylebox_top_hover, stylebox_top_pressed]
+	stylebox_top_pressed.corner_detail = 5
+	var stylebox_top_disabled: StyleBoxFlat = StyleBoxFlat.new()
+	stylebox_top_disabled.bg_color = Color(0.65, 0.65, 0.65, 1.0)
+	stylebox_top_disabled.corner_detail = 5
+	top_button_styleboxes = [stylebox_top_normal, stylebox_top_hover, stylebox_top_pressed, stylebox_top_disabled]
 	var stylebox_middle_normal: StyleBoxFlat = StyleBoxFlat.new()
 	stylebox_middle_normal.bg_color = Color(0.8, 0.8, 0.8, 1.0)
+	stylebox_middle_normal.corner_detail = 5
 	var stylebox_middle_hover: StyleBoxFlat = StyleBoxFlat.new()
 	stylebox_middle_hover.bg_color = Color(0.7, 0.7, 0.7, 1.0)
+	stylebox_middle_hover.corner_detail = 5
 	var stylebox_middle_pressed: StyleBoxFlat = StyleBoxFlat.new()
 	stylebox_middle_pressed.bg_color = Color(0.6, 0.6, 0.6, 1.0)
-	middle_button_styleboxes = [stylebox_middle_normal, stylebox_middle_hover, stylebox_middle_pressed]
+	stylebox_middle_pressed.corner_detail = 5
+	var stylebox_middle_disabled: StyleBoxFlat = StyleBoxFlat.new()
+	stylebox_middle_disabled.bg_color = Color(0.65, 0.65, 0.65, 1.0)
+	stylebox_middle_disabled.corner_detail = 5
+	middle_button_styleboxes = [stylebox_middle_normal, stylebox_middle_hover, stylebox_middle_pressed, stylebox_middle_disabled]
 	var stylebox_bottom_normal: StyleBoxFlat = StyleBoxFlat.new()
 	stylebox_bottom_normal.bg_color = Color(0.8, 0.8, 0.8, 1.0)
+	stylebox_bottom_normal.corner_detail = 5
 	var stylebox_bottom_hover: StyleBoxFlat = StyleBoxFlat.new()
 	stylebox_bottom_hover.bg_color = Color(0.7, 0.7, 0.7, 1.0)
+	stylebox_bottom_hover.corner_detail = 5
 	var stylebox_bottom_pressed: StyleBoxFlat = StyleBoxFlat.new()
 	stylebox_bottom_pressed.bg_color = Color(0.6, 0.6, 0.6, 1.0)
-	bottom_button_styleboxes = [stylebox_bottom_normal, stylebox_bottom_hover, stylebox_bottom_pressed]
+	stylebox_bottom_pressed.corner_detail = 5
+	var stylebox_bottom_disabled:  StyleBoxFlat = StyleBoxFlat.new()
+	stylebox_bottom_disabled.bg_color = Color(0.65, 0.65, 0.65, 1.0)
+	stylebox_bottom_disabled.corner_detail = 5
+	bottom_button_styleboxes = [stylebox_bottom_normal, stylebox_bottom_hover, stylebox_bottom_pressed, stylebox_bottom_disabled]
 
 func _process(delta: float) -> void:
 	var window_size: Vector2 = Vector2(get_window().size) #获取窗口大小
@@ -48,20 +66,28 @@ func _process(delta: float) -> void:
 			button.add_theme_stylebox_override(&"normal", top_button_styleboxes[0])
 			button.add_theme_stylebox_override(&"hover", top_button_styleboxes[1])
 			button.add_theme_stylebox_override(&"pressed", top_button_styleboxes[2])
+			button.add_theme_stylebox_override(&"disabled", top_button_styleboxes[3])
 		elif (button.get_index() == get_child_count() - 1): #否则如果当前按钮是最后一个按钮
 			button.add_theme_stylebox_override(&"normal", bottom_button_styleboxes[0])
 			button.add_theme_stylebox_override(&"hover", bottom_button_styleboxes[1])
 			button.add_theme_stylebox_override(&"pressed", bottom_button_styleboxes[2])
+			button.add_theme_stylebox_override(&"disabled", bottom_button_styleboxes[3])
 		else: #否则(当前按钮既不是第一个也不是最后一个)
 			button.add_theme_stylebox_override(&"normal", middle_button_styleboxes[0])
 			button.add_theme_stylebox_override(&"hover", middle_button_styleboxes[1])
 			button.add_theme_stylebox_override(&"pressed", middle_button_styleboxes[2])
+			button.add_theme_stylebox_override(&"disabled", middle_button_styleboxes[3])
 	for stylebox in top_button_styleboxes: #遍历顶部按钮样式盒
 		stylebox.corner_radius_top_left = CORNER_RADIUS_MULTI * window_size.y #设置左上角圆角半径
 		stylebox.corner_radius_top_right = stylebox.corner_radius_top_left #设置右上角圆角半径
 	for stylebox in bottom_button_styleboxes: #遍历底部按钮样式盒
 		stylebox.corner_radius_bottom_left = CORNER_RADIUS_MULTI * window_size.y #设置左下角圆角半径
 		stylebox.corner_radius_bottom_right = stylebox.corner_radius_bottom_left #设置右下角圆角半径
+
+## 检查自身的按钮成员们各自是否需要禁用并更新它们的禁用状态
+func check_disable() -> void:
+	for node in get_children() as Array[DetailNode_MultiButtons_Member]:
+		node.disabled = Main.button_disable_check(node.button_name)
 
 ## 类场景实例化方法
 static func create(new_button_names: Array[StringName], new_textures: Array[CompressedTexture2D], new_tip_texts: PackedStringArray) -> DetailNode_MultiButtons:

@@ -45,6 +45,11 @@ const ICON_TEXTURES: Dictionary[StringName, CompressedTexture2D] = {
 	&"Class_Edit": preload("res://contents/icon_class_edit_0.png"),
 	&"Class_Lock": preload("res://contents/icon_class_lock_0.png"),
 	&"Detail_Brush": preload("res://contents/icon_detail_brush_0.png"),
+	&"Detail_Brush_Brush": preload("res://contents/icon_detail_brush_brush_0.png"),
+	&"Detail_Brush_Pencil": preload("res://contents/icon_detail_brush_pencil_0.png"),
+	&"Detail_Eraser": preload("res://contents/icon_detail_eraser_0.png"),
+	&"Detail_Eraser_Dishcloth": preload("res://contents/icon_detail_eraser_dishcloth_0.png"),
+	&"Detail_Eraser_Eraser": preload("res://contents/icon_detail_eraser_eraser_0.png"),
 	&"Hand": preload("res://contents/icon_hand_0.png"),
 	&"Menu": preload("res://contents/icon_menu_0.png"),
 	&"Back": preload("res://contents/icon_back_0.png"),
@@ -93,6 +98,23 @@ func _process(delta: float) -> void:
 func push_error_format(source_class_name: String, error_handle: ErrorHandle, error_type: ErrorType) -> void:
 	pass #### 以后写
 
+## 按钮禁用检查，传入一个按钮名称，返回该按钮在当前状态下是否应该禁用(返回true代表禁用)。请妥善考虑本方法的调用频率
+static func button_disable_check(button_name: StringName) -> bool:
+	match (button_name):
+		&"DetailButton_ScaleLarge": #侧边栏工具详细层按钮-放大
+			return false
+		&"DetailButton_ScaleSmall": #侧边栏工具详细层按钮-缩小
+			return false
+		&"DetailButton_BrushModeBrush": #侧边栏工具详细层按钮-笔刷工具.模式.画笔
+			return tools_detail_state.brush_mode == ToolsDetailState.BrushMode.BRUSH
+		&"DetailButton_BrushModePencil": #侧边栏工具详细层按钮-笔刷工具.模式.铅笔
+			return tools_detail_state.brush_mode == ToolsDetailState.BrushMode.PENCIL
+		&"DetailButton_EraserModeDishcloth": #侧边栏工具详细层按钮-擦除工具.模式.抹布
+			return tools_detail_state.eraser_mode == ToolsDetailState.EraserMode.DISHCLOTH
+		&"DetailButton_EraserModeEraser": #侧边栏工具详细层按钮-擦除工具.模式.橡皮
+			return tools_detail_state.eraser_mode == ToolsDetailState.EraserMode.ERASER
+	return false
+
 #region 信号方法
 ## 任意按钮被点击时触发信号对应的捕获方法，按钮名具有以下前缀：SideButton表侧边栏底层按钮，MenuButton表菜单按钮，ClassButton表工具类别层按钮，DetailButton表工具详细层按钮
 static func on_button_trigged(button_name: StringName) -> void:
@@ -116,8 +138,16 @@ static func on_button_trigged(button_name: StringName) -> void:
 			SideBar.fs.switch_focus(SideBar.FocusClass.INTERACT, FocusTool.SCALER) #将侧边栏焦点切换到交互-缩放工具
 		&"ClassButton_Brush": #侧边栏工具类别层按钮-笔刷工具
 			SideBar.fs.switch_focus(SideBar.FocusClass.EDIT, FocusTool.BRUSH) #将侧边栏焦点切换到擦写-笔刷工具
+			if (tools_detail_state.brush_mode == ToolsDetailState.BrushMode.BRUSH): #如果笔刷模式为画笔
+				NumberBar.icon_texture = ICON_TEXTURES[&"Detail_Brush_Brush"]
+			else: #否则
+				NumberBar.icon_texture = ICON_TEXTURES[&"Detail_Brush_Pencil"]
 		&"ClassButton_Eraser": #侧边栏工具类别层按钮-擦除工具
 			SideBar.fs.switch_focus(SideBar.FocusClass.EDIT, FocusTool.ERASER) #将侧边栏焦点切换到擦写-擦除工具
+			if (tools_detail_state.eraser_mode == ToolsDetailState.EraserMode.DISHCLOTH): #如果擦除模式为抹布
+				NumberBar.icon_texture = ICON_TEXTURES[&"Detail_Eraser_Dishcloth"]
+			else: #否则
+				NumberBar.icon_texture = ICON_TEXTURES[&"Detail_Eraser_Eraser"]
 		&"DetailButton_Back": #侧边栏工具详细层按钮-返回类别层
 			SideBar.fs.switch_focus(SideBar.focus_class, FocusTool.NONE) #将侧边栏焦点切换到上一级焦点类别
 			NumberBar.icon_texture = ICON_TEXTURES[&"Hand"] #将工具提示图标设为拖手图标
@@ -126,11 +156,16 @@ static func on_button_trigged(button_name: StringName) -> void:
 		&"DetailButton_ScaleSmall": #侧边栏工具详细层按钮-缩小
 			EditableGrids.update_animation_data(EditableGrids.display_offset, clampi(grids_zoom_blocks + 1, 1, EditableGrids.global_grid_size.y)) #调用题纸网格类的更新动画方法
 		&"DetailButton_BrushModeBrush": #侧边栏工具详细层按钮-笔刷工具.模式.画笔
-			pass
+			tools_detail_state.brush_mode = ToolsDetailState.BrushMode.BRUSH #将工具详细状态的笔刷模式设为画笔
+			NumberBar.icon_texture = ICON_TEXTURES[&"Detail_Brush_Brush"] #将工具提示图标设为笔刷工具.画笔图标
 		&"DetailButton_BrushModePencil": #侧边栏工具详细层按钮-笔刷工具.模式.铅笔
-			pass
-		&"DetailButton_EraserModeCloth": #侧边栏工具详细层按钮-擦除工具.模式.抹布
-			pass
+			tools_detail_state.brush_mode = ToolsDetailState.BrushMode.PENCIL #将工具详细状态的笔刷模式设为铅笔
+			NumberBar.icon_texture = ICON_TEXTURES[&"Detail_Brush_Pencil"] #将工具提示图标设为笔刷工具.铅笔图标
+		&"DetailButton_EraserModeDishcloth": #侧边栏工具详细层按钮-擦除工具.模式.抹布
+			tools_detail_state.eraser_mode = ToolsDetailState.EraserMode.DISHCLOTH #将工具详细状态的擦除模式设为抹布
+			NumberBar.icon_texture = ICON_TEXTURES[&"Detail_Eraser_Dishcloth"] #将工具提示图标设为擦除工具.抹布图标
 		&"DetailButton_EraserModeEraser": #侧边栏工具详细层按钮-擦除工具.模式.橡皮
-			pass
+			tools_detail_state.eraser_mode = ToolsDetailState.EraserMode.ERASER #将工具详细状态的擦除模式设为橡皮
+			NumberBar.icon_texture = ICON_TEXTURES[&"Detail_Eraser_Eraser"] #将工具提示图标设为擦除工具.橡皮图标
+	SideBar.update_detail_buttons_disable() #更新按钮禁用状态
 #endregion

@@ -10,11 +10,11 @@ enum BrushMode{
 }
 ## 擦除工具.模式
 enum EraserMode{
-	CLOTH, #抹布模式
+	DISHCLOTH, #抹布模式
 	ERASER #橡皮模式
 }
 
 ## 笔刷工具.模式
 var brush_mode: BrushMode = BrushMode.BRUSH
 ## 擦除工具.模式
-var eraser_mode: EraserMode = EraserMode.CLOTH
+var eraser_mode: EraserMode = EraserMode.DISHCLOTH

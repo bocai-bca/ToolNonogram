@@ -126,7 +126,7 @@ static var SELECTION_CLASS_BUTTONS_DATA_LIST: Array[ClassButtonDataObject] = [
 ## [只读]工具类别层擦写类按钮的数据列表，按按钮由上到下的顺序排序
 static var EDIT_CLASS_BUTTONS_DATA_LIST: Array[ClassButtonDataObject] = [
 	ClassButtonDataObject.new(&"ClassButton_Brush", &"Detail_Brush", "擦写\n笔刷工具"),
-	ClassButtonDataObject.new(&"ClassButton_Eraser", &"Back", "擦写\n擦除工具"),
+	ClassButtonDataObject.new(&"ClassButton_Eraser", &"Detail_Eraser", "擦写\n擦除工具"),
 	ClassButtonDataObject.new(&"ClassButton_Fill", &"Back", "擦写\n填充工具"),
 	ClassButtonDataObject.new(&"ClassButton_Back", &"Back", "返回\n"),
 ]
@@ -143,11 +143,11 @@ static var TOOL_DETAIL_DATA_LIST_SCALER: Array[DetailNodeDataObject] = [
 ]
 ## [只读]笔刷工具的详细层数据列表
 static var TOOL_DETAIL_DATA_LIST_BRUSH: Array[DetailNodeDataObject] = [
-	DetailNodeDataObject.new(DetailNodeType.MULTI_BUTTONS, [&"DetailButton_Back", &"DetailButton_Back"], [&"Detail_Brush", &"Detail_Brush"], ["笔刷模式\n画笔", "笔刷模式\n铅笔"])
+	DetailNodeDataObject.new(DetailNodeType.MULTI_BUTTONS, [&"DetailButton_BrushModeBrush", &"DetailButton_BrushModePencil"], [&"Detail_Brush_Brush", &"Detail_Brush_Pencil"], ["笔刷模式\n画笔", "笔刷模式\n铅笔"])
 ]
 ## [只读]擦除工具的详细层数据列表
 static var TOOL_DETAIL_DATA_LIST_ERASER: Array[DetailNodeDataObject] = [
-	DetailNodeDataObject.new(DetailNodeType.MULTI_BUTTONS, [&"DetailButton_Back", &"DetailButton_Back"], [&"Back", &"Back"], ["擦除模式\n抹布", "擦除模式\n橡皮"])
+	DetailNodeDataObject.new(DetailNodeType.MULTI_BUTTONS, [&"DetailButton_EraserModeDishcloth", &"DetailButton_EraserModeEraser"], [&"Detail_Eraser_Dishcloth", &"Detail_Eraser_Eraser"], ["擦除模式\n抹布", "擦除模式\n橡皮"])
 ]
 
 ## 按钮的默认长度，该值必须通过读取按钮实例的TextureButton的size属性获取。默认只在本节点ready时读取一次
@@ -399,6 +399,13 @@ func switch_detail_button_using(target_focus_tool: Main.FocusTool) -> void:
 			new_node = create_detail_button(new_node_task) #调用按钮节点创建方法获得一个节点
 		n_detail_nodes_container.add_child(new_node) #将新创建的节点添加到场景树中
 		detail_nodes_list.append(new_node) #将新创建的节点添加到列表中
+		update_detail_buttons_disable()
+
+## 更新详细层按钮禁用状态，将遍历detail_nodes_list收录的所有详细层节点调用它们的check_disable()方法。本方法建议在按钮发生点击后等状况进行调用
+static func update_detail_buttons_disable() -> void:
+	for detail_node in detail_nodes_list:
+		if (detail_node.has_method(&"check_disable")): #防调用不存在的方法
+			detail_node.call(&"check_disable") #让详细层按钮检查自身是否应该禁用
 
 ## 详细层按钮节点创建方法，输入一个详细层节点数据对象，返回一个按钮节点
 static func create_detail_button(button_data: DetailNodeDataObject) -> Control:
