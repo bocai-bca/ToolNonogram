@@ -13,16 +13,19 @@ static var fs: PaperArea:
 @onready var n_base_click: TextureButton = $BaseClick as TextureButton
 @onready var n_base_grids: EditableGrids = $BaseGrids as EditableGrids
 @onready var n_hover_grids: Array[EditableGrids] = [
-	
+
 ]
 
+## 偏移量动画倒计时器控制开关，为true时计时器继续计时，为false时暂停计时
+static var is_allow_grids_animation_timer_update: bool = true
 ## 偏移量动画倒计时器，即为0时到达终点。这个计时器本该在EditableGrids类里以和相关的静态成员一起搭配使用，但是EditableGrids是非单例的类，不宜在它的_process中更新计时器，因此委托在此处进行
 static var grids_animation_timer: float = 0.0
 ## 点击状态实例
 static var click_state: ClickState = ClickState.new()
 
 func _process(delta: float) -> void:
-	grids_animation_timer = move_toward(grids_animation_timer, 0.0, delta) #从EditableGrids的_process()方法中接替进行动画计时器更新任务
+	if (is_allow_grids_animation_timer_update): #如果当前允许计时器更新
+		grids_animation_timer = move_toward(grids_animation_timer, 0.0, delta) #从EditableGrids的_process()方法中接替进行动画计时器更新任务
 
 func _physics_process(delta: float) -> void:
 	## 00更新点击状态
@@ -31,7 +34,19 @@ func _physics_process(delta: float) -> void:
 	## 01所有工具的行为
 	match (Main.focus_tool): #匹配焦点工具
 		Main.FocusTool.NONE: #拖手工具
-			pass
+			## 答题网格移动
+			if (click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS): #如果鼠标按下位置处于答题网格中
+				if (click_state.is_pressing()): #如果鼠标正被按下
+					if (click_state.is_just()): #如果是刚刚按下
+						EditableGrids.animate_start_offset = EditableGrids.animate_now_offset #将起始偏移量设为当前的实际偏移量
+					EditableGrids.update_offset_on_grabbing(click_state.last_update_pos - click_state.current_pos) #调用答题网格的更新偏移量方法
+					grids_animation_timer = EditableGrids.ANIMATION_TIME #重设计时器时间
+					is_allow_grids_animation_timer_update = false #关闭计时器
+				else: #否则(鼠标没在按下)
+					is_allow_grids_animation_timer_update = true #开启计时器
+			elif (click_state.pressed_at_area == ClickState.AreaOfPaper.NUMBER_BAR_UP or click_state.pressed_at_area == ClickState.AreaOfPaper.NUMBER_BAR_SIDE): #如果鼠标按下位置处于数字栏
+				pass
+			## /
 		Main.FocusTool.BRUSH: #笔刷工具
 			if (click_state.is_pressing() and click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS): #如果鼠标正被点击，且按下位置处于答题网格中
 				if (EditableGrids.is_pos_in_grid(click_state.current_pos)): #如果鼠标所在的坐标有效
@@ -66,6 +81,7 @@ func update_click_state() -> void:
 		else: #否则(当前鼠标指针Y位于数字栏外)
 			## 处于答题网格
 			click_state.current_at_area = ClickState.AreaOfPaper.GRIDS #设定当前所在区域为答题网格
+			click_state.last_update_pos = click_state.current_pos #记录上次坐标位置
 			click_state.current_pos = n_base_grids.get_mouse_pos() #设定当前鼠标所处的坐标
 	## /00
 	## 01点击状态
@@ -103,14 +119,16 @@ class ClickState:
 	}
 	## 按下状态
 	var press_state: PressState = PressState.RELEASE
-	## 按下时所处的题纸区域。当当前状态不属于按下时，本变量的值是无效的、不可信的
+	## 按下时所处的题纸区域。当当前状态不属于按下时，本变量的值表示上一次按下时所处的位置
 	var pressed_at_area: AreaOfPaper
 	## 按下时所处的抽象坐标，基于按下时所处的题纸区域。如果是工具图标的话此值无效，如果是网格的话代表网格上的坐标，而数字栏的话还需要设计
-	var pressed_pos: Vector2i
+	var pressed_pos: Vector2i = Vector2i(0, 0)
 	## 当前所处地题纸区域
 	var current_at_area: AreaOfPaper
 	## 当前所在的抽象坐标，基于当前所处的题纸区域。如果是工具图标的话此值无效，如果是网格的话代表网格上的坐标，而数字栏的话还需要设计
-	var current_pos: Vector2i
+	var current_pos: Vector2i = Vector2i(0, 0)
+	## 该click_state实例上一次更新时的current_pos
+	var last_update_pos: Vector2i = Vector2i(0, 0)
 	## 获取当前鼠标是否是按下的，是对易于理解但不易读的判断的封装方法。需通过一个ClickState实例访问
 	func is_pressing() -> bool:
 		return (press_state == PressState.PRESSING or press_state == PressState.JUST_PRESSED)

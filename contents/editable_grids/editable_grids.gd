@@ -39,6 +39,8 @@ static var animate_now_zoom_blocks: float:
 #static var animation_timer: float = 0.0 #交由PaperArea处理，请访问PaperArea.grids_animation_timer
 ## 全局网格尺寸
 static var global_grid_size: Vector2i = Vector2i(5, 5) #网格实例的节点的初始尺寸是5*5
+## 全局缩放率
+static var global_scale_rate: float = 1.0
 ## 本地网格尺寸，表示本EditableGrids实例中TileMapLayer节点所显示的网格尺寸，用于调整大小时读写
 var local_grid_size: Vector2i = Vector2i(5, 5)
 
@@ -47,7 +49,8 @@ func _process(delta: float) -> void:
 	#animation_timer = move_toward(animation_timer, 0.0, delta) #更新偏移量动画倒计时器 #转移到由PaperArea执行
 	## 00更新网格的变换
 	var free_height: float = window_size.y - NumberBar.bar_width #计算可用空间高度
-	scale = free_height / (animate_now_zoom_blocks * Main.TILE_NORMAL_SIZE) *  Vector2.ONE #计算缩放的值
+	global_scale_rate = free_height / (animate_now_zoom_blocks * Main.TILE_NORMAL_SIZE) #计算全局缩放率
+	scale = global_scale_rate *  Vector2.ONE #计算缩放的值
 	position = Vector2(NumberBar.bar_width, NumberBar.bar_width) - animate_now_offset #计算坐标并应用
 	## /00
 
@@ -65,7 +68,10 @@ func clear_slot(pos: Vector2i) -> void:
 
 ## 进行凌驾于动画之上的网格实际偏移量更新，使用拖手工具拖拽网格时需每帧调用此方法。参数请传入一个鼠标于一帧内在屏幕上坐标的移动量
 static func update_offset_on_grabbing(offset_delta: Vector2) -> void:
-	pass ####继续写
+	animate_start_offset = (animate_start_offset + offset_delta * global_scale_rate) #将本次的偏移量加进动画起始移动量
+	#animate_start_offset = animate_start_offset.clampf(NumberBar.bar_width, max(animate_start_offset.x, animate_start_offset.y)) #钳制坐标，防止超出左上角屏幕范围
+	display_offset = Vector2i(animate_start_offset / Main.TILE_NORMAL_SIZE) #将动画起始偏移量除以砖瓦大小后取整
+	animate_start_zoom_blocks = animate_now_zoom_blocks #将起始缩放格子数设为当前的缩放格子数
 
 ## 更新动画数据，调用此方法来设定新的动画缓动目标值，包含网格的缩放和偏移量，设置动画的新目标值会重置动画计时器，因此请勿尽可能降低调用此方法的频率
 static func update_animation_data(new_display_offset: Vector2i, new_zoom_blocks: int) -> void:

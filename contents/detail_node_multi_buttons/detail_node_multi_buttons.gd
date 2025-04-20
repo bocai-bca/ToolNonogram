@@ -14,46 +14,56 @@ static var bottom_button_styleboxes: Array[StyleBoxFlat]
 const DEFAULT_SIZE_PER_BUTTON: Vector2 = Vector2(120.0, 120.0)
 ## 按钮圆角半径乘数，基于视口纵向长度
 const CORNER_RADIUS_MULTI: float = 30.0 / Main.WINDOW_SIZE_DEFAULT.y
+## 按钮边角细节
+const BUTTON_STYLEBOX_CORNER_DETAIL: int = 5
+## 按钮背景颜色-正常
+const BUTTON_STYLEBOX_BG_COLOR_NORMAL: Color = Color(0.8, 0.8, 0.8, 1.0)
+## 按钮背景颜色-悬浮
+const BUTTON_STYLEBOX_BG_COLOR_HOVER: Color = Color(0.7, 0.7, 0.7, 1.0)
+## 按钮背景颜色-点击
+const BUTTON_STYLEBOX_BG_COLOR_PRESSED: Color = Color(0.6, 0.6, 0.6, 1.0)
+## 按钮背景颜色-禁用
+const BUTTON_STYLEBOX_BG_COLOR_DISABLED: Color = Color(0.75, 0.75, 0.75, 1.0)
 
 static func _static_init() -> void:
 	var stylebox_top_normal: StyleBoxFlat = StyleBoxFlat.new()
-	stylebox_top_normal.bg_color = Color(0.8, 0.8, 0.8, 1.0)
-	stylebox_top_normal.corner_detail = 5
+	stylebox_top_normal.bg_color = BUTTON_STYLEBOX_BG_COLOR_NORMAL
+	stylebox_top_normal.corner_detail = BUTTON_STYLEBOX_CORNER_DETAIL
 	var stylebox_top_hover: StyleBoxFlat = StyleBoxFlat.new()
-	stylebox_top_hover.bg_color = Color(0.7, 0.7, 0.7, 1.0)
-	stylebox_top_hover.corner_detail = 5
+	stylebox_top_hover.bg_color = BUTTON_STYLEBOX_BG_COLOR_HOVER
+	stylebox_top_hover.corner_detail = BUTTON_STYLEBOX_CORNER_DETAIL
 	var stylebox_top_pressed: StyleBoxFlat = StyleBoxFlat.new()
-	stylebox_top_pressed.bg_color = Color(0.6, 0.6, 0.6, 1.0)
-	stylebox_top_pressed.corner_detail = 5
+	stylebox_top_pressed.bg_color = BUTTON_STYLEBOX_BG_COLOR_PRESSED
+	stylebox_top_pressed.corner_detail = BUTTON_STYLEBOX_CORNER_DETAIL
 	var stylebox_top_disabled: StyleBoxFlat = StyleBoxFlat.new()
-	stylebox_top_disabled.bg_color = Color(0.65, 0.65, 0.65, 1.0)
-	stylebox_top_disabled.corner_detail = 5
+	stylebox_top_disabled.bg_color = BUTTON_STYLEBOX_BG_COLOR_DISABLED
+	stylebox_top_disabled.corner_detail = BUTTON_STYLEBOX_CORNER_DETAIL
 	top_button_styleboxes = [stylebox_top_normal, stylebox_top_hover, stylebox_top_pressed, stylebox_top_disabled]
 	var stylebox_middle_normal: StyleBoxFlat = StyleBoxFlat.new()
-	stylebox_middle_normal.bg_color = Color(0.8, 0.8, 0.8, 1.0)
-	stylebox_middle_normal.corner_detail = 5
+	stylebox_middle_normal.bg_color = BUTTON_STYLEBOX_BG_COLOR_NORMAL
+	stylebox_middle_normal.corner_detail = BUTTON_STYLEBOX_CORNER_DETAIL
 	var stylebox_middle_hover: StyleBoxFlat = StyleBoxFlat.new()
-	stylebox_middle_hover.bg_color = Color(0.7, 0.7, 0.7, 1.0)
-	stylebox_middle_hover.corner_detail = 5
+	stylebox_middle_hover.bg_color = BUTTON_STYLEBOX_BG_COLOR_HOVER
+	stylebox_middle_hover.corner_detail = BUTTON_STYLEBOX_CORNER_DETAIL
 	var stylebox_middle_pressed: StyleBoxFlat = StyleBoxFlat.new()
-	stylebox_middle_pressed.bg_color = Color(0.6, 0.6, 0.6, 1.0)
-	stylebox_middle_pressed.corner_detail = 5
+	stylebox_middle_pressed.bg_color = BUTTON_STYLEBOX_BG_COLOR_PRESSED
+	stylebox_middle_pressed.corner_detail = BUTTON_STYLEBOX_CORNER_DETAIL
 	var stylebox_middle_disabled: StyleBoxFlat = StyleBoxFlat.new()
-	stylebox_middle_disabled.bg_color = Color(0.65, 0.65, 0.65, 1.0)
-	stylebox_middle_disabled.corner_detail = 5
+	stylebox_middle_disabled.bg_color = BUTTON_STYLEBOX_BG_COLOR_DISABLED
+	stylebox_middle_disabled.corner_detail = BUTTON_STYLEBOX_CORNER_DETAIL
 	middle_button_styleboxes = [stylebox_middle_normal, stylebox_middle_hover, stylebox_middle_pressed, stylebox_middle_disabled]
 	var stylebox_bottom_normal: StyleBoxFlat = StyleBoxFlat.new()
-	stylebox_bottom_normal.bg_color = Color(0.8, 0.8, 0.8, 1.0)
-	stylebox_bottom_normal.corner_detail = 5
+	stylebox_bottom_normal.bg_color = BUTTON_STYLEBOX_BG_COLOR_NORMAL
+	stylebox_bottom_normal.corner_detail = BUTTON_STYLEBOX_CORNER_DETAIL
 	var stylebox_bottom_hover: StyleBoxFlat = StyleBoxFlat.new()
-	stylebox_bottom_hover.bg_color = Color(0.7, 0.7, 0.7, 1.0)
-	stylebox_bottom_hover.corner_detail = 5
+	stylebox_bottom_hover.bg_color = BUTTON_STYLEBOX_BG_COLOR_HOVER
+	stylebox_bottom_hover.corner_detail = BUTTON_STYLEBOX_CORNER_DETAIL
 	var stylebox_bottom_pressed: StyleBoxFlat = StyleBoxFlat.new()
-	stylebox_bottom_pressed.bg_color = Color(0.6, 0.6, 0.6, 1.0)
-	stylebox_bottom_pressed.corner_detail = 5
+	stylebox_bottom_pressed.bg_color = BUTTON_STYLEBOX_BG_COLOR_PRESSED
+	stylebox_bottom_pressed.corner_detail = BUTTON_STYLEBOX_CORNER_DETAIL
 	var stylebox_bottom_disabled:  StyleBoxFlat = StyleBoxFlat.new()
-	stylebox_bottom_disabled.bg_color = Color(0.65, 0.65, 0.65, 1.0)
-	stylebox_bottom_disabled.corner_detail = 5
+	stylebox_bottom_disabled.bg_color = BUTTON_STYLEBOX_BG_COLOR_DISABLED
+	stylebox_bottom_disabled.corner_detail = BUTTON_STYLEBOX_CORNER_DETAIL
 	bottom_button_styleboxes = [stylebox_bottom_normal, stylebox_bottom_hover, stylebox_bottom_pressed, stylebox_bottom_disabled]
 
 func _process(delta: float) -> void:
@@ -87,7 +97,7 @@ func _process(delta: float) -> void:
 ## 检查自身的按钮成员们各自是否需要禁用并更新它们的禁用状态
 func check_disable() -> void:
 	for node in get_children() as Array[DetailNode_MultiButtons_Member]:
-		node.disabled = Main.button_disable_check(node.button_name)
+		node.is_enable = not Main.button_disable_check(node.button_name)
 
 ## 类场景实例化方法
 static func create(new_button_names: Array[StringName], new_textures: Array[CompressedTexture2D], new_tip_texts: PackedStringArray) -> DetailNode_MultiButtons:
