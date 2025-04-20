@@ -81,8 +81,8 @@ func update_click_state() -> void:
 		else: #否则(当前鼠标指针Y位于数字栏外)
 			## 处于答题网格
 			click_state.current_at_area = ClickState.AreaOfPaper.GRIDS #设定当前所在区域为答题网格
-			click_state.last_update_pos = click_state.current_pos #记录上次坐标位置
-			click_state.current_pos = n_base_grids.get_mouse_pos() #设定当前鼠标所处的坐标
+	click_state.last_update_pos = click_state.current_pos #记录上次坐标位置
+	click_state.current_pos = n_base_grids.get_mouse_pos() #设定当前鼠标所处的坐标
 	## /00
 	## 01点击状态
 	if (click_state.press_state == ClickState.PressState.RELEASE or click_state.press_state == ClickState.PressState.JUST_RELEASED): #如果按下状态是松开或刚刚松开
