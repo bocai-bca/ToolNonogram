@@ -2,6 +2,7 @@ extends Node2D
 class_name EditableGrids
 ## 游戏版面可编辑网格。用于显示和容纳版面网格和棋子的类
 
+@onready var n_back_color: ColorRect = $BackColor as ColorRect
 @onready var n_grid_map: TileMapLayer = $GridMap as TileMapLayer
 @onready var n_edit_map: TileMapLayer = $EditMap as TileMapLayer
 
@@ -45,14 +46,16 @@ static var global_scale_rate: float = 1.0
 var local_grid_size: Vector2i = Vector2i(5, 5)
 
 func _process(delta: float) -> void:
-	#var window_size: Vector2 = Vector2(get_window().size) #获取窗口大小
-	#animation_timer = move_toward(animation_timer, 0.0, delta) #更新偏移量动画倒计时器 #转移到由PaperArea执行
+	var window_size: Vector2 = Vector2(get_window().size) #获取窗口大小
 	## 00更新网格的变换
-	#var free_height: float = window_size.y - NumberBar.bar_width #计算可用空间高度
 	global_scale_rate = PaperArea.grids_free_height / (animate_now_zoom_blocks * Main.TILE_NORMAL_SIZE) #计算全局缩放率
 	scale = global_scale_rate *  Vector2.ONE #计算缩放的值
 	position = Vector2(NumberBar.bar_width, NumberBar.bar_width) - animate_now_offset #计算坐标并应用
 	## /00
+	## 01更新背景
+	n_back_color.position = -position #将本类根节点的坐标的相反数赋给背景颜色矩形的坐标，达到使其坐标恒定处于一个原点的作用
+	n_back_color.size = window_size #更新背景颜色矩形的尺寸为视口尺寸
+	## /01
 
 ## 获取鼠标指针处于的格子坐标(原点为0,0)
 func get_mouse_pos() -> Vector2i:
