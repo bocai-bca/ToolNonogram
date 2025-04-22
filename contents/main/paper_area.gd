@@ -22,8 +22,12 @@ static var is_allow_grids_animation_timer_update: bool = true
 static var grids_animation_timer: float = 0.0
 ## 点击状态实例
 static var click_state: ClickState = ClickState.new()
+## 答题网格的纵向空间
+static var grids_free_height: float = 0.0
 
 func _process(delta: float) -> void:
+	var window_size: Vector2 = Vector2(get_window().size) #获取窗口大小
+	grids_free_height = window_size.y - NumberBar.bar_width #计算可用空间高度
 	if (is_allow_grids_animation_timer_update): #如果当前允许计时器更新
 		grids_animation_timer = move_toward(grids_animation_timer, 0.0, delta) #从EditableGrids的_process()方法中接替进行动画计时器更新任务
 	## 00更新点击状态
