@@ -52,7 +52,11 @@ func _process(delta: float) -> void:
 		Main.FocusTool.BRUSH: #笔刷工具
 			if (click_state.is_pressing() and click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS): #如果鼠标正被点击，且按下位置处于答题网格中
 				if (EditableGrids.is_pos_in_grid(click_state.current_grid_pos)): #如果鼠标所在的坐标有效
-					n_base_grids.write_slot(click_state.current_grid_pos, EditableGrids.FillType.BLOCK)
+					match (Main.tools_detail_state.brush_fill_type): #匹配笔刷工具的填充类型
+						ToolsDetailState.ToolFillType.FILL: #实心块
+							n_base_grids.write_slot(click_state.current_grid_pos, EditableGrids.FillType.FILL) #将指定格子填写为实心块
+						ToolsDetailState.ToolFillType.CROSS: #叉叉
+							n_base_grids.write_slot(click_state.current_grid_pos, EditableGrids.FillType.CROSS) #将指定格子填写为叉叉
 		Main.FocusTool.ERASER: #擦除工具
 			if (click_state.is_pressing() and click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS): #如果鼠标正被点击，且按下位置处于答题网格中
 				if (EditableGrids.is_pos_in_grid(click_state.current_grid_pos)): #如果鼠标所在的坐标有效

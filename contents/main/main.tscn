@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=4 uid="uid://dsyodv46dneyp"]
+[gd_scene load_steps=22 format=3 uid="uid://dsyodv46dneyp"]
 
 [ext_resource type="Script" uid="uid://ddw07f0fi354e" path="res://contents/main/main.gd" id="1_400j3"]
 [ext_resource type="PackedScene" uid="uid://dymxav2uetw0l" path="res://contents/editable_grids/editable_grids.tscn" id="2_3fq6y"]
@@ -91,20 +91,6 @@ ignore_texture_size = true
 [node name="BaseGrids" parent="PaperArea" instance=ExtResource("2_3fq6y")]
 position = Vector2(270, 270)
 
-[node name="LayersBar" type="Node2D" parent="."]
-script = ExtResource("4_a22sp")
-
-[node name="BackColor" type="ColorRect" parent="LayersBar"]
-offset_right = 135.0
-offset_bottom = 1080.0
-color = Color(0.5, 0.5, 0.5, 1)
-
-[node name="Shadow" type="Sprite2D" parent="LayersBar"]
-self_modulate = Color(0, 0, 0, 0.4)
-position = Vector2(71, 540)
-scale = Vector2(2, 1080)
-texture = ExtResource("4_dg2sw")
-
 [node name="NumberBar" type="Node2D" parent="."]
 position = Vector2(135, 0)
 script = ExtResource("3_sl0nd")
@@ -137,7 +123,7 @@ color = Color(0.75, 0.75, 0.75, 1)
 self_modulate = Color(0, 0, 0, 1)
 texture_filter = 1
 position = Vector2(270, 0)
-tile_map_data = PackedByteArray("AAAAAAAAAAADAAAAAAAAAAEAAAADAAAAAAABAAAAAAADAAAAAAABAAEAAAADAAAAAAACAAAAAAADAAAAAAACAAEAAAADAAAAAAADAAAAAAADAAAAAAADAAEAAAADAAAAAAAEAAAAAAADAAAAAAAEAAEAAAADAAAAAAA=")
+tile_map_data = PackedByteArray(0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0)
 tile_set = ExtResource("6_5huld")
 occlusion_enabled = false
 collision_enabled = false
@@ -147,7 +133,7 @@ navigation_enabled = false
 self_modulate = Color(0, 0, 0, 1)
 texture_filter = 1
 position = Vector2(0, 270)
-tile_map_data = PackedByteArray("AAAAAAAAAAAAAAEAAAAAAAEAAAAAAAEAAAAAAAIAAAAAAAEAAAAAAAMAAAAAAAEAAAAAAAQAAAAAAAEAAAABAAQAAAAAAAEAAAABAAMAAAAAAAEAAAABAAIAAAAAAAEAAAABAAEAAAAAAAEAAAABAAAAAAAAAAEAAAA=")
+tile_map_data = PackedByteArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 1, 0, 0, 0)
 tile_set = ExtResource("6_5huld")
 occlusion_enabled = false
 collision_enabled = false
@@ -164,6 +150,20 @@ self_modulate = Color(0, 0, 0, 1)
 position = Vector2(135, 135)
 scale = Vector2(2.565, 2.565)
 texture = ExtResource("6_xbqcj")
+
+[node name="LayersBar" type="Node2D" parent="."]
+script = ExtResource("4_a22sp")
+
+[node name="BackColor" type="ColorRect" parent="LayersBar"]
+offset_right = 135.0
+offset_bottom = 1080.0
+color = Color(0.5, 0.5, 0.5, 1)
+
+[node name="Shadow" type="Sprite2D" parent="LayersBar"]
+self_modulate = Color(0, 0, 0, 0.4)
+position = Vector2(71, 540)
+scale = Vector2(2, 1080)
+texture = ExtResource("4_dg2sw")
 
 [node name="SideBar" type="Node2D" parent="."]
 position = Vector2(1920, 540)

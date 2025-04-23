@@ -143,7 +143,8 @@ static var TOOL_DETAIL_DATA_LIST_SCALER: Array[DetailNodeDataObject] = [
 ]
 ## [只读]笔刷工具的详细层数据列表
 static var TOOL_DETAIL_DATA_LIST_BRUSH: Array[DetailNodeDataObject] = [
-	DetailNodeDataObject.new(DetailNodeType.MULTI_BUTTONS, [&"DetailButton_BrushModeBrush", &"DetailButton_BrushModePencil"], [&"Detail_Brush_Brush", &"Detail_Brush_Pencil"], ["笔刷模式\n画笔", "笔刷模式\n铅笔"])
+	DetailNodeDataObject.new(DetailNodeType.MULTI_BUTTONS, [&"DetailButton_BrushModeBrush", &"DetailButton_BrushModePencil"], [&"Detail_Brush_Brush", &"Detail_Brush_Pencil"], ["笔刷模式\n画笔", "笔刷模式\n铅笔"]),
+	DetailNodeDataObject.new(DetailNodeType.MULTI_BUTTONS, [&"DetailButton_BrushFillType_Fill", &"DetailButton_BrushFillType_Cross"], [&"Detail_Fill_Type_Fill", &"Detail_Fill_Type_Cross"], ["笔刷样式\n实心块", "笔刷样式\n叉叉"]),
 ]
 ## [只读]擦除工具的详细层数据列表
 static var TOOL_DETAIL_DATA_LIST_ERASER: Array[DetailNodeDataObject] = [

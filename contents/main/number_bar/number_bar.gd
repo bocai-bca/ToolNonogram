@@ -22,18 +22,18 @@ static var fs: NumberBar:
 @onready var n_number_grids_side: TileMapLayer = $NumberGrids_Side as TileMapLayer
 
 ## 边框宽度率，影响边框厚度的乘数，基数为工具图标的边长
-const FRAME_THICKNESS_RATE: float = 0.025
+const FRAME_THICKNESS_RATE: float = 0.05
 # 此乘数应用于什么基数是一个有待选择的问题，有两种选择：(目前选择1)
 # 	1.基于图标大小，这样边框相对于图标是固定粗细的，但是如果图标缩小，那么边框会一起缩得很细
 #	2.基于窗口大小，这样边框相对于窗口是固定粗细的，如果窗口分辨率太大的话，边框会一起变得很粗
 ## 缩放率调整步长，使得调整一次缩放率能像调整一次网格一样具有固定的步长
 const ZOOM_RATE_STEP_LENGTH: float = 0.1
 ## 默认缩放率
-const ZOOM_RATE_DEFAULT: float = 0.2
+const ZOOM_RATE_DEFAULT: float = 0.3
 ## 缩放率边界值，用于限制避免缩放率超出合适范围，X表示最小值、Y表示最大值
-const ZOOM_RATE_BOUND: Vector2 = Vector2(0.1, 0.4)
+const ZOOM_RATE_BOUND: Vector2 = Vector2(0.1, 0.5)
 ## 工具图标的图标纹理显示节点n_icon相对于整个工具图标区域(含边框)的缩放比率
-const ICON_DISPLAY_SCALE_RATE: float = 0.95
+const ICON_DISPLAY_SCALE_RATE: float = 0.9
 ## 数字栏填充颜色，目前该颜色不会自动应用在节点上，是一个代码层面未被使用的常量
 const NUMBER_BAR_FILL_COLOR: Color = Color(1.0, 1.0, 1.0, 1.0)
 
@@ -81,7 +81,9 @@ func _process(delta: float) -> void:
 	## /02
 	## 03更新砖瓦图
 	n_number_grids_up.scale = (window_size.y - NumberBar.bar_width) / (EditableGrids.animate_now_zoom_blocks * Main.TILE_NORMAL_SIZE) *  Vector2.ONE #计算并应用顶部砖瓦图的缩放
-	n_number_grids_up.position = Vector2(EditableGrids.animate_now_offset.x + bar_width, 0.0) #计算并应用顶部砖瓦图的位置
+	n_number_grids_up.position = Vector2(bar_width - EditableGrids.animate_now_offset.x, 0.0) #计算并应用顶部砖瓦图的位置
 	n_number_grids_side.scale = n_number_grids_up.scale #直接拿来顶部砖瓦图的缩放用
-	n_number_grids_side.position = Vector2(0.0, EditableGrids.animate_now_offset.x + bar_width) #计算并应用侧边砖瓦图的位置
+	n_number_grids_side.position = Vector2(0.0, bar_width - EditableGrids.animate_now_offset.y) #计算并应用侧边砖瓦图的位置
+	n_number_grids_up.scale.y = NumberBar.bar_width / (Main.TILE_NORMAL_SIZE) #将顶部数字栏网格的纵向缩放变换到刚好填充顶部数字栏的空间
+	n_number_grids_side.scale.x = NumberBar.bar_width / (Main.TILE_NORMAL_SIZE) #将侧边数字栏网格的横向缩放变换到刚好填充侧边数字栏的空间
 	## /03

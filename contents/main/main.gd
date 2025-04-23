@@ -50,6 +50,8 @@ const ICON_TEXTURES: Dictionary[StringName, CompressedTexture2D] = {
 	&"Detail_Eraser": preload("res://contents/icon_detail_eraser_0.png"),
 	&"Detail_Eraser_Dishcloth": preload("res://contents/icon_detail_eraser_dishcloth_0.png"),
 	&"Detail_Eraser_Eraser": preload("res://contents/icon_detail_eraser_eraser_0.png"),
+	&"Detail_Fill_Type_Fill": preload("res://contents/icon_detail_fill_type_fill.png"),
+	&"Detail_Fill_Type_Cross": preload("res://contents/icon_detail_fill_type_cross.png"),
 	&"Hand": preload("res://contents/icon_hand_0.png"),
 	&"Menu": preload("res://contents/icon_menu_0.png"),
 	&"Back": preload("res://contents/icon_back_0.png"),
@@ -109,6 +111,10 @@ static func button_disable_check(button_name: StringName) -> bool:
 			return tools_detail_state.brush_mode == ToolsDetailState.BrushMode.BRUSH
 		&"DetailButton_BrushModePencil": #侧边栏工具详细层按钮-笔刷工具.模式.铅笔
 			return tools_detail_state.brush_mode == ToolsDetailState.BrushMode.PENCIL
+		&"DetailButton_BrushFillType_Fill": #侧边栏工具详细层按钮-笔刷工具.填充模式.实心块
+			return tools_detail_state.brush_fill_type == ToolsDetailState.ToolFillType.FILL
+		&"DetailButton_BrushFillType_Cross": #侧边栏工具详细层按钮-笔刷工具.填充模式.叉叉
+			return tools_detail_state.brush_fill_type == ToolsDetailState.ToolFillType.CROSS
 		&"DetailButton_EraserModeDishcloth": #侧边栏工具详细层按钮-擦除工具.模式.抹布
 			return tools_detail_state.eraser_mode == ToolsDetailState.EraserMode.DISHCLOTH
 		&"DetailButton_EraserModeEraser": #侧边栏工具详细层按钮-擦除工具.模式.橡皮
@@ -161,6 +167,10 @@ static func on_button_trigged(button_name: StringName) -> void:
 		&"DetailButton_BrushModePencil": #侧边栏工具详细层按钮-笔刷工具.模式.铅笔
 			tools_detail_state.brush_mode = ToolsDetailState.BrushMode.PENCIL #将工具详细状态的笔刷模式设为铅笔
 			NumberBar.icon_texture = ICON_TEXTURES[&"Detail_Brush_Pencil"] #将工具提示图标设为笔刷工具.铅笔图标
+		&"DetailButton_BrushFillType_Fill": #侧边栏工具详细层按钮-笔刷工具.填充模式.实心块填充
+			tools_detail_state.brush_fill_type = ToolsDetailState.ToolFillType.FILL #将工具详细状态的笔刷填充模式设为实心块
+		&"DetailButton_BrushFillType_Cross": #侧边栏工具详细层按钮-笔刷工具.填充模式.叉叉填充
+			tools_detail_state.brush_fill_type = ToolsDetailState.ToolFillType.CROSS #将工具详细状态的笔刷填充模式设为叉叉
 		&"DetailButton_EraserModeDishcloth": #侧边栏工具详细层按钮-擦除工具.模式.抹布
 			tools_detail_state.eraser_mode = ToolsDetailState.EraserMode.DISHCLOTH #将工具详细状态的擦除模式设为抹布
 			NumberBar.icon_texture = ICON_TEXTURES[&"Detail_Eraser_Dishcloth"] #将工具提示图标设为擦除工具.抹布图标

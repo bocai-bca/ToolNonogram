@@ -13,7 +13,7 @@ static var cps: PackedScene = preload("res://contents/detail_node_multi_buttons/
 ## 按钮被启用时图标的调制
 const ICON_MODULATE_ENABLED: Color = Color(0.0, 0.0, 0.0, 1.0)
 ## 按钮被禁用时图标的调制
-const ICON_MODULATE_DISABLED: Color = Color(0.4, 0.4, 0.4, 1.0)
+const ICON_MODULATE_DISABLED: Color = Color(0.8, 0.8, 0.8, 1.0)
 
 ## 按钮名称
 var button_name: StringName

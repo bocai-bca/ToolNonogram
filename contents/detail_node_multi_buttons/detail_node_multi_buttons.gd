@@ -11,9 +11,11 @@ static var middle_button_styleboxes: Array[StyleBoxFlat]
 static var bottom_button_styleboxes: Array[StyleBoxFlat]
 
 ## 每个按钮的默认尺寸，需要根据根节点的size属性手动设置，用于图标的缩放计算
-const DEFAULT_SIZE_PER_BUTTON: Vector2 = Vector2(120.0, 120.0)
+const DEFAULT_SIZE_PER_BUTTON: Vector2 = Vector2(120.0, 90.0)
 ## 按钮圆角半径乘数，基于视口纵向长度
 const CORNER_RADIUS_MULTI: float = 30.0 / Main.WINDOW_SIZE_DEFAULT.y
+## 每个按钮纵向长度乘数，基于按钮的横向尺寸
+const DEFAULT_HEIGHT_MULTI_PER_BUTTON: float = DEFAULT_SIZE_PER_BUTTON.y / DEFAULT_SIZE_PER_BUTTON.x
 ## 按钮边角细节
 const BUTTON_STYLEBOX_CORNER_DETAIL: int = 5
 ## 按钮背景颜色-正常
@@ -23,7 +25,7 @@ const BUTTON_STYLEBOX_BG_COLOR_HOVER: Color = Color(0.7, 0.7, 0.7, 1.0)
 ## 按钮背景颜色-点击
 const BUTTON_STYLEBOX_BG_COLOR_PRESSED: Color = Color(0.6, 0.6, 0.6, 1.0)
 ## 按钮背景颜色-禁用
-const BUTTON_STYLEBOX_BG_COLOR_DISABLED: Color = Color(0.75, 0.75, 0.75, 1.0)
+const BUTTON_STYLEBOX_BG_COLOR_DISABLED: Color = Color(0.3, 0.3, 0.3, 1.0)
 
 static func _static_init() -> void:
 	var stylebox_top_normal: StyleBoxFlat = StyleBoxFlat.new()
@@ -69,8 +71,9 @@ static func _static_init() -> void:
 func _process(delta: float) -> void:
 	var window_size: Vector2 = Vector2(get_window().size) #获取窗口大小
 	for button in get_children() as Array[DetailNode_MultiButtons_Member]: #遍历所有子节点
-		button.custom_minimum_size.y = button.size.x
-		button.n_icon.scale = Vector2.ONE * minf(button.size.x / DEFAULT_SIZE_PER_BUTTON.x, button.size.y / DEFAULT_SIZE_PER_BUTTON.y) #计算图标的缩放变换，为按钮根节点的实际尺寸除以默认尺寸，该结果乘入图标的缩放中即可将图标缩放至按钮相当
+		button.custom_minimum_size.y = button.size.x * DEFAULT_HEIGHT_MULTI_PER_BUTTON #设置按钮的纵向尺寸
+		#button.n_icon.scale = Vector2.ONE * minf(button.size.x / DEFAULT_SIZE_PER_BUTTON.x, button.size.y / DEFAULT_SIZE_PER_BUTTON.y) #计算图标的缩放变换，为按钮根节点的实际尺寸除以默认尺寸，该结果乘入图标的缩放中即可将图标缩放至按钮相当
+		button.n_icon.scale = Vector2.ONE * button.size.y / DEFAULT_SIZE_PER_BUTTON.x #计算图标的缩放变换，为按钮根节点的实际尺寸除以默认尺寸，该结果乘入图标的缩放中即可将图标缩放至按钮相当
 		button.n_icon.position = button.size / 2.0
 		if (button.get_index() == 0): #如果当前按钮是第一个按钮
 			button.add_theme_stylebox_override(&"normal", top_button_styleboxes[0])

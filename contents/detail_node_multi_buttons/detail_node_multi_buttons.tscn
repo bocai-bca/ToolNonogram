@@ -7,4 +7,5 @@
 offset_right = 120.0
 offset_bottom = 40.0
 theme = ExtResource("1_1fhto")
+theme_override_constants/separation = 0
 script = ExtResource("1_8ohil")

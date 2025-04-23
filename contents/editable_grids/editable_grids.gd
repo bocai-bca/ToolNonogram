@@ -8,7 +8,7 @@ class_name EditableGrids
 
 enum FillType{
 	EMPTY, #空格
-	BLOCK, #实心块
+	FILL, #实心块
 	CROSS, #叉叉
 }
 
@@ -54,7 +54,7 @@ func _process(delta: float) -> void:
 	## /00
 	## 01更新背景
 	n_back_color.position = -position #将本类根节点的坐标的相反数赋给背景颜色矩形的坐标，达到使其坐标恒定处于一个原点的作用
-	n_back_color.size = window_size #更新背景颜色矩形的尺寸为视口尺寸
+	n_back_color.size = window_size / scale #更新背景颜色矩形的尺寸为视口尺寸
 	## /01
 
 ## 获取鼠标指针处于的格子坐标(原点为0,0)
@@ -89,7 +89,7 @@ static func get_type_atlas_coords(fill_type: FillType) -> Vector2i:
 	match (fill_type): #匹配填充类型
 		FillType.EMPTY: #空格
 			return Vector2i(-1, -1)
-		FillType.BLOCK: #实心块
+		FillType.FILL: #实心块
 			return Vector2i(1, 1)
 		FillType.CROSS: #叉叉
 			return Vector2i(2, 1)
