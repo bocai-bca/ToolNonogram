@@ -86,6 +86,8 @@ static var grids_zoom_blocks: int = 5
 static var focus_tool: FocusTool = FocusTool.NONE
 ## 各工具的详细层状态。随着将来添加越来越多的工具，请尽量考虑将工具的详细层配置数据存放在此成员中
 static var tools_detail_state: ToolsDetailState = ToolsDetailState.new()
+## 各菜单的详细状态数据(包含主菜单和弹出菜单)
+static var menu_detail_state: MenuDetailState = MenuDetailState.new()
 
 func _enter_tree() -> void:
 	fs = self #定义伪单例
@@ -122,7 +124,7 @@ static func button_disable_check(button_name: StringName) -> bool:
 	return false
 
 #region 信号方法
-## 任意按钮被点击时触发信号对应的捕获方法，按钮名具有以下前缀：SideButton表侧边栏底层按钮，MenuButton表菜单按钮，ClassButton表工具类别层按钮，DetailButton表工具详细层按钮
+## 任意按钮被点击时触发信号对应的捕获方法，按钮名具有以下前缀：SideButton表侧边栏底层按钮，MenuButton表菜单按钮，ClassButton表工具类别层按钮，DetailButton表工具详细层按钮，Popup表弹出菜单
 static func on_button_trigged(button_name: StringName) -> void:
 	match (button_name): #匹配检查button_name
 		&"SideButton_InteractClass": #侧边栏按钮-交互类
@@ -177,5 +179,13 @@ static func on_button_trigged(button_name: StringName) -> void:
 		&"DetailButton_EraserModeEraser": #侧边栏工具详细层按钮-擦除工具.模式.橡皮
 			tools_detail_state.eraser_mode = ToolsDetailState.EraserMode.ERASER #将工具详细状态的擦除模式设为橡皮
 			NumberBar.icon_texture = ICON_TEXTURES[&"Detail_Eraser_Eraser"] #将工具提示图标设为擦除工具.橡皮图标
+		&"Popup_NewPaper_Mode_Puzzle": #弹出菜单-新建题纸.游戏模式.解题
+			menu_detail_state.popup_newpaper_mode = MenuDetailState.GameMode.PUZZLE #将游戏模式设为解题
+		&"Popup_NewPaper_Mode_Sandbox": #弹出菜单-新建题纸.游戏模式.沙盒
+			menu_detail_state.popup_newpaper_mode = MenuDetailState.GameMode.SANDBOX #将游戏模式设为沙盒
+		&"Popup_NewPaper_Confirm": #弹出菜单-新建题纸.确认并创建
+			pass
+		&"Popup_NewPaper_Cancel": #弹出菜单-新建题纸.取消
+			pass
 	SideBar.update_detail_buttons_disable() #更新按钮禁用状态
 #endregion

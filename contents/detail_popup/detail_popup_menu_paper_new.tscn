@@ -1,8 +1,52 @@
-[gd_scene load_steps=4 format=3 uid="uid://cdfe7to0578iv"]
+[gd_scene load_steps=8 format=3 uid="uid://cdfe7to0578iv"]
 
 [ext_resource type="Theme" uid="uid://eqtfln2mgj5a" path="res://contents/detail_popup/detail_popup_theme.tres" id="1_0ausa"]
 [ext_resource type="Script" uid="uid://ca5n5exaexmfj" path="res://contents/detail_popup/detail_popup_menu_paper_new.gd" id="2_0ausa"]
 [ext_resource type="Script" uid="uid://dy5bm1g0m8k3y" path="res://contents/detail_popup/one_in_multi_button_container.gd" id="3_bc0ec"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bc0ec"]
+bg_color = Color(0.7, 0.7, 0.7, 1)
+border_width_left = 15
+border_width_top = 15
+border_width_right = 15
+border_width_bottom = 15
+border_blend = true
+corner_radius_top_left = 30
+corner_radius_top_right = 30
+corner_radius_bottom_right = 30
+corner_radius_bottom_left = 30
+corner_detail = 5
+expand_margin_left = 30.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_s6id4"]
+bg_color = Color(0.2, 0.2, 0.2, 1)
+corner_radius_top_left = 30
+corner_radius_top_right = 30
+corner_radius_bottom_right = 30
+corner_radius_bottom_left = 30
+corner_detail = 5
+expand_margin_left = 30.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1sbss"]
+bg_color = Color(0.8, 0.8, 0.8, 1)
+corner_radius_top_left = 30
+corner_radius_top_right = 30
+corner_radius_bottom_right = 30
+corner_radius_bottom_left = 30
+corner_detail = 5
+expand_margin_left = 30.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_55ko6"]
+bg_color = Color(1, 1, 1, 0.611765)
+corner_radius_top_left = 50
+corner_radius_top_right = 50
+corner_radius_bottom_right = 50
+corner_radius_bottom_left = 50
+corner_detail = 5
+expand_margin_left = 32.0
+expand_margin_top = 32.0
+expand_margin_right = 32.0
+expand_margin_bottom = 32.0
 
 [node name="DetailPopupMenuPaperNew" type="PanelContainer"]
 anchors_preset = 15
@@ -17,36 +61,128 @@ grow_vertical = 2
 theme = ExtResource("1_0ausa")
 script = ExtResource("2_0ausa")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="RootContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="VBoxContainer"]
+[node name="Title" type="Label" parent="RootContainer"]
 layout_mode = 2
 text = "新建题纸"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
-self_modulate = Color(1, 1, 1, 0)
+[node name="ModeTextContainer" type="HBoxContainer" parent="RootContainer"]
 layout_mode = 2
 
-[node name="SubTitle_Mode" type="Label" parent="VBoxContainer"]
+[node name="SubTitle_Mode" type="Label" parent="RootContainer/ModeTextContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "游戏模式"
 vertical_alignment = 1
 
-[node name="OIMContainer_Type" type="HBoxContainer" parent="VBoxContainer"]
+[node name="LineEdit_Seed" type="LineEdit" parent="RootContainer/ModeTextContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+theme_override_styles/focus = SubResource("StyleBoxFlat_bc0ec")
+theme_override_styles/read_only = SubResource("StyleBoxFlat_s6id4")
+theme_override_styles/normal = SubResource("StyleBoxFlat_1sbss")
+placeholder_text = "输入种子，留空随机"
+context_menu_enabled = false
+emoji_menu_enabled = false
+shortcut_keys_enabled = false
+caret_blink = true
+
+[node name="OIMContainer_Mode" type="HBoxContainer" parent="RootContainer"]
 layout_mode = 2
 alignment = 1
 script = ExtResource("3_bc0ec")
 
-[node name="Button_ModePuzzle" type="Button" parent="VBoxContainer/OIMContainer_Type"]
+[node name="Button_ModePuzzle" type="Button" parent="RootContainer/OIMContainer_Mode"]
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
-text = "题目"
+text = "解题"
 
-[node name="Button_ModeSandbox" type="Button" parent="VBoxContainer/OIMContainer_Type"]
+[node name="Button_ModeSandbox" type="Button" parent="RootContainer/OIMContainer_Mode"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "沙盒"
+
+[node name="SubTitle_Size" type="Label" parent="RootContainer"]
+layout_mode = 2
+text = "尺寸"
+vertical_alignment = 1
+
+[node name="Container_Size" type="HBoxContainer" parent="RootContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="SpinBox_SizeX" type="SpinBox" parent="RootContainer/Container_Size"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 5.0
+max_value = 25.0
+step = 5.0
+value = 5.0
+rounded = true
+alignment = 1
+prefix = "长"
+custom_arrow_step = 5.0
+
+[node name="cross" type="Label" parent="RootContainer/Container_Size"]
+layout_mode = 2
+text = "×"
+horizontal_alignment = 1
+
+[node name="SpinBox_SizeY" type="SpinBox" parent="RootContainer/Container_Size"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 5.0
+max_value = 25.0
+step = 5.0
+value = 5.0
+rounded = true
+alignment = 1
+prefix = "宽"
+custom_arrow_step = 5.0
+
+[node name="Control_SpaceFill" type="Control" parent="RootContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Container_BottomButton" type="HBoxContainer" parent="RootContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Control_SpaceFill" type="Control" parent="RootContainer/Container_BottomButton"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Button_Confirm" type="Button" parent="RootContainer/Container_BottomButton"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+text = "确认并创建"
+
+[node name="Control_SpaceFill2" type="Control" parent="RootContainer/Container_BottomButton"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Button_Cancel" type="Button" parent="RootContainer/Container_BottomButton"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+text = "取消"
+
+[node name="Control_SpaceFill3" type="Control" parent="RootContainer/Container_BottomButton"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BlockButton" type="Button" parent="."]
+visible = false
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/disabled = SubResource("StyleBoxFlat_55ko6")
+theme_override_styles/hover = SubResource("StyleBoxFlat_55ko6")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_55ko6")
+theme_override_styles/normal = SubResource("StyleBoxFlat_55ko6")

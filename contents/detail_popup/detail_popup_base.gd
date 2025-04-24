@@ -10,3 +10,6 @@ class_name DetailPopupBase
 const POPUP_MENU_SCENES: Dictionary[StringName, PackedScene] = {
 	&"Menu_Paper_New": preload("res://contents/detail_popup/detail_popup_menu_paper_new.tscn"), #菜单.题纸.新建
 }
+
+## 菜单禁用，为true时整个菜单的交互会被禁用，用于需要让用户等待而暂时阻止用户对菜单进行交互的时候，或者是菜单打开或关闭的期间。关于本属性的具体效果实现需要在子类中手动实现
+var disabled: bool = false

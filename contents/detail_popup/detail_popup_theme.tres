@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=6 format=3 uid="uid://eqtfln2mgj5a"]
+[gd_resource type="Theme" load_steps=17 format=3 uid="uid://eqtfln2mgj5a"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pr3ne"]
 bg_color = Color(0.2, 0.2, 0.2, 1)
@@ -31,6 +31,28 @@ corner_radius_bottom_right = 30
 corner_radius_bottom_left = 30
 corner_detail = 5
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lb8kd"]
+bg_color = Color(0.7, 0.7, 0.7, 1)
+border_width_left = 15
+border_width_top = 15
+border_width_bottom = 15
+border_blend = true
+corner_radius_top_left = 30
+corner_radius_bottom_left = 30
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_er1ma"]
+bg_color = Color(0.8, 0.8, 0.8, 1)
+corner_radius_top_left = 30
+corner_radius_bottom_left = 30
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gac2u"]
+bg_color = Color(0.8, 0.8, 0.8, 1)
+corner_radius_top_left = 30
+corner_radius_bottom_left = 30
+corner_detail = 5
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h7cra"]
 bg_color = Color(1, 1, 1, 1)
 corner_radius_top_left = 50
@@ -44,6 +66,44 @@ expand_margin_bottom = 32.0
 shadow_color = Color(0, 0, 0, 0.498039)
 shadow_size = 108
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_o1day"]
+bg_color = Color(0.8, 0.8, 0.8, 1)
+corner_radius_bottom_right = 30
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f3dyt"]
+bg_color = Color(0.4, 0.4, 0.4, 1)
+corner_radius_bottom_right = 30
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ne43h"]
+bg_color = Color(0.7, 0.7, 0.7, 1)
+corner_radius_bottom_right = 30
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_isasr"]
+corner_radius_bottom_right = 30
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8b5ww"]
+bg_color = Color(0.8, 0.8, 0.8, 1)
+corner_radius_top_right = 30
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_04r62"]
+bg_color = Color(0.2, 0.2, 0.2, 1)
+corner_radius_top_right = 30
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_s1y8l"]
+bg_color = Color(0.7, 0.7, 0.7, 1)
+corner_radius_top_right = 30
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ya15t"]
+corner_radius_top_right = 30
+corner_detail = 5
+
 [resource]
 default_font_size = 64
 Button/colors/font_color = Color(0, 0, 0, 1)
@@ -54,7 +114,34 @@ Button/styles/disabled = SubResource("StyleBoxFlat_pr3ne")
 Button/styles/hover = SubResource("StyleBoxFlat_xjyda")
 Button/styles/normal = SubResource("StyleBoxFlat_o0p6e")
 Button/styles/pressed = SubResource("StyleBoxFlat_og4ym")
-HSeparator/constants/separation = 32
 Label/colors/font_color = Color(0, 0, 0, 1)
+LineEdit/colors/caret_color = Color(0, 0, 0, 1)
+LineEdit/colors/font_color = Color(0, 0, 0, 1)
+LineEdit/colors/font_placeholder_color = Color(0, 0, 0, 0.501961)
+LineEdit/colors/font_selected_color = Color(0, 0, 0, 1)
+LineEdit/colors/font_uneditable_color = Color(0, 0, 0, 1)
+LineEdit/colors/selection_color = Color(0.16, 0.16, 0.16, 0.25098)
+LineEdit/constants/caret_width = 4
+LineEdit/styles/focus = SubResource("StyleBoxFlat_lb8kd")
+LineEdit/styles/normal = SubResource("StyleBoxFlat_er1ma")
+LineEdit/styles/read_only = SubResource("StyleBoxFlat_gac2u")
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_h7cra")
+SpinBox/colors/down_disabled_icon_modulate = Color(0.8, 0.8, 0.8, 1)
+SpinBox/colors/down_hover_icon_modulate = Color(0, 0, 0, 1)
+SpinBox/colors/down_icon_modulate = Color(0, 0, 0, 1)
+SpinBox/colors/down_pressed_icon_modulate = Color(0, 0, 0, 1)
+SpinBox/colors/up_disabled_icon_modulate = Color(0.8, 0.8, 0.8, 1)
+SpinBox/colors/up_hover_icon_modulate = Color(0, 0, 0, 1)
+SpinBox/colors/up_icon_modulate = Color(0, 0, 0, 1)
+SpinBox/colors/up_pressed_icon_modulate = Color(0, 0, 0, 1)
+SpinBox/constants/buttons_width = 92
+SpinBox/constants/field_and_buttons_separation = 0
+SpinBox/styles/down_background = SubResource("StyleBoxFlat_o1day")
+SpinBox/styles/down_background_disabled = SubResource("StyleBoxFlat_f3dyt")
+SpinBox/styles/down_background_hovered = SubResource("StyleBoxFlat_ne43h")
+SpinBox/styles/down_background_pressed = SubResource("StyleBoxFlat_isasr")
+SpinBox/styles/up_background = SubResource("StyleBoxFlat_8b5ww")
+SpinBox/styles/up_background_disabled = SubResource("StyleBoxFlat_04r62")
+SpinBox/styles/up_background_hovered = SubResource("StyleBoxFlat_s1y8l")
+SpinBox/styles/up_background_pressed = SubResource("StyleBoxFlat_ya15t")
 VBoxContainer/constants/separation = 16
