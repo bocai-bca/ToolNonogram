@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://dsyodv46dneyp"]
+[gd_scene load_steps=23 format=3 uid="uid://dsyodv46dneyp"]
 
 [ext_resource type="Script" uid="uid://ddw07f0fi354e" path="res://contents/main/main.gd" id="1_400j3"]
 [ext_resource type="PackedScene" uid="uid://dymxav2uetw0l" path="res://contents/editable_grids/editable_grids.tscn" id="2_3fq6y"]
@@ -12,6 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://dwjqbrpd8o0bf" path="res://contents/icon_hand_0.png" id="6_xbqcj"]
 [ext_resource type="Script" uid="uid://cenox043hlynv" path="res://contents/main/menu.gd" id="9_wy7hg"]
 [ext_resource type="LabelSettings" uid="uid://vocixu51rmfu" path="res://contents/main/sidebar_label_settings.tres" id="11_1a5w3"]
+[ext_resource type="Script" uid="uid://cfg4aul0nvkn0" path="res://contents/main/popup_manager.gd" id="13_k1fi1"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k1fi1"]
 bg_color = Color(0.95, 0.95, 0.95, 1)
@@ -427,3 +428,6 @@ focus_mode = 0
 mouse_filter = 2
 disabled = true
 text = "从画布创建题目"
+
+[node name="PopupManager" type="Node2D" parent="."]
+script = ExtResource("13_k1fi1")

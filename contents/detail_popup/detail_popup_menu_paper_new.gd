@@ -2,6 +2,9 @@ extends DetailPopupBase
 class_name DetailPopupBase_Main_Paper_New
 ## 详细信息弹窗-菜单.题纸.新建
 
+## 类场景封包ClassPackedScene
+static var cps: PackedScene = preload("res://contents/detail_popup/detail_popup_menu_paper_new.tscn") as PackedScene
+
 @onready var n_oimcontainer_mode: OneInMultiButtonContainer = $RootContainer/OIMContainer_Mode as OneInMultiButtonContainer
 @onready var n_button_mode_puzzle: Button = $RootContainer/OIMContainer_Type/Button_ModePuzzle as Button
 @onready var n_button_mode_sandbox: Button = $RootContainer/OIMContainer_Type/Button_ModeSandbox as Button
@@ -26,8 +29,13 @@ func _ready() -> void:
 		func(): Main.on_button_trigged(&"Popup_NewPaper_Cancel")
 	)
 
-## 从Main类读取菜单状态并更新本实例的各项状态。为避免n_oimcontainer_mode.set_button_disable()被连续两次调用，本方法应设计为只在菜单被初始化时使用，而不是每次数据变化时就使用
-func read_data() -> void:
+func _process(delta: float) -> void:
+	update_timer(delta) #更新倒计时器
+	####
+	update_free() #更新自主关闭
+
+## [虚函数-实现]从Main类读取菜单状态并更新本实例的各项状态。为避免n_oimcontainer_mode.set_button_disable()被连续两次调用，本方法应设计为只在菜单被初始化时使用，而不是每次数据变化时就使用
+func _read_data() -> void:
 	match (Main.menu_detail_state.popup_newpaper_mode): #匹配游戏模式
 		MenuDetailState.GameMode.PUZZLE: #解题模式
 			n_oimcontainer_mode.set_button_disable(n_button_mode_puzzle) #禁用解题模式按钮
@@ -38,6 +46,6 @@ func read_data() -> void:
 	n_spinbox_size_x.value = Main.menu_detail_state.popup_newpaper_size.x #设置题纸尺寸的X
 	n_spinbox_size_y.value = Main.menu_detail_state.popup_newpaper_size.y #设置题纸尺寸的Y
 
-## 将本实例的各项状态保存到Main类的菜单状态
-func store_data() -> void:
+## [虚函数-实现]将本实例的各项状态保存到Main类的菜单状态
+func _store_data() -> void:
 	pass
