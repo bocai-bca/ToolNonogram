@@ -16,6 +16,7 @@ static var cps: PackedScene = preload("res://contents/detail_popup/detail_popup_
 @onready var n_spinbox_size_y: SpinBox = $RootContainer/Container_Size/SpinBox_SizeX as SpinBox
 
 func _ready() -> void:
+	PopupManager.fs.close_popup.connect(check_close_signal) #将关闭弹出菜单信号连接到方法
 	n_button_mode_puzzle.pressed.connect( #题纸模式.解题
 		func(): Main.on_button_trigged(&"Popup_NewPaper_Mode_Puzzle")
 	)
@@ -31,7 +32,10 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	update_timer(delta) #更新倒计时器
-	####
+	if (disabled): #如果按钮被禁用
+		n_block_button.visible = true #将交互阻塞按钮启用
+	else: #否则(按钮被启用)
+		n_block_button.visible = false #将交互阻塞按钮禁用
 	update_free() #更新自主关闭
 
 ## [虚函数-实现]从Main类读取菜单状态并更新本实例的各项状态。为避免n_oimcontainer_mode.set_button_disable()被连续两次调用，本方法应设计为只在菜单被初始化时使用，而不是每次数据变化时就使用

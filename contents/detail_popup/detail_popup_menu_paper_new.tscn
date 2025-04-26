@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://cdfe7to0578iv"]
+[gd_scene load_steps=7 format=3 uid="uid://cdfe7to0578iv"]
 
 [ext_resource type="Theme" uid="uid://eqtfln2mgj5a" path="res://contents/detail_popup/detail_popup_theme.tres" id="1_0ausa"]
 [ext_resource type="Script" uid="uid://ca5n5exaexmfj" path="res://contents/detail_popup/detail_popup_menu_paper_new.gd" id="2_0ausa"]
@@ -35,18 +35,6 @@ corner_radius_bottom_right = 30
 corner_radius_bottom_left = 30
 corner_detail = 5
 expand_margin_left = 30.0
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_55ko6"]
-bg_color = Color(1, 1, 1, 0.611765)
-corner_radius_top_left = 50
-corner_radius_top_right = 50
-corner_radius_bottom_right = 50
-corner_radius_bottom_left = 50
-corner_detail = 5
-expand_margin_left = 32.0
-expand_margin_top = 32.0
-expand_margin_right = 32.0
-expand_margin_bottom = 32.0
 
 [node name="DetailPopupMenuPaperNew" type="PanelContainer"]
 anchors_preset = 15
@@ -182,7 +170,4 @@ size_flags_horizontal = 3
 visible = false
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/disabled = SubResource("StyleBoxFlat_55ko6")
-theme_override_styles/hover = SubResource("StyleBoxFlat_55ko6")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_55ko6")
-theme_override_styles/normal = SubResource("StyleBoxFlat_55ko6")
+flat = true

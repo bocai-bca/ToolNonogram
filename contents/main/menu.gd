@@ -83,7 +83,7 @@ func _ready() -> void:
 	n_menu_button_close_menu.pressed.connect( #关闭菜单
 		func(): Main.on_button_trigged(&"MenuButton_CloseMenu"))
 	n_menu_button_new.pressed.connect( #新建题纸
-		func(): Main.on_button_trigged(&"MenuButton_New"))
+		func(): Main.on_button_trigged(&"MenuButton_Paper_New"))
 	n_menu_button_open.pressed.connect( #打开题纸
 		func(): Main.on_button_trigged(&"MenuButton_Open"))
 	n_menu_button_save.pressed.connect( #保存题纸

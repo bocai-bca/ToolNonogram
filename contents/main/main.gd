@@ -139,6 +139,9 @@ static func on_button_trigged(button_name: StringName) -> void:
 			is_menu_open = true #打开菜单
 		&"MenuButton_CloseMenu": #菜单按钮-关闭菜单
 			is_menu_open = false #关闭菜单
+		&"MenuButton_Paper_New": #菜单按钮-新建题纸
+			PopupManager.add_popup(PopupManager.create_popup(&"Paper_New")) #新建一个新建题纸弹出菜单
+			is_menu_open = false #关闭菜单
 		&"ClassButton_Back": #侧边栏工具类别层按钮-返回底部
 			SideBar.fs.switch_focus(SideBar.FocusClass.NONE, FocusTool.NONE) #将侧边栏焦点切换到底部
 			NumberBar.icon_texture = ICON_TEXTURES[&"Hand"] #将工具提示图标设为拖手图标
@@ -186,6 +189,6 @@ static func on_button_trigged(button_name: StringName) -> void:
 		&"Popup_NewPaper_Confirm": #弹出菜单-新建题纸.确认并创建
 			pass
 		&"Popup_NewPaper_Cancel": #弹出菜单-新建题纸.取消
-			pass
+			PopupManager.fs.emit_signal(&"close_popup", &"Paper_New")
 	SideBar.update_detail_buttons_disable() #更新按钮禁用状态
 #endregion

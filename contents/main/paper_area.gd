@@ -24,6 +24,10 @@ static var grids_animation_timer: float = 0.0
 static var click_state: ClickState = ClickState.new()
 ## 答题网格的纵向空间
 static var grids_free_height: float = 0.0
+## 当前是否允许鼠标在答题网格上的交互
+static var can_mouse_interactive: bool:
+	get:
+		return (PopupManager.alive_popup_count == 0 and not Main.is_menu_open) #返回判据，返回true需要：当前没有弹出菜单、没有打开底部菜单
 
 func _process(delta: float) -> void:
 	var window_size: Vector2 = Vector2(get_window().size) #获取窗口大小
@@ -34,33 +38,34 @@ func _process(delta: float) -> void:
 	update_click_state()
 	## /00
 	## 01所有工具的行为
-	match (Main.focus_tool): #匹配焦点工具
-		Main.FocusTool.NONE: #拖手工具
-			## 答题网格移动
-			if (click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS): #如果鼠标按下位置处于答题网格中
-				if (click_state.is_pressing()): #如果鼠标正被按下
-					if (click_state.is_just()): #如果是刚刚按下
-						EditableGrids.animate_start_offset = EditableGrids.animate_now_offset #将起始偏移量设为当前的实际偏移量
-					EditableGrids.update_offset_on_grabbing(click_state.last_update_pos - click_state.current_pos) #调用答题网格的更新偏移量方法
-					grids_animation_timer = EditableGrids.ANIMATION_TIME #重设计时器时间
-					is_allow_grids_animation_timer_update = false #关闭计时器
-				else: #否则(鼠标没在按下)
-					is_allow_grids_animation_timer_update = true #开启计时器
-			elif (click_state.pressed_at_area == ClickState.AreaOfPaper.NUMBER_BAR_UP or click_state.pressed_at_area == ClickState.AreaOfPaper.NUMBER_BAR_SIDE): #如果鼠标按下位置处于数字栏
-				pass
-			## /
-		Main.FocusTool.BRUSH: #笔刷工具
-			if (click_state.is_pressing() and click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS): #如果鼠标正被点击，且按下位置处于答题网格中
-				if (EditableGrids.is_pos_in_grid(click_state.current_grid_pos)): #如果鼠标所在的坐标有效
-					match (Main.tools_detail_state.brush_fill_type): #匹配笔刷工具的填充类型
-						ToolsDetailState.ToolFillType.FILL: #实心块
-							n_base_grids.write_slot(click_state.current_grid_pos, EditableGrids.FillType.FILL) #将指定格子填写为实心块
-						ToolsDetailState.ToolFillType.CROSS: #叉叉
-							n_base_grids.write_slot(click_state.current_grid_pos, EditableGrids.FillType.CROSS) #将指定格子填写为叉叉
-		Main.FocusTool.ERASER: #擦除工具
-			if (click_state.is_pressing() and click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS): #如果鼠标正被点击，且按下位置处于答题网格中
-				if (EditableGrids.is_pos_in_grid(click_state.current_grid_pos)): #如果鼠标所在的坐标有效
-					n_base_grids.clear_slot(click_state.current_grid_pos)
+	if (can_mouse_interactive): #如果允许鼠标交互
+		match (Main.focus_tool): #匹配焦点工具
+			Main.FocusTool.NONE: #拖手工具
+				## 答题网格移动
+				if (click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS): #如果鼠标按下位置处于答题网格中
+					if (click_state.is_pressing()): #如果鼠标正被按下
+						if (click_state.is_just()): #如果是刚刚按下
+							EditableGrids.animate_start_offset = EditableGrids.animate_now_offset #将起始偏移量设为当前的实际偏移量
+						EditableGrids.update_offset_on_grabbing(click_state.last_update_pos - click_state.current_pos) #调用答题网格的更新偏移量方法
+						grids_animation_timer = EditableGrids.ANIMATION_TIME #重设计时器时间
+						is_allow_grids_animation_timer_update = false #关闭计时器
+					else: #否则(鼠标没在按下)
+						is_allow_grids_animation_timer_update = true #开启计时器
+				elif (click_state.pressed_at_area == ClickState.AreaOfPaper.NUMBER_BAR_UP or click_state.pressed_at_area == ClickState.AreaOfPaper.NUMBER_BAR_SIDE): #如果鼠标按下位置处于数字栏
+					pass
+				## /
+			Main.FocusTool.BRUSH: #笔刷工具
+				if (click_state.is_pressing() and click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS): #如果鼠标正被点击，且按下位置处于答题网格中
+					if (EditableGrids.is_pos_in_grid(click_state.current_grid_pos)): #如果鼠标所在的坐标有效
+						match (Main.tools_detail_state.brush_fill_type): #匹配笔刷工具的填充类型
+							ToolsDetailState.ToolFillType.FILL: #实心块
+								n_base_grids.write_slot(click_state.current_grid_pos, EditableGrids.FillType.FILL) #将指定格子填写为实心块
+							ToolsDetailState.ToolFillType.CROSS: #叉叉
+								n_base_grids.write_slot(click_state.current_grid_pos, EditableGrids.FillType.CROSS) #将指定格子填写为叉叉
+			Main.FocusTool.ERASER: #擦除工具
+				if (click_state.is_pressing() and click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS): #如果鼠标正被点击，且按下位置处于答题网格中
+					if (EditableGrids.is_pos_in_grid(click_state.current_grid_pos)): #如果鼠标所在的坐标有效
+						n_base_grids.clear_slot(click_state.current_grid_pos)
 
 func _physics_process(delta: float) -> void:
 	pass

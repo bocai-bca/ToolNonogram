@@ -430,4 +430,13 @@ disabled = true
 text = "从画布创建题目"
 
 [node name="PopupManager" type="Node2D" parent="."]
+position = Vector2(960, 540)
 script = ExtResource("13_k1fi1")
+
+[node name="BackColor" type="ColorRect" parent="PopupManager"]
+offset_left = -960.0
+offset_top = -540.0
+offset_right = 960.0
+offset_bottom = 540.0
+mouse_filter = 2
+color = Color(0, 0, 0, 0)

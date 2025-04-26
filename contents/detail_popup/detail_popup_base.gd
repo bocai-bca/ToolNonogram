@@ -14,6 +14,10 @@ const POPUP_MENU_SCENES: Dictionary[StringName, PackedScene] = {
 const FADEIN_TIME: float = 1.25
 ## 滑出动画时间，单位为秒，表示菜单从屏幕中间离开到屏幕外所需的时间(-1*this[100%] <=== 0[0%])
 const FADEOUT_TIME: float = FADEIN_TIME
+## 滑入动画的落点位置Y乘数，基于视口纵向长度
+const FADEIN_POS_Y_MULTI: float = 0.5
+## 滑出动画的落点位置Y乘数，基于视口纵向长度
+const FADEOUT_POS_Y_MULTI: float = -0.5
 
 ## 本弹出菜单启用状态(简称存活态)，为true时一切正常运作，为false时菜单将会自主关闭并自毁
 var alive: bool = true:
@@ -30,6 +34,25 @@ var fade_timer: float = FADEIN_TIME
 ## 本弹出菜单的名称。目前需要设计该值由谁赋予
 var popup_name: StringName 
 
+## 当_ready()被子类重写时，需要在其内部加上相同内容
+func _ready() -> void:
+	## Prefix
+	PopupManager.fs.close_popup.connect(check_close_signal) #将关闭弹出菜单信号连接到方法
+	## /Prefix
+
+## 当_process()被子类重写时，需要在其内部加上相同内容
+func _process(delta: float) -> void:
+	## Postfix
+	#### 此处继续写弹出菜单的缩放计算
+	position = size * scale / -2.0 #将size与scale相乘得到其实际尺寸，除以-2得到其一半尺寸的负数，应用在坐标即使其居中在中心(0,0)位置
+	
+	## /Postfix
+
+## 检查关闭信号。当受到关闭弹出菜单的信号的时候检查需要被关闭的菜单名，如果自身符合该名称则将自身的alive属性设为false
+func check_close_signal(close_name: StringName) -> void:
+	if (close_name == popup_name):
+		alive = false
+
 ## 更新倒计时器，请在子类的_process()的开头调用此方法
 func update_timer(delta: float) -> void:
 	if (alive): #如果当前为存活态
@@ -41,6 +64,7 @@ func update_timer(delta: float) -> void:
 func update_free() -> void:
 	if (not alive and fade_timer == -FADEOUT_TIME): #如果不是存活态且滑入滑出动画计时器已达到完全滑出状态
 		queue_free() #标记清除
+		PopupManager.alive_popup_count -= 1 #在弹出菜单管理器中减去一个弹出菜单数
 
 ## 获取经过缓动曲线修饰的当前滑入滑出动画位置百分比插值(0.0[屏幕中心] - 1.0[屏幕外])
 func get_fade_weight() -> float:
