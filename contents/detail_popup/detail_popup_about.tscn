@@ -1,0 +1,39 @@
+[gd_scene load_steps=3 format=3 uid="uid://6q21j1p2d6ma"]
+
+[ext_resource type="Theme" uid="uid://eqtfln2mgj5a" path="res://contents/detail_popup/detail_popup_theme.tres" id="1_gjm18"]
+[ext_resource type="Script" uid="uid://2vq31bm5uypi" path="res://contents/detail_popup/detail_popup_about.gd" id="1_joj08"]
+
+[node name="DetailPopupAbout" type="PanelContainer"]
+custom_minimum_size = Vector2(1536, 864)
+offset_left = -768.0
+offset_top = -432.0
+offset_right = 768.0
+offset_bottom = 432.0
+theme = ExtResource("1_gjm18")
+script = ExtResource("1_joj08")
+
+[node name="RootContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="RootContainer"]
+layout_mode = 2
+text = "关于【工具数织】"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RichText" type="RichTextLabel" parent="RootContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+text = "[font_size=48]ToolNonogram 0.0.0 (v0)
+版权所有 (C) 2025 BCASoft.
+
+使用[url=https://godotengine.org]GodotEngine[/url]制作。
+
+链接:
+[url=https://github.com/bocai-bca/ToolNonogram]Github存储库[/url][/font_size]"
+
+[node name="Button_Back" type="Button" parent="RootContainer"]
+layout_mode = 2
+focus_mode = 0
+text = "返回"

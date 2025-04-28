@@ -20,11 +20,12 @@ static var fs: PopupManager:
 ## 背景颜色变化时间，与背景颜色的alpha关联
 const BACK_COLOR_ALPHA_TIME: float = 0.6
 ## 背景颜色的最大alpha
-const BACK_COLOR_ALPHA: float = 0.25
+const BACK_COLOR_ALPHA: float = 0.4
 
 ## [只读]各弹出菜单的场景资源，它们实例化后为不同的类型但均继承自DetailPopupBase
 static var POPUPS_PACKED_SCENES: Dictionary[StringName, PackedScene] = {
 	&"Paper_New": DetailPopupBase_Main_Paper_New.cps, #新建题纸
+	&"About": DetailPopup_About.cps, #关于
 }
 
 ## 当前运行中的所有菜单实例，用于遍历
@@ -47,7 +48,6 @@ func _process(delta: float) -> void:
 	n_back_color.position = position * -1.0 #移动背景颜色矩形的位置
 	n_back_color.size = window_size #设置背景颜色矩形的尺寸
 	if (alive_popup_count > 0): #如果菜单计数大于0，意味着当前有菜单激活
-		
 		back_color_alpha_timer = move_toward(back_color_alpha_timer, BACK_COLOR_ALPHA_TIME, delta) #更新背景颜色alpha计时器
 		n_back_color.mouse_filter = Control.MOUSE_FILTER_STOP #开启背景鼠标阻塞
 	else: #否则(菜单计数不大于0，意味着当前没有菜单激活)

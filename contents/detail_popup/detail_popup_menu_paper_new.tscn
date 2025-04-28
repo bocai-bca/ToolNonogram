@@ -37,13 +37,14 @@ corner_detail = 5
 expand_margin_left = 30.0
 
 [node name="DetailPopupMenuPaperNew" type="PanelContainer"]
+custom_minimum_size = Vector2(1536, 864)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -736.0
-offset_top = -400.0
-offset_right = -1184.0
-offset_bottom = -680.0
+offset_left = -768.0
+offset_top = -432.0
+offset_right = -1152.0
+offset_bottom = -648.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_0ausa")
@@ -71,6 +72,7 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
+focus_next = NodePath("../../Container_Size/SpinBox_SizeX")
 theme_override_styles/focus = SubResource("StyleBoxFlat_bc0ec")
 theme_override_styles/read_only = SubResource("StyleBoxFlat_s6id4")
 theme_override_styles/normal = SubResource("StyleBoxFlat_1sbss")
@@ -94,6 +96,7 @@ text = "解题"
 [node name="Button_ModeSandbox" type="Button" parent="RootContainer/OIMContainer_Mode"]
 layout_mode = 2
 size_flags_horizontal = 3
+focus_mode = 0
 text = "沙盒"
 
 [node name="SubTitle_Size" type="Label" parent="RootContainer"]
@@ -108,6 +111,8 @@ alignment = 1
 [node name="SpinBox_SizeX" type="SpinBox" parent="RootContainer/Container_Size"]
 layout_mode = 2
 size_flags_horizontal = 3
+focus_next = NodePath("../SpinBox_SizeY")
+focus_previous = NodePath("../../ModeTextContainer/LineEdit_Seed")
 min_value = 5.0
 max_value = 25.0
 step = 5.0
@@ -125,6 +130,7 @@ horizontal_alignment = 1
 [node name="SpinBox_SizeY" type="SpinBox" parent="RootContainer/Container_Size"]
 layout_mode = 2
 size_flags_horizontal = 3
+focus_previous = NodePath("../SpinBox_SizeX")
 min_value = 5.0
 max_value = 25.0
 step = 5.0
@@ -142,32 +148,16 @@ size_flags_vertical = 3
 layout_mode = 2
 alignment = 1
 
-[node name="Control_SpaceFill" type="Control" parent="RootContainer/Container_BottomButton"]
-layout_mode = 2
-size_flags_horizontal = 3
-
 [node name="Button_Confirm" type="Button" parent="RootContainer/Container_BottomButton"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
+focus_mode = 0
 text = "确认并创建"
-
-[node name="Control_SpaceFill2" type="Control" parent="RootContainer/Container_BottomButton"]
-layout_mode = 2
-size_flags_horizontal = 3
 
 [node name="Button_Cancel" type="Button" parent="RootContainer/Container_BottomButton"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
-text = "取消"
-
-[node name="Control_SpaceFill3" type="Control" parent="RootContainer/Container_BottomButton"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="BlockButton" type="Button" parent="."]
-visible = false
-layout_mode = 2
 focus_mode = 0
-flat = true
+text = "取消"

@@ -13,4 +13,5 @@ enum GameMode{
 var popup_newpaper_mode: GameMode = GameMode.PUZZLE
 ## 弹出菜单-新建题纸.尺寸
 var popup_newpaper_size: Vector2i = Vector2i(5, 5)
-## 弹出菜单-种子(
+## 弹出菜单-新建题纸.种子
+var popup_newpaper_seed: String = ""
