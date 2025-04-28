@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://rajkavblthsy"]
+
+[ext_resource type="Script" uid="uid://evixi8hpi7fh" path="res://contents/detail_popup/disable_blocker.gd" id="1_0hcpf"]
+
+[node name="DisableBlocker" type="Button"]
+offset_right = 8.0
+offset_bottom = 8.0
+focus_mode = 0
+flat = true
+script = ExtResource("1_0hcpf")

@@ -6,11 +6,19 @@ class_name DetailPopup_About
 static var cps: PackedScene = preload("res://contents/detail_popup/detail_popup_about.tscn") as PackedScene
 
 @onready var n_button_back: Button = $RootContainer/Button_Back as Button
+@onready var n_rich_text: RichTextLabel = $RootContainer/RichText as RichTextLabel
 
 func _ready() -> void:
+	## Prefix
+	PopupManager.fs.close_popup.connect(check_close_signal) #将关闭弹出菜单信号连接到方法
+	## /Prefix
 	n_button_back.pressed.connect( #返回
 		func():
 			Main.on_button_trigged(&"Popup_About_Back")
+	)
+	n_rich_text.meta_clicked.connect( #富文本元数据点击
+		func(meta: Variant):
+			OS.shell_open(str(meta)) #使操作系统以合适方式打开url
 	)
 
 func _process(delta: float) -> void:

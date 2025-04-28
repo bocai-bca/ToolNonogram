@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://cdfe7to0578iv"]
+[gd_scene load_steps=8 format=3 uid="uid://cdfe7to0578iv"]
 
 [ext_resource type="Theme" uid="uid://eqtfln2mgj5a" path="res://contents/detail_popup/detail_popup_theme.tres" id="1_0ausa"]
 [ext_resource type="Script" uid="uid://ca5n5exaexmfj" path="res://contents/detail_popup/detail_popup_menu_paper_new.gd" id="2_0ausa"]
 [ext_resource type="Script" uid="uid://dy5bm1g0m8k3y" path="res://contents/detail_popup/one_in_multi_button_container.gd" id="3_bc0ec"]
+[ext_resource type="PackedScene" uid="uid://rajkavblthsy" path="res://contents/detail_popup/disable_blocker.tscn" id="4_s6id4"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bc0ec"]
 bg_color = Color(0.7, 0.7, 0.7, 1)
@@ -161,3 +162,6 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 focus_mode = 0
 text = "取消"
+
+[node name="DisableBlocker" parent="." instance=ExtResource("4_s6id4")]
+layout_mode = 2

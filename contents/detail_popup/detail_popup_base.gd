@@ -16,7 +16,7 @@ const POPUP_MENU_SCENES: Dictionary[StringName, PackedScene] = {
 ## 弹出菜单的默认尺寸
 const DEFAULT_SIZE: Vector2 = Vector2(1536.0, 864.0)
 ## 滑入滑出动画的缓动曲线值，参见ease()
-const EASE_CURVE: float = 3.0
+const EASE_CURVE: float = 5.0
 ## 滑动动画时间，单位为秒
 const FADE_TIME: float = 0.6
 ## 滑入动画时间，单位为秒，表示菜单从实例化到淡入完成所需的时间(0[100%] <=== this[0%])
@@ -33,15 +33,15 @@ const MAX_HEIGHT_MULTI: float = 0.8
 const MAX_WIDTH_MULTI: float = 0.8
 
 ## 本弹出菜单启用状态(简称存活态)，为true时一切正常运作，为false时菜单将会自主关闭并自毁
-var alive: bool = true
-	#get:
-		#return alive
-	#set(value):
-		#if (not value): #如果传入值为否
-			#disabled = true #使本菜单禁用
-		#alive = value
-## 本弹出菜单禁用状态，为true时整个菜单的交互会被禁用，用于需要让用户等待而暂时阻止用户对菜单进行交互的时候，或者是菜单打开或关闭的期间。关于本属性的具体效果实现需要在子类中手动实现
-#var disabled: bool = false
+var alive: bool = true:
+	get:
+		return alive
+	set(value):
+		if (not value): #如果传入值为否
+			disabled = true #使本菜单禁用
+		alive = value
+## 本弹出菜单禁用状态，为true时整个菜单的交互会被禁用，用于需要让用户等待而暂时阻止用户对菜单进行交互的时候，或者是菜单打开或关闭的期间。关于本属性的具体效果实现需要在子类中手动实现(可以搭配DisableBlocker)
+var disabled: bool = false
 ## 本弹出菜单滑入滑出动画倒计时器，为0时菜单处于屏幕中央，其余状况时为absf(this)/FADE_TIME时处于画面最外部
 var fade_timer: float = FADE_TIME
 ## 本弹出菜单的名称。目前该属性设计于被PopupManager的弹出菜单创建方法赋值

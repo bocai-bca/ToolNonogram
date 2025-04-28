@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://6q21j1p2d6ma"]
+[gd_scene load_steps=4 format=3 uid="uid://6q21j1p2d6ma"]
 
 [ext_resource type="Theme" uid="uid://eqtfln2mgj5a" path="res://contents/detail_popup/detail_popup_theme.tres" id="1_gjm18"]
 [ext_resource type="Script" uid="uid://2vq31bm5uypi" path="res://contents/detail_popup/detail_popup_about.gd" id="1_joj08"]
+[ext_resource type="PackedScene" uid="uid://rajkavblthsy" path="res://contents/detail_popup/disable_blocker.tscn" id="3_gyqo5"]
 
 [node name="DetailPopupAbout" type="PanelContainer"]
 custom_minimum_size = Vector2(1536, 864)
@@ -37,3 +38,6 @@ text = "[font_size=48]ToolNonogram 0.0.0 (v0)
 layout_mode = 2
 focus_mode = 0
 text = "返回"
+
+[node name="DisableBlocker" parent="." instance=ExtResource("3_gyqo5")]
+layout_mode = 2
