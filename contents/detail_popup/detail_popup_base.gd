@@ -51,6 +51,7 @@ var popup_name: StringName
 func _ready() -> void:
 	## Prefix
 	PopupManager.fs.close_popup.connect(check_close_signal) #将关闭弹出菜单信号连接到方法
+	PopupManager.fs.custom_popup_notify.connect(_check_custom_notify) #检查自定义消息
 	## /Prefix
 
 ## 当_process()被子类重写时，需要在其内部加上相同内容
@@ -96,3 +97,6 @@ func _read_data() -> void: pass
 
 ## [虚函数-声明]将本实例的各项状态保存到Main类的菜单状态
 func _store_data() -> void: pass
+
+## [虚函数-声明]检查自定义消息
+func _check_custom_notify(notice: StringName) -> void: pass

@@ -80,7 +80,7 @@ static var is_menu_open: bool:
 			fs.n_menu_cover_button.mouse_filter = Control.MOUSE_FILTER_STOP #开启菜单遮掩按钮的鼠标输入拦截
 		else: #否则(传入的参数是false)
 			fs.n_menu_cover_button.mouse_filter = Control.MOUSE_FILTER_IGNORE #关闭菜单遮掩按钮的鼠标输入拦截
-## 当前答题网格缩放格数，单位为格。代表当前画面长宽比下横向能显示多少列格子
+## 当前答题网格缩放格数，单位为格。代表当前画面长宽比下纵向能显示多少个格子
 static var grids_zoom_blocks: int = 5
 ## 焦点工具，联动于SideBar
 static var focus_tool: FocusTool = FocusTool.NONE
@@ -190,10 +190,18 @@ static func on_button_trigged(button_name: StringName) -> void:
 		&"Popup_NewPaper_Mode_Sandbox": #弹出菜单-新建题纸.游戏模式.沙盒
 			menu_detail_state.popup_newpaper_mode = MenuDetailState.GameMode.SANDBOX #将游戏模式设为沙盒
 		&"Popup_NewPaper_Confirm": #弹出菜单-新建题纸.确认并创建
-			pass
+			if (menu_detail_state.popup_newpaper_mode == MenuDetailState.GameMode.PUZZLE): #如果选择的模式为解题
+				if (SeedManager.is_input_valid(menu_detail_state.popup_newpaper_seed)): #如果种子合法
+					PopupManager.fs.emit_signal(&"close_popup", &"Paper_New") #关闭菜单
+				else: #否则(种子不合法)
+					PopupManager.fs.emit_signal(&"custom_popup_notify", &"New_Paper_SeedInvalid") #通知新建题纸菜单种子不可用
+			else: #否则(选择的模式为沙盒)
+				PaperArea.fs.clear_base_grids() #清空基本题纸的内容
+				PaperArea.fs.reset_grids_size(menu_detail_state.popup_newpaper_size) #重设网格尺寸(不影响题纸内容)
+				PopupManager.fs.emit_signal(&"close_popup", &"Paper_New") #关闭菜单
 		&"Popup_NewPaper_Cancel": #弹出菜单-新建题纸.取消
-			PopupManager.fs.emit_signal(&"close_popup", &"Paper_New")
+			PopupManager.fs.emit_signal(&"close_popup", &"Paper_New") #关闭菜单
 		&"Popup_About_Back": #弹出菜单-关于
-			PopupManager.fs.emit_signal(&"close_popup", &"About")
+			PopupManager.fs.emit_signal(&"close_popup", &"About") #关闭菜单
 	SideBar.update_detail_buttons_disable() #更新按钮禁用状态
 #endregion

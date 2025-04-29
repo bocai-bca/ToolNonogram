@@ -6,6 +6,8 @@ class_name PopupManager
 #signal new_popup(popup_name: StringName)
 ## 关闭弹出菜单。需要由菜单实例订阅此信号，然后判断信号给定的菜单名称是否与自己相同
 signal close_popup(popup_name: StringName)
+## 自定义菜单通知信息。需要由菜单实例订阅此信号，若传参是自己可受理的内容则根据其作出相应反应
+signal custom_popup_notify(notice: StringName)
 
 ## 伪单例FakeSingleton
 static var fs: PopupManager:

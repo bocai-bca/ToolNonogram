@@ -111,5 +111,5 @@ func resize_local_grids(new_size: Vector2i) -> void:
 		return
 	n_grid_map.clear() #清除背景网格地图
 	for x in new_size.x: #遍历X
-		for y in new_size: #遍历Y
+		for y in new_size.y: #遍历Y
 			n_grid_map.set_cell(Vector2i(x, y), 0, Vector2i(2, 0)) #

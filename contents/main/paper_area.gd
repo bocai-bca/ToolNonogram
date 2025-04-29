@@ -29,6 +29,9 @@ static var can_mouse_interactive: bool:
 	get:
 		return (PopupManager.alive_popup_count == 0 and not Main.is_menu_open) #返回判据，返回true需要：当前没有弹出菜单、没有打开底部菜单
 
+func _enter_tree() -> void:
+	fs = self #定义伪单例
+
 func _process(delta: float) -> void:
 	var window_size: Vector2 = Vector2(get_window().size) #获取窗口大小
 	grids_free_height = window_size.y - NumberBar.bar_width #计算可用空间高度
@@ -69,6 +72,27 @@ func _process(delta: float) -> void:
 
 func _physics_process(delta: float) -> void:
 	pass
+
+#region 系统级变更题纸的方法集
+## 清空基本题纸的内容
+func clear_base_grids() -> void:
+	if (n_base_grids == null):
+		push_error("PaperArea: 未能清空基本题纸，因为：解引用n_base_grids时返回null。")
+		return
+	elif (n_base_grids.n_edit_map == null):
+		push_error("PaperArea: 未能清空基本题纸，因为：解引用n_base_grids.n_edit_map时返回null。")
+		return
+	n_base_grids.n_edit_map.clear()
+
+## 重设网格尺寸(不会影响题纸的内容，可能导致内容超出新的尺寸)
+func reset_grids_size(new_size: Vector2i) -> void:
+	if (n_base_grids == null):
+		push_error("PaperArea: 未能重设网格尺寸，因为：解引用n_base_grids时返回null。")
+		return
+	EditableGrids.global_grid_size = new_size #设置全局网格尺寸
+	n_base_grids.resize_local_grids(new_size) #重绘基本题纸的本地网格
+	Main.grids_zoom_blocks = new_size.y #设置新的缩放格子数，使得新网格适应全屏
+#endregion
 
 ## 更新点击状态
 func update_click_state() -> void:

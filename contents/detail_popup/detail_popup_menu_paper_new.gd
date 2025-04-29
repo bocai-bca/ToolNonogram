@@ -13,9 +13,16 @@ static var cps: PackedScene = preload("res://contents/detail_popup/detail_popup_
 @onready var n_button_cancel: Button = $RootContainer/Container_BottomButton/Button_Cancel as Button
 @onready var n_spinbox_size_x: SpinBox = $RootContainer/Container_Size/SpinBox_SizeX as SpinBox
 @onready var n_spinbox_size_y: SpinBox = $RootContainer/Container_Size/SpinBox_SizeX as SpinBox
+@onready var n_tiptext_seedinvalid: Label = $RootContainer/TipText_SeedInvalid as Label
+
+## 种子不合法提示文本的消隐时间(被用作除数，不可为0)
+const SEED_INVALID_TIP_FADEOUT_TIME: float = 2.5
 
 func _ready() -> void:
+	## Prefix
 	PopupManager.fs.close_popup.connect(check_close_signal) #将关闭弹出菜单信号连接到方法
+	PopupManager.fs.custom_popup_notify.connect(_check_custom_notify) #检查自定义消息
+	## /Prefix
 	n_button_mode_puzzle.pressed.connect( #题纸模式.解题
 		func():
 			_store_data()
@@ -50,6 +57,7 @@ func _process(delta: float) -> void:
 	## Prefix
 	var window_size: Vector2 = Vector2(get_window().size) #获取窗口大小
 	## /Prefix
+	n_tiptext_seedinvalid.self_modulate.a = move_toward(n_tiptext_seedinvalid.self_modulate.a, 0.0, delta / 1.5) #更新种子不合法提示文本的alpha消隐
 	## Postfix
 	var width_max_scale: float = MAX_WIDTH_MULTI * window_size.x / DEFAULT_SIZE.x #获取当前状况能使用的最大横向长度
 	var height_max_scale: float = MAX_HEIGHT_MULTI * window_size.y / DEFAULT_SIZE.y #获取当前状况能使用的最大纵向长度
@@ -82,3 +90,9 @@ func _read_data() -> void:
 func _store_data() -> void:
 	Main.menu_detail_state.popup_newpaper_seed = n_lineedit_seed.text #保存输入的种子
 	Main.menu_detail_state.popup_newpaper_size = Vector2i(int(n_spinbox_size_x.value), int(n_spinbox_size_y.value)) #保存题纸尺寸SpinBox的值
+
+## [虚函数-声明]检查自定义消息
+func _check_custom_notify(notice: StringName) -> void:
+	match (notice): #匹配自定义消息
+		&"New_Paper_SeedInvalid": #种子不合法
+			n_tiptext_seedinvalid.self_modulate.a = 1.0 #将种子不合法Label显示
