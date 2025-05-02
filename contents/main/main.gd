@@ -142,6 +142,9 @@ static func on_button_trigged(button_name: StringName) -> void:
 		&"MenuButton_Paper_New": #菜单按钮-新建题纸
 			PopupManager.add_popup(PopupManager.create_popup(&"Paper_New")) #新建一个新建题纸弹出菜单
 			is_menu_open = false #关闭菜单
+		&"MenuButton_Clear": #菜单按钮-清除网格
+			PaperArea.fs.clear_base_grids() #清空基本题纸的内容
+			is_menu_open = false #关闭菜单
 		&"MenuButton_About": #菜单按钮-关于
 			PopupManager.add_popup(PopupManager.create_popup(&"About")) #新建一个关于弹出菜单
 			is_menu_open = false #关闭菜单
@@ -198,6 +201,7 @@ static func on_button_trigged(button_name: StringName) -> void:
 			else: #否则(选择的模式为沙盒)
 				PaperArea.fs.clear_base_grids() #清空基本题纸的内容
 				PaperArea.fs.reset_grids_size(menu_detail_state.popup_newpaper_size) #重设网格尺寸(不影响题纸内容)
+				NumberBar.fs.resize_grids(menu_detail_state.popup_newpaper_size) #重设数字栏网格尺寸(不影响内容)
 				PopupManager.fs.emit_signal(&"close_popup", &"Paper_New") #关闭菜单
 		&"Popup_NewPaper_Cancel": #弹出菜单-新建题纸.取消
 			PopupManager.fs.emit_signal(&"close_popup", &"Paper_New") #关闭菜单

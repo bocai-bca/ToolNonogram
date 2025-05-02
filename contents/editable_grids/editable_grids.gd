@@ -53,8 +53,8 @@ func _process(delta: float) -> void:
 	position = Vector2(NumberBar.bar_width, NumberBar.bar_width) - animate_now_offset #计算坐标并应用
 	## /00
 	## 01更新背景
-	n_back_color.position = -position #将本类根节点的坐标的相反数赋给背景颜色矩形的坐标，达到使其坐标恒定处于一个原点的作用
 	n_back_color.size = window_size / scale #更新背景颜色矩形的尺寸为视口尺寸
+	n_back_color.position = -position / scale #将本类根节点的坐标的相反数赋给背景颜色矩形的坐标，达到使其坐标恒定处于一个原点的作用
 	## /01
 
 ## 获取鼠标指针处于的格子坐标(原点为0,0)

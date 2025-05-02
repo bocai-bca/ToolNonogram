@@ -12,7 +12,7 @@ static var cps: PackedScene = preload("res://contents/detail_popup/detail_popup_
 @onready var n_button_confirm: Button = $RootContainer/Container_BottomButton/Button_Confirm as Button
 @onready var n_button_cancel: Button = $RootContainer/Container_BottomButton/Button_Cancel as Button
 @onready var n_spinbox_size_x: SpinBox = $RootContainer/Container_Size/SpinBox_SizeX as SpinBox
-@onready var n_spinbox_size_y: SpinBox = $RootContainer/Container_Size/SpinBox_SizeX as SpinBox
+@onready var n_spinbox_size_y: SpinBox = $RootContainer/Container_Size/SpinBox_SizeY as SpinBox
 @onready var n_tiptext_seedinvalid: Label = $RootContainer/TipText_SeedInvalid as Label
 
 ## 种子不合法提示文本的消隐时间(被用作除数，不可为0)
@@ -24,33 +24,38 @@ func _ready() -> void:
 	PopupManager.fs.custom_popup_notify.connect(_check_custom_notify) #检查自定义消息
 	## /Prefix
 	n_button_mode_puzzle.pressed.connect( #题纸模式.解题
-		func():
+		func() -> void:
 			_store_data()
 			Main.on_button_trigged(&"Popup_NewPaper_Mode_Puzzle")
 			_read_data()
 	)
 	n_button_mode_sandbox.pressed.connect( #题纸模式.沙盒
-		func():
+		func() -> void:
 			_store_data()
 			Main.on_button_trigged(&"Popup_NewPaper_Mode_Sandbox")
 			_read_data()
 	)
 	n_button_confirm.pressed.connect( #确认并创建(确认)
-		func():
+		func() -> void:
 			_store_data()
 			Main.on_button_trigged(&"Popup_NewPaper_Confirm")
 			_read_data()
 	)
 	n_button_cancel.pressed.connect( #取消
-		func():
+		func() -> void:
 			_store_data()
 			Main.on_button_trigged(&"Popup_NewPaper_Cancel")
 			_read_data()
 	)
 	n_lineedit_seed.text_changed.connect( #种子输入框变动
-		func(_new_text: String):
+		func(_new_text: String) -> void:
 			_store_data()
 	)
+	var spinbox_changed_lambda: Callable = \
+		func(value: float) -> void:
+			_store_data()
+	n_spinbox_size_x.value_changed.connect(spinbox_changed_lambda)
+	n_spinbox_size_y.value_changed.connect(spinbox_changed_lambda)
 	_read_data()
 
 func _process(delta: float) -> void:
@@ -90,6 +95,7 @@ func _read_data() -> void:
 func _store_data() -> void:
 	Main.menu_detail_state.popup_newpaper_seed = n_lineedit_seed.text #保存输入的种子
 	Main.menu_detail_state.popup_newpaper_size = Vector2i(int(n_spinbox_size_x.value), int(n_spinbox_size_y.value)) #保存题纸尺寸SpinBox的值
+	print(Main.menu_detail_state.popup_newpaper_size)
 
 ## [虚函数-声明]检查自定义消息
 func _check_custom_notify(notice: StringName) -> void:

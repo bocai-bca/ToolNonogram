@@ -36,6 +36,10 @@ const ZOOM_RATE_BOUND: Vector2 = Vector2(0.1, 0.5)
 const ICON_DISPLAY_SCALE_RATE: float = 0.9
 ## 数字栏填充颜色，目前该颜色不会自动应用在节点上，是一个代码层面未被使用的常量
 const NUMBER_BAR_FILL_COLOR: Color = Color(1.0, 1.0, 1.0, 1.0)
+## TileSet中用于顶部数字栏网格的图块在砖瓦图集中的索引坐标
+const UP_GRIDS_ATLAS_COORDS: Vector2i = Vector2i(3, 0)
+## TileSet中用于侧边数字栏网格的图块在砖瓦图集中的索引坐标
+const SIDE_GRIDS_ATLAS_COORDS: Vector2i = Vector2i(0, 1)
 
 ## 数字栏的宽度(纵向或横向)，也是工具图标大小，单位是一条边的长度(涵盖边框)。
 static var bar_width: float = Main.WINDOW_SIZE_DEFAULT.y * ZOOM_RATE_DEFAULT
@@ -87,3 +91,15 @@ func _process(delta: float) -> void:
 	n_number_grids_up.scale.y = NumberBar.bar_width / (Main.TILE_NORMAL_SIZE) #将顶部数字栏网格的纵向缩放变换到刚好填充顶部数字栏的空间
 	n_number_grids_side.scale.x = NumberBar.bar_width / (Main.TILE_NORMAL_SIZE) #将侧边数字栏网格的横向缩放变换到刚好填充侧边数字栏的空间
 	## /03
+
+## 重设数字栏网格尺寸(不影响显示内容，只影响网格)
+func resize_grids(new_size: Vector2i) -> void:
+	if (n_number_grids_up != null and n_number_grids_side != null): #如果俩节点都不为null
+		n_number_grids_up.clear() #清除顶部数字栏网格
+		n_number_grids_side.clear() #清除侧边数字栏网格
+		for x in new_size.x:
+			n_number_grids_up.set_cell(Vector2i(x, 0), 0, UP_GRIDS_ATLAS_COORDS) #设置格子
+		for y in new_size.y:
+			n_number_grids_side.set_cell(Vector2i(0, y), 0, SIDE_GRIDS_ATLAS_COORDS) #设置格子
+		return
+	push_error("NumberBar: 无法设置数字栏网格尺寸，因为：解引用n_number_grids_up和n_number_grids_side时其中至少一个返回了null。")
