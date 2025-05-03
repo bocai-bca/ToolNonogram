@@ -49,7 +49,7 @@ func _process(delta: float) -> void:
 	var window_size: Vector2 = Vector2(get_window().size) #获取窗口大小
 	## 00更新网格的变换
 	global_scale_rate = PaperArea.grids_free_height / (animate_now_zoom_blocks * Main.TILE_NORMAL_SIZE) #计算全局缩放率
-	scale = global_scale_rate *  Vector2.ONE #计算缩放的值
+	scale = global_scale_rate * Vector2.ONE #计算缩放的值
 	position = Vector2(NumberBar.bar_width, NumberBar.bar_width) - animate_now_offset #计算坐标并应用
 	## /00
 	## 01更新背景
@@ -71,7 +71,7 @@ func clear_slot(pos: Vector2i) -> void:
 
 ## 进行凌驾于动画之上的网格实际偏移量更新，使用拖手工具拖拽网格时需每帧调用此方法。参数请传入一个鼠标于一帧内在屏幕上坐标的移动量
 static func update_offset_on_grabbing(offset_delta: Vector2) -> void:
-	animate_start_offset = (animate_start_offset + offset_delta * global_scale_rate) #将本次的偏移量加进动画起始移动量
+	animate_start_offset = (animate_start_offset + offset_delta) #将本次的偏移量加进动画起始移动量
 	animate_start_offset = Vector2(clampf(animate_start_offset.x, 0.0, (EditableGrids.global_grid_size.x - 1) * Main.TILE_NORMAL_SIZE * global_scale_rate), clampf(animate_start_offset.y, 0.0, (EditableGrids.global_grid_size.y - 1) * Main.TILE_NORMAL_SIZE * global_scale_rate)) #钳制坐标，防止超出左上角屏幕范围
 	display_offset = Vector2i((animate_start_offset / Main.TILE_NORMAL_SIZE / global_scale_rate).round()) #将动画起始偏移量除以砖瓦大小和全局缩放率后取整
 	animate_start_zoom_blocks = animate_now_zoom_blocks #将起始缩放格子数设为当前的缩放格子数

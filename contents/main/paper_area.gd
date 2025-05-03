@@ -34,6 +34,7 @@ func _enter_tree() -> void:
 
 func _process(delta: float) -> void:
 	var window_size: Vector2 = Vector2(get_window().size) #获取窗口大小
+	position = Vector2(LayersBar.bar_width, 0.0) #更新题纸区域的坐标
 	grids_free_height = window_size.y - NumberBar.bar_width #计算可用空间高度
 	if (is_allow_grids_animation_timer_update): #如果当前允许计时器更新
 		grids_animation_timer = move_toward(grids_animation_timer, 0.0, delta) #从EditableGrids的_process()方法中接替进行动画计时器更新任务

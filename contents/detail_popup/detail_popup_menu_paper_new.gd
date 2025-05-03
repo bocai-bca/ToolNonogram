@@ -95,7 +95,6 @@ func _read_data() -> void:
 func _store_data() -> void:
 	Main.menu_detail_state.popup_newpaper_seed = n_lineedit_seed.text #保存输入的种子
 	Main.menu_detail_state.popup_newpaper_size = Vector2i(int(n_spinbox_size_x.value), int(n_spinbox_size_y.value)) #保存题纸尺寸SpinBox的值
-	print(Main.menu_detail_state.popup_newpaper_size)
 
 ## [虚函数-声明]检查自定义消息
 func _check_custom_notify(notice: StringName) -> void:

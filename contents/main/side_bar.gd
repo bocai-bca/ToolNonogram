@@ -138,8 +138,8 @@ static var LOCK_CLASS_BUTTONS_DATA_LIST: Array[ClassButtonDataObject] = [
 ]
 ## [只读]缩放工具的详细层数据列表
 static var TOOL_DETAIL_DATA_LIST_SCALER: Array[DetailNodeDataObject] = [
-	DetailNodeDataObject.new(DetailNodeType.SINGLE_BUTTON, [&"DetailButton_ScaleLarge"], [&"Back"], ["放大\n"]),
-	DetailNodeDataObject.new(DetailNodeType.SINGLE_BUTTON, [&"DetailButton_ScaleSmall"], [&"Back"], ["缩小\n"])
+	DetailNodeDataObject.new(DetailNodeType.MULTI_BUTTONS, [&"DetailButton_ScalerNumberBarLarger", &"DetailButton_ScalerNumberBarSmaller"], [&"Back", &"Back"], ["数字栏\n放大", "数字栏\n缩小"]),
+	DetailNodeDataObject.new(DetailNodeType.MULTI_BUTTONS, [&"DetailButton_ScalerGridsLarger", &"DetailButton_ScalerGridsSmaller"], [&"Back", &"Back"], ["答题网格\n放大", "答题网格\n缩小"]),
 ]
 ## [只读]笔刷工具的详细层数据列表
 static var TOOL_DETAIL_DATA_LIST_BRUSH: Array[DetailNodeDataObject] = [
@@ -148,7 +148,7 @@ static var TOOL_DETAIL_DATA_LIST_BRUSH: Array[DetailNodeDataObject] = [
 ]
 ## [只读]擦除工具的详细层数据列表
 static var TOOL_DETAIL_DATA_LIST_ERASER: Array[DetailNodeDataObject] = [
-	DetailNodeDataObject.new(DetailNodeType.MULTI_BUTTONS, [&"DetailButton_EraserModeDishcloth", &"DetailButton_EraserModeEraser"], [&"Detail_Eraser_Dishcloth", &"Detail_Eraser_Eraser"], ["擦除模式\n抹布", "擦除模式\n橡皮"])
+	DetailNodeDataObject.new(DetailNodeType.MULTI_BUTTONS, [&"DetailButton_EraserModeDishcloth", &"DetailButton_EraserModeEraser"], [&"Detail_Eraser_Dishcloth", &"Detail_Eraser_Eraser"], ["擦除模式\n抹布", "擦除模式\n橡皮"]),
 ]
 
 ## 按钮的默认长度，该值必须通过读取按钮实例的TextureButton的size属性获取。默认只在本节点ready时读取一次

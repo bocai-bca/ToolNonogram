@@ -11,9 +11,10 @@ static var fs: Main:
 		return fs
 
 #@onready var n_back_color: ColorRect = $BackColor as ColorRect
-@onready var n_paper_area: Node2D = $PaperArea as Node2D
+#@onready var n_paper_area: Node2D = $PaperArea as Node2D
 @onready var n_menu_cover_button: TextureButton = $MenuCoverButton as TextureButton
 
+## 工具数织报错处理方式
 enum ErrorHandle{
 
 }
@@ -21,6 +22,17 @@ enum ErrorHandle{
 enum ErrorType{
 	NULL_REFERENCE, #解引用时取得意外的空引用
 
+}
+## 游戏模式(只用于游戏系统，和MenuDetailState.GameMode无关)
+enum GameMode{
+	PUZZLE, #解题
+	SANDBOX, #沙盒
+}
+## 自动填充状态
+enum AutoFill{
+	OFF, #关闭
+	COMMON, #一般
+	SMART, #智能
 }
 ## 焦点所在的工具，联动于SideBar的工具详细层
 enum FocusTool{
@@ -88,6 +100,10 @@ static var focus_tool: FocusTool = FocusTool.NONE
 static var tools_detail_state: ToolsDetailState = ToolsDetailState.new()
 ## 各菜单的详细状态数据(包含主菜单和弹出菜单)
 static var menu_detail_state: MenuDetailState = MenuDetailState.new()
+## 游戏模式，初始化时默认处于沙盒模式
+static var game_mode: GameMode = GameMode.SANDBOX
+## 自动填充状态，初始化时默认处于一般模式
+static var auto_fill: AutoFill = AutoFill.COMMON
 
 func _enter_tree() -> void:
 	fs = self #定义伪单例
@@ -97,10 +113,18 @@ func _ready() -> void:
 	pass
 
 func _process(delta: float) -> void:
-	n_paper_area.position = Vector2(LayersBar.bar_width, 0.0) #更新题纸区域的坐标
+	#n_paper_area.position = Vector2(LayersBar.bar_width, 0.0) #更新题纸区域的坐标
+	## 00Debug
+	if (Input.is_action_just_pressed(&"debug_print")):
+		debug_print()
+	## /00
 
 func push_error_format(source_class_name: String, error_handle: ErrorHandle, error_type: ErrorType) -> void:
 	pass #### 以后写
+
+func debug_print() -> void:
+	pass
+	print(EditableGrids.global_scale_rate)
 
 ## 按钮禁用检查，传入一个按钮名称，返回该按钮在当前状态下是否应该禁用(返回true代表禁用)。请妥善考虑本方法的调用频率
 static func button_disable_check(button_name: StringName) -> bool:
@@ -168,9 +192,13 @@ static func on_button_trigged(button_name: StringName) -> void:
 		&"DetailButton_Back": #侧边栏工具详细层按钮-返回类别层
 			SideBar.fs.switch_focus(SideBar.focus_class, FocusTool.NONE) #将侧边栏焦点切换到上一级焦点类别
 			NumberBar.icon_texture = ICON_TEXTURES[&"Hand"] #将工具提示图标设为拖手图标
-		&"DetailButton_ScaleLarge": #侧边栏工具详细层按钮-放大
+		&"DetailButton_ScalerNumberBarLarger": #侧边栏工具详细层按钮-数字栏放大
+			NumberBar.fs.icon_zoom_larger() #放大
+		&"DetailButton_ScalerNumberBarSmaller": #侧边栏工具详细层按钮-数字栏缩小
+			NumberBar.fs.icon_zoom_smaller() #缩小
+		&"DetailButton_ScalerGridsLarger": #侧边栏工具详细层按钮-答题网格放大
 			EditableGrids.update_animation_data(EditableGrids.display_offset, clampi(grids_zoom_blocks - 1, 1, EditableGrids.global_grid_size.y)) #调用题纸网格类的更新动画方法
-		&"DetailButton_ScaleSmall": #侧边栏工具详细层按钮-缩小
+		&"DetailButton_ScalerGridsSmaller": #侧边栏工具详细层按钮-答题网格缩小
 			EditableGrids.update_animation_data(EditableGrids.display_offset, clampi(grids_zoom_blocks + 1, 1, EditableGrids.global_grid_size.y)) #调用题纸网格类的更新动画方法
 		&"DetailButton_BrushModeBrush": #侧边栏工具详细层按钮-笔刷工具.模式.画笔
 			tools_detail_state.brush_mode = ToolsDetailState.BrushMode.BRUSH #将工具详细状态的笔刷模式设为画笔

@@ -32,6 +32,10 @@ const ZOOM_RATE_STEP_LENGTH: float = 0.1
 const ZOOM_RATE_DEFAULT: float = 0.3
 ## 缩放率边界值，用于限制避免缩放率超出合适范围，X表示最小值、Y表示最大值
 const ZOOM_RATE_BOUND: Vector2 = Vector2(0.1, 0.5)
+## 缩放率动画计时器时间
+const ZOOM_RATE_ANIMATION_TIME: float = 0.25
+## 缩放率动画插值缓动曲线值
+const ZOOM_RATE_ANIMATION_EASE_CURVE: float = -2.0
 ## 工具图标的图标纹理显示节点n_icon相对于整个工具图标区域(含边框)的缩放比率
 const ICON_DISPLAY_SCALE_RATE: float = 0.9
 ## 数字栏填充颜色，目前该颜色不会自动应用在节点上，是一个代码层面未被使用的常量
@@ -43,8 +47,17 @@ const SIDE_GRIDS_ATLAS_COORDS: Vector2i = Vector2i(0, 1)
 
 ## 数字栏的宽度(纵向或横向)，也是工具图标大小，单位是一条边的长度(涵盖边框)。
 static var bar_width: float = Main.WINDOW_SIZE_DEFAULT.y * ZOOM_RATE_DEFAULT
-## 缩放率，表示工具图标占据窗口纵向长度的比率
+## 缩放率实际值，表示工具图标占据窗口纵向长度的比率
 static var zoom_rate: float = ZOOM_RATE_DEFAULT
+## 缩放率动画倒计时器，为0即到达缩放率实际值
+static var zoom_rate_animation_timer: float = 0.0
+## 缩放率动画历史值
+static var zoom_rate_last: float = zoom_rate
+## [只读]缩放率动画当前值，由缩放率动画历史值和实际值通过
+static var zoom_rate_now: float:
+	get:
+		return lerpf(zoom_rate, zoom_rate_last, ease(zoom_rate_animation_timer / ZOOM_RATE_ANIMATION_TIME, ZOOM_RATE_ANIMATION_EASE_CURVE))
+## 图标纹理，即左上角的大图标显示的纹理，对本属性写入可直接修改该图标
 static var icon_texture: Texture2D:
 	get:
 		if (fs != null && fs.n_icon != null): #防空引用
@@ -65,8 +78,9 @@ func _enter_tree() -> void:
 func _process(delta: float) -> void:
 	var window_size: Vector2 = Vector2(get_window().size) #获取窗口尺寸
 	position.x = LayersBar.bar_width #更新数字栏坐标使其贴靠到图层栏的右上角
+	zoom_rate_animation_timer = move_toward(zoom_rate_animation_timer, 0.0, delta) #更新缩放率动画计时器
 	## 00更新图标大小变量
-	bar_width = window_size.y * zoom_rate #计算新的图标大小
+	bar_width = window_size.y * zoom_rate_now #计算新的图标大小
 	## /00
 	## 01更新工具图标和图标背景
 	var frame_thickness: float = bar_width * FRAME_THICKNESS_RATE #通过工具图标背景的边长和边框厚度乘数求一条边框的实际厚度
@@ -91,6 +105,24 @@ func _process(delta: float) -> void:
 	n_number_grids_up.scale.y = NumberBar.bar_width / (Main.TILE_NORMAL_SIZE) #将顶部数字栏网格的纵向缩放变换到刚好填充顶部数字栏的空间
 	n_number_grids_side.scale.x = NumberBar.bar_width / (Main.TILE_NORMAL_SIZE) #将侧边数字栏网格的横向缩放变换到刚好填充侧边数字栏的空间
 	## /03
+
+## 放大工具图标
+func icon_zoom_larger() -> void:
+	var new_zoom_rate: float = zoom_rate + ZOOM_RATE_STEP_LENGTH #计算进行放大后的缩放率
+	if (new_zoom_rate > ZOOM_RATE_BOUND.y): #如果新缩放率超出最大值边界
+		return
+	zoom_rate_last = zoom_rate_now #记录进行放大时的实际值
+	zoom_rate = new_zoom_rate #更改缩放率
+	zoom_rate_animation_timer = ZOOM_RATE_ANIMATION_TIME #重设缩放率动画计时器
+
+## 缩小工具图标
+func icon_zoom_smaller() -> void:
+	var new_zoom_rate: float = zoom_rate - ZOOM_RATE_STEP_LENGTH #计算进行缩小后的缩放率
+	if (new_zoom_rate < ZOOM_RATE_BOUND.x): #如果新缩放率超出最小值边界
+		return
+	zoom_rate_last = zoom_rate_now #记录进行缩小时的实际值
+	zoom_rate = new_zoom_rate #更改缩放率
+	zoom_rate_animation_timer = ZOOM_RATE_ANIMATION_TIME #重设缩放率动画计时器
 
 ## 重设数字栏网格尺寸(不影响显示内容，只影响网格)
 func resize_grids(new_size: Vector2i) -> void:
