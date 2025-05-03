@@ -1,8 +1,11 @@
-[gd_scene format=3 uid="uid://crbjkfkewy244"]
+[gd_scene load_steps=2 format=3 uid="uid://crbjkfkewy244"]
+
+[ext_resource type="Script" uid="uid://cc2k6ruh3dg4g" path="res://contents/number_array_displayer/number_array_displayer.gd" id="1_jfwg1"]
 
 [node name="NumberArrayDisplayer" type="SubViewportContainer"]
 offset_right = 40.0
 offset_bottom = 40.0
+script = ExtResource("1_jfwg1")
 
 [node name="SubViewport" type="SubViewport" parent="."]
 handle_input_locally = false
