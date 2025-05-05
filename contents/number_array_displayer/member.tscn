@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://cwdvyqb6sqree"]
+[gd_scene load_steps=3 format=3 uid="uid://cwdvyqb6sqree"]
 
 [ext_resource type="Theme" uid="uid://3svmed1fbwo8" path="res://contents/number_array_displayer/theme.tres" id="1_jmklc"]
+[ext_resource type="Script" uid="uid://cyfp021ns2jev" path="res://contents/number_array_displayer/member.gd" id="2_uflsv"]
 
 [node name="Member" type="Label"]
 custom_minimum_size = Vector2(162, 270)
@@ -9,3 +10,4 @@ offset_bottom = 23.0
 theme = ExtResource("1_jmklc")
 horizontal_alignment = 1
 vertical_alignment = 1
+script = ExtResource("2_uflsv")

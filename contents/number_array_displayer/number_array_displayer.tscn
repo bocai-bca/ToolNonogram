@@ -21,17 +21,20 @@ layout_mode = 3
 anchors_preset = 0
 
 [node name="Member" parent="DisplayerViewport/Numbers" instance=ExtResource("2_vs00j")]
+layout_mode = 0
 offset_right = 162.0
 offset_bottom = 270.0
 text = "1"
 
 [node name="Member2" parent="DisplayerViewport/Numbers" instance=ExtResource("2_vs00j")]
+layout_mode = 0
 offset_left = 162.0
 offset_right = 324.0
 offset_bottom = 270.0
 text = "2"
 
 [node name="Member3" parent="DisplayerViewport/Numbers" instance=ExtResource("2_vs00j")]
+layout_mode = 0
 offset_left = 324.0
 offset_right = 486.0
 offset_bottom = 270.0
