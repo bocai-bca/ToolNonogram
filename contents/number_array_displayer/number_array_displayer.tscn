@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://crbjkfkewy244"]
+[gd_scene load_steps=3 format=3 uid="uid://crbjkfkewy244"]
 
 [ext_resource type="Script" uid="uid://cc2k6ruh3dg4g" path="res://contents/number_array_displayer/number_array_displayer.gd" id="1_jfwg1"]
 [ext_resource type="Theme" uid="uid://3svmed1fbwo8" path="res://contents/number_array_displayer/theme.tres" id="2_67n7v"]
-[ext_resource type="PackedScene" uid="uid://cwdvyqb6sqree" path="res://contents/number_array_displayer/member.tscn" id="2_vs00j"]
 
 [node name="NumberArrayDisplayer" type="SubViewportContainer"]
 offset_right = 512.0
@@ -19,26 +18,6 @@ render_target_update_mode = 4
 [node name="Numbers" type="Control" parent="DisplayerViewport"]
 layout_mode = 3
 anchors_preset = 0
-
-[node name="Member" parent="DisplayerViewport/Numbers" instance=ExtResource("2_vs00j")]
-layout_mode = 0
-offset_right = 162.0
-offset_bottom = 270.0
-text = "1"
-
-[node name="Member2" parent="DisplayerViewport/Numbers" instance=ExtResource("2_vs00j")]
-layout_mode = 0
-offset_left = 162.0
-offset_right = 324.0
-offset_bottom = 270.0
-text = "2"
-
-[node name="Member3" parent="DisplayerViewport/Numbers" instance=ExtResource("2_vs00j")]
-layout_mode = 0
-offset_left = 324.0
-offset_right = 486.0
-offset_bottom = 270.0
-text = "3"
 
 [node name="TextLengthTester" type="Label" parent="."]
 self_modulate = Color(1, 1, 1, 0)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://dsyodv46dneyp"]
+[gd_scene load_steps=24 format=3 uid="uid://dsyodv46dneyp"]
 
 [ext_resource type="Script" uid="uid://ddw07f0fi354e" path="res://contents/main/main.gd" id="1_400j3"]
 [ext_resource type="PackedScene" uid="uid://dymxav2uetw0l" path="res://contents/editable_grids/editable_grids.tscn" id="2_3fq6y"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://bf2qbkvh1j7yp" path="res://contents/main/layers_bar.gd" id="4_a22sp"]
 [ext_resource type="Texture2D" uid="uid://by3xy64q5cx0k" path="res://contents/white_fadeout_64.png" id="4_dg2sw"]
 [ext_resource type="PackedScene" uid="uid://bsgvi5i4do8uw" path="res://contents/side_button/side_button.tscn" id="4_u7q6r"]
+[ext_resource type="PackedScene" uid="uid://crbjkfkewy244" path="res://contents/number_array_displayer/number_array_displayer.tscn" id="5_fhatg"]
 [ext_resource type="TileSet" uid="uid://3x76mo7fq5a5" path="res://contents/grids_tile_set.tres" id="6_5huld"]
 [ext_resource type="Texture2D" uid="uid://dwjqbrpd8o0bf" path="res://contents/icon_hand_0.png" id="6_xbqcj"]
 [ext_resource type="Script" uid="uid://cenox043hlynv" path="res://contents/main/menu.gd" id="9_wy7hg"]
@@ -120,6 +121,10 @@ offset_right = 263.25
 offset_bottom = 1080.0
 color = Color(0.75, 0.75, 0.75, 1)
 
+[node name="NumberArrayDisplayer_Up" parent="NumberBar" instance=ExtResource("5_fhatg")]
+offset_left = 270.0
+offset_right = 2190.0
+
 [node name="NumberGrids_Up" type="TileMapLayer" parent="NumberBar"]
 self_modulate = Color(0, 0, 0, 1)
 texture_filter = 1
@@ -129,6 +134,12 @@ tile_set = ExtResource("6_5huld")
 occlusion_enabled = false
 collision_enabled = false
 navigation_enabled = false
+
+[node name="NumberArrayDisplayer_Side" parent="NumberBar" instance=ExtResource("5_fhatg")]
+offset_top = 270.0
+offset_right = 1920.0
+offset_bottom = 540.0
+direction = 1
 
 [node name="NumberGrids_Side" type="TileMapLayer" parent="NumberBar"]
 self_modulate = Color(0, 0, 0, 1)
