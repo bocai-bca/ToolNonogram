@@ -104,6 +104,10 @@ static var menu_detail_state: MenuDetailState = MenuDetailState.new()
 static var game_mode: GameMode = GameMode.SANDBOX
 ## 自动填充状态，初始化时默认处于一般模式
 static var auto_fill: AutoFill = AutoFill.COMMON
+## 题目的横排部分
+static var puzzle_horizontal: Array[PackedInt32Array]
+## 题目的竖排部分
+static var puzzle_vertical: Array[PackedInt32Array]
 
 func _enter_tree() -> void:
 	fs = self #定义伪单例
@@ -122,9 +126,29 @@ func _process(delta: float) -> void:
 func push_error_format(source_class_name: String, error_handle: ErrorHandle, error_type: ErrorType) -> void:
 	pass #### 以后写
 
+## 一个调试用的临时方法，由本实例_process调用，按下输入映射的debug_print动作即可触发
+## 请通过在本方法内写入print以实现输出调试信息
 func debug_print() -> void:
 	pass
-	print(EditableGrids.global_scale_rate)
+
+## 新建游戏的高级封装，返回成功与否(如果因各种原因导致最终没有新建游戏，将返回false)
+static func start_new_game(new_mode: GameMode, new_seed: String) -> bool:
+	match (new_mode): #匹配游戏模式
+		GameMode.PUZZLE: #解题模式
+			return true
+		GameMode.SANDBOX: #沙盒模式
+			
+			return true
+	return false
+
+## 新建沙盒模式游戏的低级封装，返回成功与否
+static func start_new_sandbox(clear_grids: bool, new_size: Vector2i) -> bool:
+	if (clear_grids): #如果需要清空网格
+		PaperArea.fs.clear_base_grids() #清空基本题纸的内容
+		#### 此处缺少当不清空网格时清除处于新尺寸画布外的笔迹的清除操作
+	PaperArea.fs.reset_grids_size(menu_detail_state.popup_newpaper_size) #重设网格尺寸(不影响题纸内容)
+	NumberBar.fs.resize_grids(menu_detail_state.popup_newpaper_size) #重设数字栏网格尺寸(不影响内容)
+	return true
 
 ## 按钮禁用检查，传入一个按钮名称，返回该按钮在当前状态下是否应该禁用(返回true代表禁用)。请妥善考虑本方法的调用频率
 static func button_disable_check(button_name: StringName) -> bool:
@@ -227,9 +251,7 @@ static func on_button_trigged(button_name: StringName) -> void:
 				else: #否则(种子不合法)
 					PopupManager.fs.emit_signal(&"custom_popup_notify", &"New_Paper_SeedInvalid") #通知新建题纸菜单种子不可用
 			else: #否则(选择的模式为沙盒)
-				PaperArea.fs.clear_base_grids() #清空基本题纸的内容
-				PaperArea.fs.reset_grids_size(menu_detail_state.popup_newpaper_size) #重设网格尺寸(不影响题纸内容)
-				NumberBar.fs.resize_grids(menu_detail_state.popup_newpaper_size) #重设数字栏网格尺寸(不影响内容)
+				
 				PopupManager.fs.emit_signal(&"close_popup", &"Paper_New") #关闭菜单
 		&"Popup_NewPaper_Cancel": #弹出菜单-新建题纸.取消
 			PopupManager.fs.emit_signal(&"close_popup", &"Paper_New") #关闭菜单
@@ -237,3 +259,12 @@ static func on_button_trigged(button_name: StringName) -> void:
 			PopupManager.fs.emit_signal(&"close_popup", &"About") #关闭菜单
 	SideBar.update_detail_buttons_disable() #更新按钮禁用状态
 #endregion
+
+## 类-新游戏设置数据，不含游戏模式
+class NewGameSettings:
+	## 尺寸
+	var size: Vector2i
+	## 是否清除答题网格，只在沙盒模式生效(因为解题模式必定清除网格)
+	var clear_grids: bool
+	## 种子，只在解题模式生效
+	var seed: String

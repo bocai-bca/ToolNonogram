@@ -20,6 +20,8 @@ static var fs: NumberBar:
 @onready var n_icon: Sprite2D = $Icon as Sprite2D
 @onready var n_number_grids_up: TileMapLayer = $NumberGrids_Up as TileMapLayer
 @onready var n_number_grids_side: TileMapLayer = $NumberGrids_Side as TileMapLayer
+@onready var n_number_array_displayer_up: NumberArrayDisplayer = $NumberArrayDisplayer_Up as NumberArrayDisplayer
+@onready var n_number_array_displayer_side: NumberArrayDisplayer = $NumberArrayDisplayer_Side as NumberArrayDisplayer
 
 ## 边框宽度率，影响边框厚度的乘数，基数为工具图标的边长
 const FRAME_THICKNESS_RATE: float = 0.05

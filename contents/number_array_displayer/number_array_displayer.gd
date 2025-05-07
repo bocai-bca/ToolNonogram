@@ -19,6 +19,8 @@ enum Direction{
 static var side_length: float:
 	get:
 		return Main.TILE_NORMAL_SIZE * EditableGrids.global_scale_rate
+## 滚动单位数量，X分量表示垂直排列的数字阵列显示器的左右滚动(值越大越显示左侧的数字)，Y分量表示水平排列的数字阵列显示器的上下滚动(值越大越显示上方的数字)
+static var scroll: Vector2i = Vector2i(0, 0)
 ## 排列方向
 @export var direction: Direction
 ## 显示的数字(缓存，不代表实际构成数字的节点的内容)，第一层索引代表行列，第二层索引代表同一行列内的一群数字
