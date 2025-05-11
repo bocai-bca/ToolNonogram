@@ -45,7 +45,7 @@ var disabled: bool = false
 ## 本弹出菜单滑入滑出动画倒计时器，为0时菜单处于屏幕中央，其余状况时为absf(this)/FADE_TIME时处于画面最外部
 var fade_timer: float = FADE_TIME
 ## 本弹出菜单的名称。目前该属性设计于被PopupManager的弹出菜单创建方法赋值
-var popup_name: StringName 
+var popup_name: StringName
 
 ## 当_ready()被子类重写时，需要在其内部加上相同内容
 func _ready() -> void:
@@ -99,4 +99,4 @@ func _read_data() -> void: pass
 func _store_data() -> void: pass
 
 ## [虚函数-声明]检查自定义消息
-func _check_custom_notify(notice: StringName) -> void: pass
+func _check_custom_notify(_notice: StringName) -> void: pass

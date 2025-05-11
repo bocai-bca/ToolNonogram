@@ -121,29 +121,29 @@ func _process(delta: float) -> void:
 	var minimum_width_for_per_paper_button: float = (menu_container_size.x - BUTTONS_SPACING_X * (PAPER_BUTTONS_COLUMNS - 1)) / PAPER_BUTTONS_COLUMNS #计算每个属于题纸系列的按钮的最小宽度属性的值
 	for n_paper_button in n_menu_buttons_paper: #遍历所有属于题纸系列的按钮
 		n_paper_button.custom_minimum_size = Vector2(minimum_width_for_per_paper_button, 0.0) #设置自定义最小尺寸
-		n_paper_button.add_theme_font_size_override(&"font_size", clampf(n_paper_button.custom_minimum_size.x / test_text_length(n_paper_button.text), 0.0, 1.0) * DEFAULT_FONT_SIZE) #计算并设置使文本能完全放置在按钮中所需的最大字体大小
+		n_paper_button.add_theme_font_size_override(&"font_size", int(clampf(n_paper_button.custom_minimum_size.x / test_text_length(n_paper_button.text), 0.0, 1.0) * DEFAULT_FONT_SIZE)) #计算并设置使文本能完全放置在按钮中所需的最大字体大小
 	var minimum_width_for_per_autofill_button: float = (menu_container_size.x - BUTTONS_SPACING_X * (AUTOFILL_BUTTONS_COLUMNS - 1)) / AUTOFILL_BUTTONS_COLUMNS #计算每个属于自动填充系列的按钮的最小宽度属性的值
 	for n_autofill_button in n_menu_buttons_autofill: #遍历所有属于自动填充系列的按钮
 		n_autofill_button.custom_minimum_size = Vector2(minimum_width_for_per_autofill_button, 0.0) #设置自定义最小尺寸
-		n_autofill_button.add_theme_font_size_override(&"font_size", clampf(n_autofill_button.custom_minimum_size.x / test_text_length(n_autofill_button.text), 0.0, 1.0) * DEFAULT_FONT_SIZE) #计算并设置使文本能完全放置在按钮中所需的最大字体大小
+		n_autofill_button.add_theme_font_size_override(&"font_size", int(clampf(n_autofill_button.custom_minimum_size.x / test_text_length(n_autofill_button.text), 0.0, 1.0) * DEFAULT_FONT_SIZE)) #计算并设置使文本能完全放置在按钮中所需的最大字体大小
 	var minimum_width_for_per_misc_button: float = (menu_container_size.x - BUTTONS_SPACING_X * (MISC_BUTTONS_COLUMNS - 1)) / MISC_BUTTONS_COLUMNS #计算每个属于其他系列的按钮的最小宽度属性的值
 	for n_misc_button in n_menu_buttons_misc: #遍历所有属于其他系列的按钮
 		n_misc_button.custom_minimum_size = Vector2(minimum_width_for_per_misc_button, 0.0) #设置自定义最小尺寸
-		n_misc_button.add_theme_font_size_override(&"font_size", clampf(n_misc_button.custom_minimum_size.x / test_text_length(n_misc_button.text), 0.0, 1.0) * DEFAULT_FONT_SIZE) #计算并设置使文本能完全放置在按钮中所需的最大字体大小
+		n_misc_button.add_theme_font_size_override(&"font_size", int(clampf(n_misc_button.custom_minimum_size.x / test_text_length(n_misc_button.text), 0.0, 1.0) * DEFAULT_FONT_SIZE)) #计算并设置使文本能完全放置在按钮中所需的最大字体大小
 	## 	03纵向缩放。此处一些尺寸计算需要与先前横向缩放的数值取最小值
 	if (menu_elements_length == -1.0): #如果元素长度未被初始化
 		menu_elements_length = n_length_test.position.y #给元素长度初始化
 	var vertical_resize_rate: float = clampf(menu_container_size.y / menu_elements_length, 0.1, 1.0) #根据当下菜单中元素实际的长度占用和容器能够提供的最大长度，计算按钮字体等属性的垂直缩放倍率，该倍率应被钳制在0-1之间(含)，因为超过1代表按钮将主动放大到占满空间
 	for n_menu_subtitle_node in n_menu_subtitles: #遍历所有菜单小标题
-		n_menu_subtitle_node.add_theme_font_size_override(&"font_size", vertical_resize_rate * DEFAULT_FONT_SIZE) #设置字体大小
-		n_menu_subtitle_node.add_theme_constant_override(&"line_spacing", vertical_resize_rate * DEFAULT_LABEL_LINE_SPACING) #设置行间距
+		n_menu_subtitle_node.add_theme_font_size_override(&"font_size", int(vertical_resize_rate * DEFAULT_FONT_SIZE)) #设置字体大小
+		n_menu_subtitle_node.add_theme_constant_override(&"line_spacing", int(vertical_resize_rate * DEFAULT_LABEL_LINE_SPACING)) #设置行间距
 	for n_menu_button_node in n_menu_buttons_paper + n_menu_buttons_autofill + n_menu_buttons_misc: #遍历所有按钮
-		n_menu_button_node.add_theme_font_size_override(&"font_size", minf(vertical_resize_rate * DEFAULT_FONT_SIZE, n_menu_button_node.get_theme_font_size(&"font_size"))) #设置字体大小
-	n_menu_button_close_menu.add_theme_font_size_override(&"font_size", vertical_resize_rate * DEFAULT_FONT_SIZE) #设置字体大小
-	n_paper_buttons_container.add_theme_constant_override(&"v_separation", DEFAULT_GRID_CONTAINER_V_SEPARATION * vertical_resize_rate) #在网格容器(题纸)的纵向元素间距上应用缩放率
-	n_autofill_buttons_container.add_theme_constant_override(&"separation", DEFAULT_HBOX_CONTAINER_SEPARATION * vertical_resize_rate) #在横向排列容器(自动填充)的纵向元素间距上应用缩放率
-	n_misc_buttons_container.add_theme_constant_override(&"separation", DEFAULT_HBOX_CONTAINER_SEPARATION * vertical_resize_rate) #在横向排列容器(其他)的元素间距上应用缩放率
-	add_theme_constant_override(&"separation", DEFAULT_VBOX_CONTAINER_SEPARATION * vertical_resize_rate) #在纵向排列容器的元素间距上应用缩放率
+		n_menu_button_node.add_theme_font_size_override(&"font_size", int(minf(vertical_resize_rate * DEFAULT_FONT_SIZE, n_menu_button_node.get_theme_font_size(&"font_size")))) #设置字体大小
+	n_menu_button_close_menu.add_theme_font_size_override(&"font_size", int(vertical_resize_rate * DEFAULT_FONT_SIZE)) #设置字体大小
+	n_paper_buttons_container.add_theme_constant_override(&"v_separation", int(DEFAULT_GRID_CONTAINER_V_SEPARATION * vertical_resize_rate)) #在网格容器(题纸)的纵向元素间距上应用缩放率
+	n_autofill_buttons_container.add_theme_constant_override(&"separation", int(DEFAULT_HBOX_CONTAINER_SEPARATION * vertical_resize_rate)) #在横向排列容器(自动填充)的纵向元素间距上应用缩放率
+	n_misc_buttons_container.add_theme_constant_override(&"separation", int(DEFAULT_HBOX_CONTAINER_SEPARATION * vertical_resize_rate)) #在横向排列容器(其他)的元素间距上应用缩放率
+	add_theme_constant_override(&"separation", int(DEFAULT_VBOX_CONTAINER_SEPARATION * vertical_resize_rate)) #在纵向排列容器的元素间距上应用缩放率
 	## 	/03
 	## /02
 	n_menu_container.size = menu_container_size #设置菜单容器尺寸

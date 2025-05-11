@@ -91,10 +91,10 @@ func _process(delta: float) -> void:
 			button.add_theme_stylebox_override(&"pressed", middle_button_styleboxes[2])
 			button.add_theme_stylebox_override(&"disabled", middle_button_styleboxes[3])
 	for stylebox in top_button_styleboxes: #遍历顶部按钮样式盒
-		stylebox.corner_radius_top_left = CORNER_RADIUS_MULTI * window_size.y #设置左上角圆角半径
+		stylebox.corner_radius_top_left = int(CORNER_RADIUS_MULTI * window_size.y) #设置左上角圆角半径
 		stylebox.corner_radius_top_right = stylebox.corner_radius_top_left #设置右上角圆角半径
 	for stylebox in bottom_button_styleboxes: #遍历底部按钮样式盒
-		stylebox.corner_radius_bottom_left = CORNER_RADIUS_MULTI * window_size.y #设置左下角圆角半径
+		stylebox.corner_radius_bottom_left = int(CORNER_RADIUS_MULTI * window_size.y) #设置左下角圆角半径
 		stylebox.corner_radius_bottom_right = stylebox.corner_radius_bottom_left #设置右下角圆角半径
 
 ## 检查自身的按钮成员们各自是否需要禁用并更新它们的禁用状态

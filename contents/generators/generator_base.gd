@@ -8,9 +8,14 @@ static func _is_seed_prefix_matched(seed_prefix: StringName) -> bool:
 
 ## [虚函数-声明]种子可用性检查方法(含前缀)，检查输入的种子对于本生成器来说是否合法
 ## 本方法应设计为种子合法性检查流程的最后一道门槛，在此方法之前，种子必定已经通过_is_seed_prefix_matched()的前缀检查，所以可以不用担心性能消耗
-static func _is_seed_valid(seed: String) -> bool:
+#static func _is_seed_valid(seed: String) -> bool:
+#	return false
+
+## [虚函数-声明]种子参数可用性检查方法(只能输入种子)，检查输入的种子参数对于本生成器来说是否可用
+## 本方法旨在检查给定的参数是否满足本生成器所需的必要参数，同时值也满足本生成器接受的值
+static func _is_seed_parameters_usable(parameters: Dictionary) -> bool:
 	return false
 
 ## [虚函数-声明]生成题目局面数据
-static func _generate(seed: String, size: Vector2i) -> GridsData:
+static func _generate(seed_deserializated: String, size: Vector2i) -> GridsData:
 	return null

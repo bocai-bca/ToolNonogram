@@ -226,7 +226,7 @@ func _process(delta: float) -> void:
 	## 03更新提示文本
 	n_tip_text.position = n_bar_color.position #设置提示文本的位置
 	n_tip_text.size = Vector2(n_bar_color.size.x, window_size.y * BAR_TEXT_SPACE_MULTI) #设置提示文本的尺寸
-	n_tip_text.label_settings.font_size = BAR_TEXT_FONT_SIZE_MULTI * n_tip_text.size.x #设置提示文本的字体大小，底部和纹理层的提示文本使用的是同一个LabelSettings
+	n_tip_text.label_settings.font_size = int(BAR_TEXT_FONT_SIZE_MULTI * n_tip_text.size.x) #设置提示文本的字体大小，底部和纹理层的提示文本使用的是同一个LabelSettings
 	if (should_show_tip_text): #如果当前应当显示提示文本
 		var new_alpha: float = move_toward(n_tip_text.self_modulate.a, 1.0, delta * BAR_TEXT_FADING_SPEED) #线性地将提示文本的不透明度变换到1.0
 		n_tip_text.self_modulate.a = new_alpha
@@ -247,12 +247,12 @@ func _process(delta: float) -> void:
 	var stylebox_editing: StyleBoxFlat #创建一个StyleBox变量用于修改
 	## 	05工具类别层StyleBox更新
 	stylebox_editing = n_tool_class_panel.theme.get_stylebox(&"panel", &"Panel") as StyleBoxFlat #获取工具类别层的StyleBox
-	stylebox_editing.shadow_size = window_size.y * TOOL_PANEL_SHADOW_SIZE_MULTI #设置StyleBox的阴影尺寸
-	stylebox_editing.corner_radius_bottom_left = window_size.y * TOOL_PANEL_CORNER_RADIUS_MULTI #设置StyleBox的圆角半径
+	stylebox_editing.shadow_size = int(window_size.y * TOOL_PANEL_SHADOW_SIZE_MULTI) #设置StyleBox的阴影尺寸
+	stylebox_editing.corner_radius_bottom_left = int(window_size.y * TOOL_PANEL_CORNER_RADIUS_MULTI) #设置StyleBox的圆角半径
 	n_tool_class_panel.theme.set_stylebox(&"panel", &"Panel", stylebox_editing) #将修改好的StyleBox保存回工具类别层节点
 	stylebox_editing = n_tool_detail_panel.theme.get_stylebox(&"panel", &"Panel") as StyleBoxFlat #获取工具详细层的StyleBox
-	stylebox_editing.shadow_size = window_size.y * TOOL_PANEL_SHADOW_SIZE_MULTI #设置StyleBox的阴影尺寸
-	stylebox_editing.corner_radius_top_left = window_size.y * TOOL_PANEL_CORNER_RADIUS_MULTI #设置StyleBox的圆角半径
+	stylebox_editing.shadow_size = int(window_size.y * TOOL_PANEL_SHADOW_SIZE_MULTI) #设置StyleBox的阴影尺寸
+	stylebox_editing.corner_radius_top_left = int(window_size.y * TOOL_PANEL_CORNER_RADIUS_MULTI) #设置StyleBox的圆角半径
 	n_tool_detail_panel.theme.set_stylebox(&"panel", &"Panel", stylebox_editing) #将修改好的StyleBox保存回工具详细层节点
 	## 	/05
 	## 	06工具详细层StyleBox更新
@@ -295,8 +295,8 @@ func _process(delta: float) -> void:
 func switch_focus(target_class: FocusClass, target_detail: Main.FocusTool) -> void:
 	#### 要做的事情：判断类别层和详细层何时需要打开或收起，并在其需要动的时候动，不需要动的时候不动。面板的开关与否是由焦点决定的，本函数只在改变了焦点的时候
 	## 00穷举判断面板是否应当切换开关状态
-	var new_should_class_panel_open: bool #一个布尔型，记录接下来的类别层面板是否应该打开
-	var current_class_panel_open: bool #一个布尔型，记录当前的类别曾面板是否是打开状态
+	#var new_should_class_panel_open: bool #一个布尔型，记录接下来的类别层面板是否应该打开
+	#var current_class_panel_open: bool #一个布尔型，记录当前的类别曾面板是否是打开状态
 	var new_focus_panel: Panels = get_new_focus_panel(target_class, target_detail) #获取接下来的焦点面板
 	if (focus_panel != new_focus_panel): #如果焦点面板需要变动
 		match (focus_panel):

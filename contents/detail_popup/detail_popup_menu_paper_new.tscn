@@ -149,7 +149,7 @@ size_flags_vertical = 3
 self_modulate = Color(1, 1, 1, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 0, 1)
-text = "种子不合法"
+text = "种子不合法或不可用"
 
 [node name="Container_BottomButton" type="HBoxContainer" parent="RootContainer"]
 layout_mode = 2

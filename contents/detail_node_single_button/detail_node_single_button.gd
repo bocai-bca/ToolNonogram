@@ -42,7 +42,7 @@ func _process(delta: float) -> void:
 		style_boxes.append(theme.get_stylebox(style_box_name, "Button") as StyleBoxFlat) #获取一个StyleBox并添加到列表中
 	for style_box in style_boxes: #遍历所有获取到的StyleBox
 		## 设置每个边角的圆角半径
-		style_box.corner_radius_bottom_left = window_size.y * CORNER_RADIUS_MULTI
+		style_box.corner_radius_bottom_left = int(window_size.y * CORNER_RADIUS_MULTI)
 		style_box.corner_radius_bottom_right = style_box.corner_radius_bottom_left
 		style_box.corner_radius_top_left = style_box.corner_radius_bottom_left
 		style_box.corner_radius_top_right = style_box.corner_radius_bottom_left

@@ -52,7 +52,7 @@ func _ready() -> void:
 			_store_data()
 	)
 	var spinbox_changed_lambda: Callable = \
-		func(value: float) -> void:
+		func(_value: float) -> void:
 			_store_data()
 	n_spinbox_size_x.value_changed.connect(spinbox_changed_lambda)
 	n_spinbox_size_y.value_changed.connect(spinbox_changed_lambda)
