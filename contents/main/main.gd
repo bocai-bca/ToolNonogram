@@ -104,10 +104,8 @@ static var menu_detail_state: MenuDetailState = MenuDetailState.new()
 static var game_mode: GameMode = GameMode.SANDBOX
 ## 自动填充状态，初始化时默认处于一般模式
 static var auto_fill: AutoFill = AutoFill.COMMON
-## 题目的横排部分
-static var puzzle_horizontal: Array[PackedInt32Array]
-## 题目的竖排部分
-static var puzzle_vertical: Array[PackedInt32Array]
+## 题目数据
+static var puzzle_data: PuzzleData
 
 func _enter_tree() -> void:
 	fs = self #定义伪单例
@@ -133,26 +131,34 @@ func debug_print() -> void:
 
 ## 本方法尚不确定是否要投入使用，目前考虑稍微降低一点抽象程度
 ## 新建游戏的高级封装，返回成功与否(如果因各种原因导致最终没有新建游戏，将返回false)
-static func start_new_game(new_mode: GameMode, new_game_settings: NewGameSettings) -> bool:
-	match (new_mode): #匹配游戏模式
-		GameMode.PUZZLE: #解题模式
-			return true
-		GameMode.SANDBOX: #沙盒模式
-			if (start_new_sandbox(new_game_settings.clear_grids, new_game_settings.size)): #如果新建沙盒模式时成功
-				game_mode = GameMode.SANDBOX #将游戏模式调整为沙盒
-				return true
-			return false
-	return false
+#static func start_new_game(new_mode: GameMode, new_game_settings: NewGameSettings) -> bool:
+	#match (new_mode): #匹配游戏模式
+		#GameMode.PUZZLE: #解题模式
+			#return true
+		#GameMode.SANDBOX: #沙盒模式
+			#if (start_new_sandbox(new_game_settings.clear_grids, new_game_settings.size)): #如果新建沙盒模式时成功
+				#game_mode = GameMode.SANDBOX #将游戏模式调整为沙盒
+				#return true
+			#return false
+	#return false
 
-## 新建沙盒模式游戏的低级封装，返回成功与否
-## 需要留个心眼新建沙盒模式是否有可能出现失败，目前想不到有什么失败的可能，所以直接return true了
-static func start_new_sandbox(clear_grids: bool, new_size: Vector2i) -> bool:
+## 新建解题模式游戏的低级封装
+static func start_new_puzzle(new_puzzle_data: PuzzleData, new_size: Vector2i) -> void:
+	PaperArea.fs.clear_base_grids() #清空基本题纸的内容
+	PaperArea.fs.reset_grids_size(new_size) #重设网格尺寸(不影响题纸内容)
+	NumberBar.fs.resize_grids(new_size) #重设数字栏网格尺寸(不影响内容)
+	puzzle_data = new_puzzle_data #设置题目数据
+	NumberBar.fs.set_number_array_displayers(new_puzzle_data) #设置数字栏
+	game_mode = GameMode.PUZZLE #将游戏模式设为解题
+
+## 新建沙盒模式游戏的低级封装
+static func start_new_sandbox(clear_grids: bool, new_size: Vector2i) -> void:
 	if (clear_grids): #如果需要清空网格
 		PaperArea.fs.clear_base_grids() #清空基本题纸的内容
 		#### 此处缺少当不清空网格时清除处于新尺寸画布外的笔迹的清除操作(如沙盒化)
 	PaperArea.fs.reset_grids_size(new_size) #重设网格尺寸(不影响题纸内容)
 	NumberBar.fs.resize_grids(new_size) #重设数字栏网格尺寸(不影响内容)
-	return true
+	game_mode = GameMode.SANDBOX #将游戏模式设为沙盒
 
 ## 按钮禁用检查，传入一个按钮名称，返回该按钮在当前状态下是否应该禁用(返回true代表禁用)。请妥善考虑本方法的调用频率
 static func button_disable_check(button_name: StringName) -> bool:
@@ -250,14 +256,14 @@ static func on_button_trigged(button_name: StringName) -> void:
 			menu_detail_state.popup_newpaper_mode = MenuDetailState.GameMode.SANDBOX #将游戏模式设为沙盒
 		&"Popup_NewPaper_Confirm": #弹出菜单-新建题纸.确认并创建
 			if (menu_detail_state.popup_newpaper_mode == MenuDetailState.GameMode.PUZZLE): #如果选择的模式为解题
-				if (PuzzleManager.is_seed_valid(menu_detail_state.popup_newpaper_seed)): #如果种子合法
+				if (PuzzleManager.is_seed_valid_user(menu_detail_state.popup_newpaper_seed)): #如果种子合法
+
 					PopupManager.fs.emit_signal(&"close_popup", &"Paper_New") #关闭菜单
 				else: #否则(种子不合法)
 					PopupManager.fs.emit_signal(&"custom_popup_notify", &"New_Paper_SeedInvalid") #通知新建题纸菜单种子不可用
 			else: #否则(选择的模式为沙盒)
-				if (start_new_sandbox(true, menu_detail_state.popup_newpaper_size)): #如果[创建新沙盒模式]返回true
-					game_mode = GameMode.SANDBOX #将游戏模式设为沙盒
-					PopupManager.fs.emit_signal(&"close_popup", &"Paper_New") #关闭菜单
+				start_new_sandbox(true, menu_detail_state.popup_newpaper_size) #创建新沙盒模式游戏
+				PopupManager.fs.emit_signal(&"close_popup", &"Paper_New") #关闭菜单
 		&"Popup_NewPaper_Cancel": #弹出菜单-新建题纸.取消
 			PopupManager.fs.emit_signal(&"close_popup", &"Paper_New") #关闭菜单
 		&"Popup_About_Back": #弹出菜单-关于

@@ -55,8 +55,8 @@ func _process(delta: float) -> void:
 	## /02
 
 ## 设置新数字，将重新放置节点
-func set_number_nodes(new_number: Array[PackedInt32Array]) -> void:
-	numbers = new_number #记录新显示的数字
+func set_numbers(new_numbers: Array[PackedInt32Array]) -> void:
+	numbers = new_numbers #记录新显示的数字
 	## 00清除旧的数字节点
 	for node in n_numbers.get_children(): #遍历Numbers的所有子节点
 		node.queue_free() #清除子节点
