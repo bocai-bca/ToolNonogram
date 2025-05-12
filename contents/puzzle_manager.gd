@@ -5,10 +5,10 @@ class_name PuzzleManager
 
 ## [只读]存放一堆生成器的实例(别放基类)
 static var generators: Array[Generator] = [
-	Generator_RandomPick.new(), #随机选取
+	Generator_RainingPick.new(), #随机选取
 ]
 ## [只读]默认生成器，当用户没有指定种子时使用什么生成器前缀
-static var DEFAULT_GENERATOR_PREFIX: String = "RP" #随机选取
+static var DEFAULT_GENERATOR_PREFIX: String = "RP" #雨滴选取
 ## [只读]默认生成器参数，当用户没有指定种子时使用的生成器参数
 static var DEFAULT_GENERATOR_PARAMETERS: String = ""
 
@@ -30,6 +30,10 @@ static var DEFAULT_GENERATOR_PARAMETERS: String = ""
 			#else: #否则(该种子于当前生成器来说符合前缀但不合法或可用)
 				#return false
 	#return false
+
+## 随机生成种子
+static func random_seed(prefix: String = DEFAULT_GENERATOR_PREFIX, parameters: String = DEFAULT_GENERATOR_PARAMETERS) -> String:
+	return prefix + str((randi() << 32 | randi()) & 0x7FFF_FFFF_FFFF_FFFF) + parameters
 
 ## 获取种子前缀所代表的生成器(返回一个生成器实例)，当没有任何生成器匹配时将返回null，当有多个生成器可以匹配的情况时只会返回第一个
 ## 本方法不直接进行判断，判断交由各个生成器进行，如果哪个生成器对于空输入也会作出true回应，那么本方法也将最终返回true

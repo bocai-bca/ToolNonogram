@@ -17,5 +17,5 @@ static func _is_seed_parameters_usable(parameters: Dictionary) -> bool:
 	return false
 
 ## [虚函数-声明]生成题目局面数据
-static func _generate(seed_deserializated: String, size: Vector2i) -> GridsData:
+static func _generate(seed_deserializated: SeedParser.SeedDeserializated, size: Vector2i) -> GridsData:
 	return null

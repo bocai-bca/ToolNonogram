@@ -36,3 +36,8 @@ func set_slot(index: Vector2i, value: int) -> void:
 ## 如果array被外界非法修改，本方法可能返回错误结果
 func get_size() -> Vector2i:
 	return Vector2i(width, array.size() / width) #X不用讲，Y的话是根据"长*高=面积"反过来得到"高=面积/长"
+
+## 转换到PuzzleData
+func to_puzzle_data() -> PuzzleData:
+	return null ####
+	

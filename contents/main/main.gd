@@ -256,12 +256,18 @@ static func on_button_trigged(button_name: StringName) -> void:
 			menu_detail_state.popup_newpaper_mode = MenuDetailState.GameMode.SANDBOX #将游戏模式设为沙盒
 		&"Popup_NewPaper_Confirm": #弹出菜单-新建题纸.确认并创建
 			if (menu_detail_state.popup_newpaper_mode == MenuDetailState.GameMode.PUZZLE): #如果选择的模式为解题
-				#if (PuzzleManager.is_seed_valid_user(menu_detail_state.popup_newpaper_seed)): #如果种子合法
-					#
-					#PopupManager.fs.emit_signal(&"close_popup", &"Paper_New") #关闭菜单
-				#else: #否则(种子不合法)
-					#PopupManager.fs.emit_signal(&"custom_popup_notify", &"New_Paper_SeedInvalid") #通知新建题纸菜单种子不可用
-				pass
+				var seed: String
+				var seed_deserializated: SeedParser.SeedDeserializated = SeedParser.SeedDeserializated.new() #创建一个反序列化种子实例
+				if (menu_detail_state.popup_newpaper_seed.is_empty()): #如果种子为空
+					seed = PuzzleManager.random_seed() #随机创建种子
+				else: #否则(种子不为空)
+					seed = menu_detail_state.popup_newpaper_seed #使用玩家在菜单里填写的种子
+				if (SeedParser.fully_seed_check(seed, seed_deserializated)): #将参数传入种子解析器的完全检查方法，如果返回true也就是种子合法且可用
+					## 创建新解题游戏
+					PopupManager.fs.emit_signal(&"close_popup", &"Paper_New") #关闭菜单
+					start_new_puzzle(seed_deserializated.generator._generate(seed_deserializated, menu_detail_state.popup_newpaper_size).to_puzzle_data(), menu_detail_state.popup_newpaper_size) #开始新解题游戏
+				else: #否则(种子不合法或不可用)
+					PopupManager.fs.emit_signal(&"custom_popup_notify", &"New_Paper_SeedInvalid") #通知新建题纸菜单种子不可用
 			else: #否则(选择的模式为沙盒)
 				start_new_sandbox(true, menu_detail_state.popup_newpaper_size) #创建新沙盒模式游戏
 				PopupManager.fs.emit_signal(&"close_popup", &"Paper_New") #关闭菜单

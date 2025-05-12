@@ -56,7 +56,7 @@ const SEED_NAME_CHAR: PackedStringArray = [
 ## 可以在第二个参数处传入一个SeedDeserializated实例，本方法会将反序列化好的种子通过这种方式传出去。即便返回结果为false，该SeedDeserializated仍有可能被写入值
 ## 本方法将视空种子为不合法种子，对于使用空种子以进行随机生成的游戏系统设计功能，相关逻辑请在PuzzleManager中实现
 ## 本方法内部会调用本类的其他方法
-static func fully_seed_check(seed: String, seed_deserializated: SeedDeserializated = SeedDeserializated.new(null, 0, {})) -> bool:
+static func fully_seed_check(seed: String, seed_deserializated: SeedDeserializated = SeedDeserializated.new()) -> bool:
 	if (seed.is_empty()): #如果种子为空
 		return false #因结构不合法(种子为空)返回false
 	## 00字符合法性检查
@@ -156,7 +156,7 @@ class SeedDeserializated extends RefCounted:
 	var seed_number: int
 	## 种子参数
 	var parameters: Dictionary[StringName, int]
-	func _init(new_generator: Generator, new_seed_number: int, new_parameters: Dictionary[StringName, int]) -> void:
+	func _init(new_generator: Generator = null, new_seed_number: int = 0, new_parameters: Dictionary[StringName, int] = {}) -> void:
 		generator = new_generator
 		seed_number = new_seed_number
 		parameters = new_parameters
