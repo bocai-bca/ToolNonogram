@@ -4,9 +4,8 @@
 [ext_resource type="Script" uid="uid://cyfp021ns2jev" path="res://contents/number_array_displayer/member.gd" id="2_uflsv"]
 
 [node name="Member" type="Label"]
-custom_minimum_size = Vector2(162, 270)
-offset_right = 40.0
-offset_bottom = 23.0
+offset_right = 1.0
+offset_bottom = 222.0
 theme = ExtResource("1_jmklc")
 horizontal_alignment = 1
 vertical_alignment = 1

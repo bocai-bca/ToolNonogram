@@ -15,6 +15,9 @@ enum Direction{
 	VERTICAL, #垂直
 }
 
+## 默认字体大小，需要手动根据本类的子节点使用的主题的默认字体设置
+const DEFAULT_FONT_SIZE: float = 162.0
+
 ## [只读]单边边长，即答题网格中一个格子的边长，用于计算数字
 static var side_length: float:
 	get:
@@ -47,9 +50,12 @@ func _process(delta: float) -> void:
 	## 01更新数字节点
 	for member in n_numbers.get_children() as Array[NumberArrayDisplayer_Member]: #遍历成员
 		if (direction == Direction.HORIZONTAL): #如果本数字阵列显示器的方向是水平的
-			member.position = Vector2(member.column, -member.height) * side_length #计算坐标
-			member.custom_minimum_size = side_length * Vector2.ONE #计算大小
-			member.size = member.custom_minimum_size
+			member.add_theme_font_size_override(&"font_size", int(side_length / get_text_min_width(member.text).z * DEFAULT_FONT_SIZE)) #覆写字体大小使其填满格子
+			member.size = Vector2.ZERO
+			member.position = Vector2(
+				member.column * side_length,
+				-member.height * side_length
+			)
 		else: #否则(本数字阵列显示器的方向是垂直)
 			member.position = Vector2(-member.height, member.column) * side_length #计算坐标
 			member.custom_minimum_size = side_length * Vector2.ONE #计算大小
@@ -80,6 +86,11 @@ func clear_numbers() -> void:
 	for node in n_numbers.get_children(): #遍历Numbers的所有子节点
 		node.queue_free() #清除子节点
 	max_scroll_units = 0 #清除最大滚动单位数
+
+## 获取文本的最小尺寸，输出结果的X和Y是尺寸XY，Z是这两个数中的最大值
+func get_text_min_width(text: String) -> Vector3:
+	n_text_length_tester.text = text
+	return Vector3(n_text_length_tester.size.x, n_text_length_tester.size.y, maxf(n_text_length_tester.size.x, n_text_length_tester.size.y))
 
 ## 类场景实例化方法
 #static func create(new_direction: Direction) -> NumberArrayDisplayer:

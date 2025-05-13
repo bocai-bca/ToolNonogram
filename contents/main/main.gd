@@ -263,7 +263,7 @@ static func on_button_trigged(button_name: StringName) -> void:
 					print("Main: 种子为空，正在随机创建种子")
 					seed = PuzzleManager.random_seed() #随机创建种子
 				else: #否则(种子不为空)
-					seed = menu_detail_state.popup_newpaper_seed #使用玩家在菜单里填写的种子
+					seed = menu_detail_state.popup_newpaper_seed.to_upper() #使用玩家在菜单里填写的种子
 				print("Main: 使用种子:\"", seed, "\"")
 				if (SeedParser.fully_seed_check(seed, seed_deserializated)): #将参数传入种子解析器的完全检查方法，如果返回true也就是种子合法且可用
 					print("Main: 种子验证通过，正在新建解题游戏")
