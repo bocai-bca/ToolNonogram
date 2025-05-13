@@ -131,6 +131,11 @@ func set_number_array_displayers(puzzle_data: PuzzleData) -> void:
 	n_number_array_displayer_up.set_numbers(puzzle_data.horizontal) #将水平题目数据设置给顶部的数字阵列显示器
 	n_number_array_displayer_side.set_numbers(puzzle_data.vertical) #将垂直题目数据设置给侧边的数字阵列显示器
 
+## 清除数字栏的数字
+func clear_number_array_displayers() -> void:
+	n_number_array_displayer_up.clear_numbers()
+	n_number_array_displayer_side.clear_numbers()
+
 ## 重设数字栏网格尺寸(不影响显示内容，只影响网格)
 func resize_grids(new_size: Vector2i) -> void:
 	if (n_number_grids_up != null and n_number_grids_side != null): #如果俩节点都不为null

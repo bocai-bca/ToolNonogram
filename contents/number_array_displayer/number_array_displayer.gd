@@ -48,8 +48,12 @@ func _process(delta: float) -> void:
 	for member in n_numbers.get_children() as Array[NumberArrayDisplayer_Member]: #遍历成员
 		if (direction == Direction.HORIZONTAL): #如果本数字阵列显示器的方向是水平的
 			member.position = Vector2(member.column, -member.height) * side_length #计算坐标
+			member.custom_minimum_size = side_length * Vector2.ONE #计算大小
+			member.size = member.custom_minimum_size
 		else: #否则(本数字阵列显示器的方向是垂直)
 			member.position = Vector2(-member.height, member.column) * side_length #计算坐标
+			member.custom_minimum_size = side_length * Vector2.ONE #计算大小
+			member.size = member.custom_minimum_size
 	## /01
 	## 02更新Numbers控制节点
 	## /02
@@ -58,19 +62,24 @@ func _process(delta: float) -> void:
 func set_numbers(new_numbers: Array[PackedInt32Array]) -> void:
 	numbers = new_numbers #记录新显示的数字
 	## 00清除旧的数字节点
-	for node in n_numbers.get_children(): #遍历Numbers的所有子节点
-		node.queue_free() #清除子节点
-	max_scroll_units = 0 #清除最大滚动单位数
+	clear_numbers()
 	## /00
 	## 01创建数字节点
 	for i in numbers.size(): #按索引遍历数字列表的第一层
 		for j in numbers[i].size(): #按索引遍历数字列表的第二层
 			var member: NumberArrayDisplayer_Member = NumberArrayDisplayer_Member.create(i, numbers[i].size() - 1 - j) #创建成员，传入的列数是i，传入的高度是逆序的j
 			member.text = str(numbers[i][numbers[i].size() - 1 - j]) #设置成员的数字
+			member.self_modulate = Color(0.0, 0.0, 0.0, 1.0) #设置成员的颜色
 			n_numbers.add_child(member) #将创建的成员加入子节点
 		if (numbers[i].size() - 1 > max_scroll_units): #如果同一行列的数字数量-1大于记录的最大滚动单位数
 			max_scroll_units = numbers[i].size() - 1 #将最大滚动单位数记录为它
 	## /01
+
+## 清除数字(用于沙盒模式)
+func clear_numbers() -> void:
+	for node in n_numbers.get_children(): #遍历Numbers的所有子节点
+		node.queue_free() #清除子节点
+	max_scroll_units = 0 #清除最大滚动单位数
 
 ## 类场景实例化方法
 #static func create(new_direction: Direction) -> NumberArrayDisplayer:

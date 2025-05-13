@@ -113,3 +113,7 @@ func resize_local_grids(new_size: Vector2i) -> void:
 	for x in new_size.x: #遍历X
 		for y in new_size.y: #遍历Y
 			n_grid_map.set_cell(Vector2i(x, y), 0, Vector2i(2, 0)) #
+
+## 转换到GridsData，用于检测答题网格是否通关。转换时需要按GridsData.SlotType存储格子信息，而不是本类的FillType
+func to_grids_data() -> GridsData:
+	return GridsData.new(global_grid_size)

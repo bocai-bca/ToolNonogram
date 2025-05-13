@@ -57,48 +57,61 @@ const SEED_NAME_CHAR: PackedStringArray = [
 ## 本方法将视空种子为不合法种子，对于使用空种子以进行随机生成的游戏系统设计功能，相关逻辑请在PuzzleManager中实现
 ## 本方法内部会调用本类的其他方法
 static func fully_seed_check(seed: String, seed_deserializated: SeedDeserializated = SeedDeserializated.new()) -> bool:
+	print("SeedParser: 开始解析并验证\"", seed, "\"")
 	if (seed.is_empty()): #如果种子为空
+		print("SeedParser: 解析失败，因为结构不合法(种子为空)")
 		return false #因结构不合法(种子为空)返回false
 	## 00字符合法性检查
 	var seed_splitted: Array[SeedFragment] = seed_splitting(seed) #获取种子分段
 	if (seed_splitted.is_empty()): #如果种子分段列表为空，意味着种子分段方法报告其存在不合法的符号
+		print("SeedParser: 解析失败，因为字符不合法")
 		return false #因字符不合法返回false
 	## /00
 	## 01前缀可用性检查
 	if (seed_splitted[0].value.is_empty()): #如果种子分段列表的首项的值是空的，意味着未指定生成器
+		print("SeedParser: 解析失败，因为结构不合法(前缀为空)")
 		return false #因结构不合法(前缀为空)返回false
 	var generator_matched: Generator = PuzzleManager.find_generator_by_prefix(seed_splitted[0].value) #调用PuzzleManager提供的方法，使用前缀寻找匹配的生成器
 	if (generator_matched == null): #如果该变量为null，意味着没有任何生成器匹配，意味着前缀不可用
+		print("SeedParser: 验证失败，因为没有找到与前缀\"", seed_splitted[0].value, "\"匹配的生成器")
 		return false #因前缀不可用返回false
+	print("SeedParser: 已解析种子指定的生成器")
 	seed_deserializated.generator = generator_matched #将已匹配的生成器放进反序列化种子实例
 	## /01
 	## 02数字合法性检查
 	if (seed_splitted.size() >= 2): #如果分段数大于等于2
-		if (not seed_splitted[1].value.is_valid_int()): #如果第二分段不是合法的int64
+		if (not seed_splitted[1].value.is_valid_int() or seed_splitted[1].value.length() > 19): #如果第二分段不是合法的int64或长度超过19位
+			print("SeedParser: 解析失败，因为数字不合法")
 			return false #因数字不合法返回false
 	else: #否则(只有前缀分段)
+		print("SeedParser: 解析失败，因为结构不合法(种子数为空)")
 		return false #因结构不合法(种子数为空)返回false
+	print("SeedParser: 已解析种子指定的种子数")
 	seed_deserializated.seed_number = seed_splitted[1].value.to_int() #将种子数转换为int后存储进反序列化种子实例
 	## /02
 	## 03参数合法性检查，只需要检查参数的键与值是否成对即可
 	if (seed_splitted.size() % 2 != 0): #如果分段数量求余2不等于0，也就是说分段数量不是偶数
+		print("SeedParser: 解析失败，因为结构不合法(参数键值不成对)")
 		return false #因结构不合法(参数键值不成对)返回false
 	## /03
 	## 04参数可用性检查，需要访问生成器
 	## 	05参数解析
-	for i in (seed_splitted.size() / 2 - 1): #按索引以两倍焦点减1遍历分段列表
-		i += 1 #减1的目的是为了跳过首两个片段，所以这里还要把这个1加回去
+	for i in ((seed_splitted.size() - 2) / 2): #按索引遍历分段列表，通过修饰索引数，使得忽略头两个元素，并以每两个元素遍历分段列表
+		i = i * 2 + 2 #还原索引
 		seed_deserializated.parameters[StringName(seed_splitted[i].value)] = seed_splitted[i + 1].value.to_int() #太复杂了懒得讲
 	## 	/05
 	if (not generator_matched._is_seed_parameters_usable(seed_deserializated.parameters)): #将解析后的参数字典传进生成器的参数可用性检查方法，如果返回的结果不是可用的
+		print("SeedParser: 验证失败，因为生成器不认可参数字典:\n", str(seed_deserializated.parameters))
 		return false #因参数不可用返回false
 	## /04
+	print("SeedParser: \"", seed, "\"解析完成且验证通过")
 	return true #活到现在就是可用，返回true
 
 ## 种子分段方法，主要功能为将种子分段成存储SeedFragment的数组，同时将检查符号合法性，当出现不合法的符号时，本方法将会返回空数组
 ## 本方法不会检查结构合法性和种子可用性
 ## 本方法只认同SEED_NUMBER_CHAR字符表和SEED_NAME_CHAR字符表，也就是说本方法不认可小写字母，如需支持小写字母需在种子传入本方法之前将其大写化
 static func seed_splitting(seed: String) -> Array[SeedFragment]:
+	print("SeedParser: 开始分段\"", seed, "\"")
 	var current_type: SeedFragmentType = SeedFragmentType.NAME #声明局部变量，记录当前的字符类型。NAME对应字母，NUMBER对应数字
 	var result_array: Array[SeedFragment] = [] #声明局部变量，为结果列表
 	var fragment_string: String = "" #声明局部变量，记录当前片段的字符串
@@ -124,7 +137,11 @@ static func seed_splitting(seed: String) -> Array[SeedFragment]:
 					fragment_string += char #将当前字符加入当前片段，然后继续下一个字符
 					continue
 		else: #否则(当前字符既不包含于字母表也不包含于数字表，属于非法字符)
+			print("SeedParser: 分段中止，发现不合法的字符")
 			return [] #因非法字符而种子不合法，所以返回空数组
+	if (not fragment_string.is_empty()): #遍历结束时如果当前片段不为空
+		result_array.append(SeedFragment.new(current_type, fragment_string)) #创建一个新SeedFragment实例并添加到结果数组中
+	print("SeedParser: 分段完成，结果:", str(result_array))
 	return result_array #返回结果
 
 ## 获取种子的前缀
@@ -147,6 +164,8 @@ class SeedFragment extends RefCounted:
 	func _init(new_type: SeedFragmentType, new_value: String) -> void:
 		type = new_type
 		value = new_value
+	func _to_string() -> String:
+		return value
 
 ## 类-反序列化种子，是种子解析流程的最终产品
 class SeedDeserializated extends RefCounted:

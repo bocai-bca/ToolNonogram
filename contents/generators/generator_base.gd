@@ -11,7 +11,7 @@ static func _is_seed_prefix_matched(seed_prefix: StringName) -> bool:
 #static func _is_seed_valid(seed: String) -> bool:
 #	return false
 
-## [虚函数-声明]种子参数可用性检查方法(只能输入种子)，检查输入的种子参数对于本生成器来说是否可用
+## [虚函数-声明]种子参数可用性检查方法(传入一个SeedParser反序列化好的参数字典)，检查输入的种子参数对于本生成器来说是否可用
 ## 本方法旨在检查给定的参数是否满足本生成器所需的必要参数，同时值也满足本生成器接受的值
 static func _is_seed_parameters_usable(parameters: Dictionary) -> bool:
 	return false
