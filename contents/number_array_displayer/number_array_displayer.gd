@@ -53,15 +53,26 @@ func _process(delta: float) -> void:
 			member.add_theme_font_size_override(&"font_size", int(side_length / get_text_min_width(member.text).z * DEFAULT_FONT_SIZE)) #覆写字体大小使其填满格子
 			member.size = Vector2.ZERO
 			member.position = Vector2(
-				member.column * side_length,
-				-member.height * side_length
+				side_length * (2.0 * member.column + 1.0) / 2.0 - member.size.x / 2.0,
+				-(member.height + 1) * side_length
 			)
 		else: #否则(本数字阵列显示器的方向是垂直)
-			member.position = Vector2(-member.height, member.column) * side_length #计算坐标
-			member.custom_minimum_size = side_length * Vector2.ONE #计算大小
-			member.size = member.custom_minimum_size
+			#member.position = Vector2(-member.height, member.column) * side_length #计算坐标
+			#member.custom_minimum_size = side_length * Vector2.ONE #计算大小
+			#member.size = member.custom_minimum_size
+			member.add_theme_font_size_override(&"font_size", int(side_length / get_text_min_width(member.text).z * DEFAULT_FONT_SIZE)) #覆写字体大小使其填满格子
+			member.size = Vector2.ZERO
+			member.position = Vector2(
+				-(member.height + 1) * side_length,
+				side_length * (2.0 * member.column + 1.0) / 2.0 - member.size.y / 2.0,
+			)
 	## /01
 	## 02更新Numbers控制节点
+	if (direction == Direction.HORIZONTAL): #如果本数字阵列显示器的方向是水平的
+		#### 实验中
+		n_numbers.position = Vector2(-EditableGrids.animate_now_offset.x, NumberBar.bar_width)
+	else: #否则(本数字阵列显示器的方向是垂直)
+		n_numbers.position = Vector2(NumberBar.bar_width, -EditableGrids.animate_now_offset.y)
 	## /02
 
 ## 设置新数字，将重新放置节点
