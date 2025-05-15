@@ -73,6 +73,14 @@ static var icon_texture: Texture2D:
 		push_error("NumberBar: 已取消对属性\"icon_texture\"的设置，因为：解引用fs或fs.n_icon时返回null。")
 ## 工具图标纹理分辨率缓存，单位是X边的长度，当设置icon_texture时会被赋值。此处的初始赋值请手动根据n_icon(Sprite2D)的纹理的横向长度填写
 static var icon_texture_resolution: float = 100.0
+## 顶部数字阵列显示器使用的滚动动画倒计时器，为0时到达终点
+static var number_array_displayer_scroll_animation_timer_up: float = 0.0
+## 顶部数字阵列显示器滚动动画倒计时器更新控制开关
+static var is_allow_number_array_displayer_scroll_animation_timer_up_update: bool = true
+## 侧边数字阵列显示器使用的滚动动画倒计时器，为0时到达终点
+static var number_array_displayer_scroll_animation_timer_side: float = 0.0
+## 侧边数字阵列显示器滚动动画倒计时器更新控制开关
+static var is_allow_number_array_displayer_scroll_animation_timer_side_update: bool = true
 
 func _enter_tree() -> void:
 	fs = self #定义伪单例
@@ -81,6 +89,10 @@ func _process(delta: float) -> void:
 	var window_size: Vector2 = Vector2(get_window().size) #获取窗口尺寸
 	position.x = LayersBar.bar_width #更新数字栏坐标使其贴靠到图层栏的右上角
 	zoom_rate_animation_timer = move_toward(zoom_rate_animation_timer, 0.0, delta) #更新缩放率动画计时器
+	if (is_allow_number_array_displayer_scroll_animation_timer_up_update): #如果当前允许顶部数字阵列显示器滚动动画倒计时器更新
+		number_array_displayer_scroll_animation_timer_up = move_toward(number_array_displayer_scroll_animation_timer_up, 0.0, delta) #更新顶部数字阵列显示器滚动动画计时器
+	if (is_allow_number_array_displayer_scroll_animation_timer_side_update): #如果当前允许侧边数字阵列显示器滚动动画倒计时器更新
+		number_array_displayer_scroll_animation_timer_side = move_toward(number_array_displayer_scroll_animation_timer_side, 0.0, delta) #更新侧边数字阵列显示器滚动动画计时器
 	## 00更新图标大小变量
 	bar_width = window_size.y * zoom_rate_now #计算新的图标大小
 	## /00

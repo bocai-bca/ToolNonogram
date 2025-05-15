@@ -128,6 +128,7 @@ func push_error_format(source_class_name: String, error_handle: ErrorHandle, err
 ## 请通过在本方法内写入print以实现输出调试信息
 func debug_print() -> void:
 	pass
+	print(NumberArrayDisplayer.max_scroll_units)
 
 ## 本方法尚不确定是否要投入使用，目前考虑稍微降低一点抽象程度
 ## 新建游戏的高级封装，返回成功与否(如果因各种原因导致最终没有新建游戏，将返回false)

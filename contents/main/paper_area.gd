@@ -55,8 +55,26 @@ func _process(delta: float) -> void:
 						is_allow_grids_animation_timer_update = false #关闭计时器
 					else: #否则(鼠标没在按下)
 						is_allow_grids_animation_timer_update = true #开启计时器
-				elif (click_state.pressed_at_area == ClickState.AreaOfPaper.NUMBER_BAR_UP or click_state.pressed_at_area == ClickState.AreaOfPaper.NUMBER_BAR_SIDE): #如果鼠标按下位置处于数字栏
-					pass
+				## 顶部数字栏滚动
+				elif (click_state.pressed_at_area == ClickState.AreaOfPaper.NUMBER_BAR_UP): #如果鼠标按下位置处于顶部数字栏
+					if (click_state.is_pressing()): #如果鼠标正被按下
+						if (click_state.is_just()): #如果是刚刚按下
+							NumberArrayDisplayer.scroll_animation_start_offset.y = NumberArrayDisplayer.scroll_animation_now_offset.y #将起始量设为当前量
+						NumberArrayDisplayer.update_offset_on_scrolling_up(click_state.last_update_pos.y - click_state.current_pos.y) #调用数字阵列显示器的顶部数字栏滚动更新方法
+						NumberBar.number_array_displayer_scroll_animation_timer_up = NumberArrayDisplayer.ANIMATION_TIME #重设计时器时间
+						NumberBar.is_allow_number_array_displayer_scroll_animation_timer_up_update = false #关闭计时器
+					else: #否则(鼠标没在按下)
+						NumberBar.is_allow_number_array_displayer_scroll_animation_timer_up_update = true #开启计时器
+				## 侧边数字栏滚动
+				elif (click_state.pressed_at_area == ClickState.AreaOfPaper.NUMBER_BAR_SIDE): #如果鼠标按下位置处于侧边数字栏
+					if (click_state.is_pressing()): #如果鼠标正被按下
+						if (click_state.is_just()): #如果是刚刚按下
+							NumberArrayDisplayer.scroll_animation_start_offset.x = NumberArrayDisplayer.scroll_animation_now_offset.x #将起始量设为当前量
+						NumberArrayDisplayer.update_offset_on_scrolling_side(click_state.last_update_pos.x - click_state.current_pos.x) #调用数字阵列显示器的侧边数字栏滚动更新方法
+						NumberBar.number_array_displayer_scroll_animation_timer_side = NumberArrayDisplayer.ANIMATION_TIME #重设计时器时间
+						NumberBar.is_allow_number_array_displayer_scroll_animation_timer_side_update = false #关闭计时器
+					else: #否则(鼠标没在按下)
+						NumberBar.is_allow_number_array_displayer_scroll_animation_timer_side_update = true #开启计时器
 				## /
 			Main.FocusTool.BRUSH: #笔刷工具
 				if (click_state.is_pressing() and click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS): #如果鼠标正被点击，且按下位置处于答题网格中

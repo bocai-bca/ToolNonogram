@@ -7,8 +7,8 @@ class_name GridsData
 
 ## 格子类型，本枚举与EditableGrids.FillType功能类似但请注意避免混淆，请在生成器相关的场合中尽可能使用本枚举
 enum SlotType{
-	EMPTY, #空格
-	FILL, #实心块
+	EMPTY = 0, #空格
+	FILL = 1, #实心块
 }
 
 ## 扁平数组，代表一个二维数组，采用y*a+x的方式进行排列(a为每个横排的元素数量)
