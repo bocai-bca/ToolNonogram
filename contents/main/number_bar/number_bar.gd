@@ -49,6 +49,10 @@ const SIDE_GRIDS_ATLAS_COORDS: Vector2i = Vector2i(0, 1)
 
 ## 数字栏的宽度(纵向或横向)，也是工具图标大小，单位是一条边的长度(涵盖边框)。
 static var bar_width: float = Main.WINDOW_SIZE_DEFAULT.y * ZOOM_RATE_DEFAULT
+## 实际厚度，通过工具图标背景的边长和边框厚度乘数求一条边框的实际厚度
+static var frame_thickness: float:
+	get:
+		return bar_width * FRAME_THICKNESS_RATE
 ## 缩放率实际值，表示工具图标占据窗口纵向长度的比率
 static var zoom_rate: float = ZOOM_RATE_DEFAULT
 ## 缩放率动画倒计时器，为0即到达缩放率实际值
@@ -97,7 +101,7 @@ func _process(delta: float) -> void:
 	bar_width = window_size.y * zoom_rate_now #计算新的图标大小
 	## /00
 	## 01更新工具图标和图标背景
-	var frame_thickness: float = bar_width * FRAME_THICKNESS_RATE #通过工具图标背景的边长和边框厚度乘数求一条边框的实际厚度
+	#var frame_thickness: float = bar_width * FRAME_THICKNESS_RATE #通过工具图标背景的边长和边框厚度乘数求一条边框的实际厚度
 	n_icon_fill_background.size = (bar_width - 2.0 * frame_thickness) * Vector2.ONE #计算工具图标背景大小并应用
 	n_icon_fill_background.position = frame_thickness * Vector2.ONE #根据工具图标背景的大小计算坐标并应用
 	n_icon.scale = bar_width * ICON_DISPLAY_SCALE_RATE / icon_texture_resolution * Vector2.ONE #计算工具图标节点的缩放并应用
@@ -140,6 +144,7 @@ func icon_zoom_smaller() -> void:
 
 ## 设置数字栏的数字
 func set_number_array_displayers(puzzle_data: PuzzleData) -> void:
+	NumberArrayDisplayer.max_scroll_units = Vector2i(0, 0) #重设最大滚动单位数
 	n_number_array_displayer_up.set_numbers(puzzle_data.horizontal) #将水平题目数据设置给顶部的数字阵列显示器
 	n_number_array_displayer_side.set_numbers(puzzle_data.vertical) #将垂直题目数据设置给侧边的数字阵列显示器
 

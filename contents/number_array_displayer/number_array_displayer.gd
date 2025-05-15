@@ -71,23 +71,24 @@ func _process(delta: float) -> void:
 			member.size = Vector2.ZERO
 			member.position = Vector2(
 				side_length * (2.0 * member.column + 1.0) / 2.0 - member.size.x / 2.0,
-				-(member.height + 1) * side_length
+				side_length * -(member.height + 1)
 			)
 		else: #否则(本数字阵列显示器的方向是垂直)
 			member.add_theme_font_size_override(&"font_size", int(side_length / get_text_min_width(member.text).z * DEFAULT_FONT_SIZE)) #覆写字体大小使其填满格子
 			member.size = Vector2.ZERO
 			member.position = Vector2(
-				-(member.height + 1) * side_length,
-				side_length * (2.0 * member.column + 1.0) / 2.0 - member.size.y / 2.0,
+				side_length * -(member.height + 0.5) - member.size.x / 2.0,
+				#side_length * (2.0 * member.column + 1.0) / 2.0 - member.size.y / 2.0
+				side_length * member.column
 			)
 	## /01
 	## 02更新Numbers控制节点
 	if (direction == Direction.HORIZONTAL): #如果本数字阵列显示器的方向是水平的
 		#### 实验中
 		#n_numbers.position = Vector2(-EditableGrids.animate_now_offset.x, NumberBar.bar_width)
-		n_numbers.position = Vector2(-EditableGrids.animate_now_offset.x, NumberBar.bar_width + scroll_animation_now_offset.y)
+		n_numbers.position = Vector2(-EditableGrids.animate_now_offset.x, NumberBar.bar_width + scroll_animation_now_offset.y - NumberBar.frame_thickness)
 	else: #否则(本数字阵列显示器的方向是垂直)
-		n_numbers.position = Vector2(NumberBar.bar_width + scroll_animation_now_offset.x, -EditableGrids.animate_now_offset.y)
+		n_numbers.position = Vector2(NumberBar.bar_width + scroll_animation_now_offset.x - NumberBar.frame_thickness, -EditableGrids.animate_now_offset.y)
 	## /02
 
 ## 设置新数字，将重新放置节点
@@ -115,7 +116,7 @@ func set_numbers(new_numbers: Array[PackedInt32Array]) -> void:
 func clear_numbers() -> void:
 	for node in n_numbers.get_children(): #遍历Numbers的所有子节点
 		node.queue_free() #清除子节点
-	max_scroll_units = Vector2(0, 0) #清除最大滚动单位数
+	#max_scroll_units = Vector2(0, 0) #清除最大滚动单位数
 	scroll = Vector2i(0, 0) #重置滚动单位数
 
 ## 获取文本的最小尺寸，输出结果的X和Y是尺寸XY，Z是这两个数中的最大值
@@ -125,15 +126,15 @@ func get_text_min_width(text: String) -> Vector3:
 
 ## 进行凌驾于动画之上的顶部数字栏滚动实际量更新，使用拖手工具拖拽网格时需每帧调用此方法。参数请传入一个鼠标于一帧内在屏幕上坐标的移动量
 static func update_offset_on_scrolling_up(offset_delta: float) -> void:
-	scroll_animation_start_offset.x += offset_delta #将新的偏移量加入滚动起始量中
-	scroll_animation_start_offset.x = clampf(scroll_animation_start_offset.x, 0.0, max_scroll_units.y * side_length) #钳制滚动偏移量数字，防止超出范围
-	scroll.x = roundf(scroll_animation_start_offset.x / side_length) #根据偏移量逆向到滚动单位数
+	scroll_animation_start_offset.y += offset_delta #将新的偏移量加入滚动起始量中
+	scroll_animation_start_offset.y = clampf(scroll_animation_start_offset.y, 0.0, max_scroll_units.y * side_length) #钳制滚动偏移量数字，防止超出范围
+	scroll.y = int(roundf(scroll_animation_start_offset.y / side_length)) #根据偏移量逆向到滚动单位数
 
 ## 进行凌驾于动画之上的侧边数字栏滚动实际量更新，使用拖手工具拖拽网格时需每帧调用此方法。参数请传入一个鼠标于一帧内在屏幕上坐标的移动量
 static func update_offset_on_scrolling_side(offset_delta: float) -> void:
-	scroll_animation_start_offset.y += offset_delta #将新的偏移量加入滚动起始量中
-	scroll_animation_start_offset.y = clampf(scroll_animation_start_offset.y, 0.0, max_scroll_units.x * side_length) #钳制滚动偏移量数字，防止超出范围
-	scroll.y = roundf(scroll_animation_start_offset.y / side_length) #根据偏移量逆向到滚动单位数
+	scroll_animation_start_offset.x += offset_delta #将新的偏移量加入滚动起始量中
+	scroll_animation_start_offset.x = clampf(scroll_animation_start_offset.x, 0.0, max_scroll_units.x * side_length) #钳制滚动偏移量数字，防止超出范围
+	scroll.x = int(roundf(scroll_animation_start_offset.x / side_length)) #根据偏移量逆向到滚动单位数
 
 ## 类场景实例化方法
 #static func create(new_direction: Direction) -> NumberArrayDisplayer:

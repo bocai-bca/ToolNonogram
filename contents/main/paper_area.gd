@@ -60,7 +60,7 @@ func _process(delta: float) -> void:
 					if (click_state.is_pressing()): #如果鼠标正被按下
 						if (click_state.is_just()): #如果是刚刚按下
 							NumberArrayDisplayer.scroll_animation_start_offset.y = NumberArrayDisplayer.scroll_animation_now_offset.y #将起始量设为当前量
-						NumberArrayDisplayer.update_offset_on_scrolling_up(click_state.last_update_pos.y - click_state.current_pos.y) #调用数字阵列显示器的顶部数字栏滚动更新方法
+						NumberArrayDisplayer.update_offset_on_scrolling_up(click_state.current_pos.y - click_state.last_update_pos.y) #调用数字阵列显示器的顶部数字栏滚动更新方法(此处对传入参数作了取负)
 						NumberBar.number_array_displayer_scroll_animation_timer_up = NumberArrayDisplayer.ANIMATION_TIME #重设计时器时间
 						NumberBar.is_allow_number_array_displayer_scroll_animation_timer_up_update = false #关闭计时器
 					else: #否则(鼠标没在按下)
@@ -70,7 +70,7 @@ func _process(delta: float) -> void:
 					if (click_state.is_pressing()): #如果鼠标正被按下
 						if (click_state.is_just()): #如果是刚刚按下
 							NumberArrayDisplayer.scroll_animation_start_offset.x = NumberArrayDisplayer.scroll_animation_now_offset.x #将起始量设为当前量
-						NumberArrayDisplayer.update_offset_on_scrolling_side(click_state.last_update_pos.x - click_state.current_pos.x) #调用数字阵列显示器的侧边数字栏滚动更新方法
+						NumberArrayDisplayer.update_offset_on_scrolling_side(click_state.current_pos.x - click_state.last_update_pos.x) #调用数字阵列显示器的侧边数字栏滚动更新方法(此处对传入参数作了取负)
 						NumberBar.number_array_displayer_scroll_animation_timer_side = NumberArrayDisplayer.ANIMATION_TIME #重设计时器时间
 						NumberBar.is_allow_number_array_displayer_scroll_animation_timer_side_update = false #关闭计时器
 					else: #否则(鼠标没在按下)
