@@ -1,5 +1,5 @@
 extends DetailPopupBase
-class_name DetailPopupBase_Main_Paper_New
+class_name DetailPopup_Main_Paper_New
 ## 详细信息弹窗-菜单.题纸.新建
 
 ## 类场景封包ClassPackedScene
@@ -87,8 +87,9 @@ func _read_data() -> void:
 		MenuDetailState.GameMode.SANDBOX: #沙盒模式
 			n_oimcontainer_mode.set_button_disable(n_button_mode_sandbox) #禁用沙盒模式按钮
 			n_lineedit_seed.visible = false #使种子输入框不可见
-	n_spinbox_size_x.value = Main.menu_detail_state.popup_newpaper_size.x #设置题纸尺寸的X
-	n_spinbox_size_y.value = Main.menu_detail_state.popup_newpaper_size.y #设置题纸尺寸的Y
+	var size: Vector2i = Main.menu_detail_state.popup_newpaper_size #取过来作缓存
+	n_spinbox_size_x.value = size.x #设置题纸尺寸的X
+	n_spinbox_size_y.value = size.y #设置题纸尺寸的Y
 	n_lineedit_seed.text = Main.menu_detail_state.popup_newpaper_seed #设置输入的种子
 
 ## [虚函数-实现]将本实例的各项状态保存到Main类的菜单状态

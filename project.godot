@@ -19,7 +19,6 @@ config/custom_user_dir_name="BCASoft/ToolNonogram"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 run/max_fps=100
 run/low_processor_mode=true
-run/low_processor_mode_sleep_usec=16900
 boot_splash/bg_color=Color(0, 0, 0, 1)
 boot_splash/show_image=false
 config/icon="res://icon.svg"

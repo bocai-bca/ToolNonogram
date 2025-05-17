@@ -26,8 +26,9 @@ const BACK_COLOR_ALPHA: float = 0.4
 
 ## [只读]各弹出菜单的场景资源，它们实例化后为不同的类型但均继承自DetailPopupBase
 static var POPUPS_PACKED_SCENES: Dictionary[StringName, PackedScene] = {
-	&"Paper_New": DetailPopupBase_Main_Paper_New.cps, #新建题纸
+	&"Paper_New": DetailPopup_Main_Paper_New.cps, #新建题纸
 	&"About": DetailPopup_About.cps, #关于
+	&"Win": DetailPopup_Win.cps, #胜利
 }
 
 ## 当前运行中的所有菜单实例，用于遍历

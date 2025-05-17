@@ -1,0 +1,54 @@
+[gd_scene load_steps=4 format=3 uid="uid://b6bgxnbb3tn7c"]
+
+[ext_resource type="Theme" uid="uid://eqtfln2mgj5a" path="res://contents/detail_popup/detail_popup_theme.tres" id="1_3k3ut"]
+[ext_resource type="Script" uid="uid://sq7eeovcsdrx" path="res://contents/detail_popup/detail_popup_win.gd" id="2_ken8f"]
+[ext_resource type="PackedScene" uid="uid://rajkavblthsy" path="res://contents/detail_popup/disable_blocker.tscn" id="3_8itpj"]
+
+[node name="DetailPopupWin" type="PanelContainer"]
+custom_minimum_size = Vector2(1536, 864)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -768.0
+offset_top = -432.0
+offset_right = -1152.0
+offset_bottom = -648.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_3k3ut")
+script = ExtResource("2_ken8f")
+
+[node name="RootContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="RootContainer"]
+layout_mode = 2
+text = "解题完成"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RichText" type="RichTextLabel" parent="RootContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "尺寸：
+用时：
+种子：
+"
+
+[node name="HBox" type="HBoxContainer" parent="RootContainer"]
+layout_mode = 2
+
+[node name="Button_CopySeed" type="Button" parent="RootContainer/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+text = "复制种子到剪贴板"
+
+[node name="Button_Back" type="Button" parent="RootContainer/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+text = "关闭"
+
+[node name="DisableBlocker" parent="." instance=ExtResource("3_8itpj")]
+layout_mode = 2

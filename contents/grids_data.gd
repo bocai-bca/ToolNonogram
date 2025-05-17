@@ -23,7 +23,7 @@ func _init(size: Vector2i) -> void:
 	array.fill(SlotType.EMPTY) #将内容设为全空
 
 ## 读取，超出索引边界时返回给定的失败返回值(默认为0)
-func get_slot(index: Vector2i, failed_return: int = 0) -> int:
+func get_slot(index: Vector2i, failed_return: int = 0) -> SlotType:
 	var i: int = index.y * width + index.x #计算扁平化索引
 	if (i >= array.size()): #如果扁平化索引超出边界
 		push_error("GridsData: 读取失败并返回了给定的失败返回值，因为：给定的二维索引在扁平化后超出扁平化数组边界。")
@@ -32,12 +32,12 @@ func get_slot(index: Vector2i, failed_return: int = 0) -> int:
 
 ## 写入，超出索引边界时放弃写入
 ## 注意，本方法不提供对输入值的范围检查，将使用PackedByteArray.set()对指定索引位置进行写入，超出int8范围时会作何行为由该方法决定
-func set_slot(index: Vector2i, value: int) -> void:
+func set_slot(index: Vector2i, slot_type: SlotType) -> void:
 	var i: int = index.y * width + index.x #计算扁平化索引
 	if (i >= array.size()): #如果扁平化索引超出边界
 		push_error("GridsData: 写入失败并放弃写入，因为：给定的二维索引在扁平化后超出扁平化数组边界。")
 		return
-	array.set(i, value) #使用PackedByteArray.set()进行写入
+	array.set(i, slot_type) #使用PackedByteArray.set()进行写入
 
 ## 获取尺寸
 ## 如果array被外界非法修改，本方法可能返回错误结果
@@ -45,11 +45,12 @@ func get_size() -> Vector2i:
 	return Vector2i(width, array.size() / width) #X不用讲，Y的话是根据"长*高=面积"反过来得到"高=面积/长"
 
 ## 转换到PuzzleData
+## 相同GridsData转换出的PuzzleData的引用是不同的，若要对比PuzzleData是否相同可以使用PuzzleData.is_same()
 func to_puzzle_data() -> PuzzleData:
-	print("GridsData: 正在转换到PuzzleData")
+	#print("GridsData: 正在转换到PuzzleData")
 	var result: PuzzleData = PuzzleData.new()
 	var size: Vector2i = get_size() #获取本局面数据的尺寸
-	print("GridsData: 尺寸为", str(size))
+	#print("GridsData: 尺寸为", str(size))
 	## 00顶部数字栏
 	var debug_str: String = "" #创建一个局部字符串，用于记录转换后的数组的调试输出文本
 	for row in size.x: #遍历尺寸的X，以每一横排的竖向数字列执行内容
@@ -69,7 +70,7 @@ func to_puzzle_data() -> PuzzleData:
 			nums_array.append(0) #将0添加进去
 		result.horizontal.append(nums_array) #将本排数字列的数组添加到水平数字栏
 		debug_str += str(nums_array) #将本排数字列转换到文本放进调试输出文本
-	print("GridsData: 转换出顶部数字栏:", debug_str)
+	#print("GridsData: 转换出顶部数字栏:", debug_str)
 	## /00
 	debug_str = "" #清空调试输出文本
 	## 01侧边数字栏
@@ -90,7 +91,6 @@ func to_puzzle_data() -> PuzzleData:
 			nums_array.append(0) #将0添加进去
 		result.vertical.append(nums_array) #将本排数字行的数组添加到垂直数字栏
 		debug_str += str(nums_array) #将本排数字列转换到文本放进调试输出文本
-	print("GridsData: 转换出侧边数字栏:", debug_str)
+	#print("GridsData: 转换出侧边数字栏:", debug_str)
 	## /01
 	return result
-	

@@ -84,10 +84,16 @@ func _process(delta: float) -> void:
 								n_base_grids.write_slot(click_state.current_grid_pos, EditableGrids.FillType.FILL) #将指定格子填写为实心块
 							ToolsDetailState.ToolFillType.CROSS: #叉叉
 								n_base_grids.write_slot(click_state.current_grid_pos, EditableGrids.FillType.CROSS) #将指定格子填写为叉叉
+				elif (click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS and not click_state.is_pressing() and click_state.is_just()): #如果鼠标未被点击，且刚刚松开，且上一次按下位置是答题网格
+					if (Main.game_mode == Main.GameMode.PUZZLE): #如果当前处于解题模式
+						Main.win_check_flag = true #开启胜利检查旗标
 			Main.FocusTool.ERASER: #擦除工具
 				if (click_state.is_pressing() and click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS): #如果鼠标正被点击，且按下位置处于答题网格中
 					if (EditableGrids.is_pos_in_grid(click_state.current_grid_pos)): #如果鼠标所在的坐标有效
 						n_base_grids.clear_slot(click_state.current_grid_pos)
+				elif (click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS and not click_state.is_pressing() and click_state.is_just()): #如果鼠标未被点击，且刚刚松开
+					if (Main.game_mode == Main.GameMode.PUZZLE): #如果当前处于解题模式
+						Main.win_check_flag = true #开启胜利检查旗标
 
 func _physics_process(delta: float) -> void:
 	pass

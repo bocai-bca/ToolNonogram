@@ -80,7 +80,6 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_1sbss")
 placeholder_text = "输入种子，留空随机"
 context_menu_enabled = false
 emoji_menu_enabled = false
-shortcut_keys_enabled = false
 caret_blink = true
 
 [node name="OIMContainer_Mode" type="HBoxContainer" parent="RootContainer"]

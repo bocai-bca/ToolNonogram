@@ -1,6 +1,6 @@
 extends SubViewportContainer
 class_name NumberArrayDisplayer
-## 数字阵列显示器
+## 数字阵列显示器。用于在数字栏上将题目数据呈现为数织题目数字
 
 ## 类场景封包ClassPackedScene
 #static var cps: PackedScene = preload("res://contents/number_array_displayer/number_array_displayer.tscn") as PackedScene
@@ -64,7 +64,17 @@ func _process(delta: float) -> void:
 		n_viewport.size = Vector2i(Vector2(NumberBar.bar_width, window_size.y - NumberBar.bar_width)) #设置视口尺寸
 		position = Vector2(0.0, NumberBar.bar_width) #设置坐标
 	## /00
-	## 01更新数字节点
+	## 01更新Numbers控制节点
+	if (direction == Direction.HORIZONTAL): #如果本数字阵列显示器的方向是水平的
+		#### 实验中
+		#n_numbers.position = Vector2(-EditableGrids.animate_now_offset.x, NumberBar.bar_width)
+		n_numbers.position = Vector2(-EditableGrids.animate_now_offset.x, NumberBar.bar_width + scroll_animation_now_offset.y - NumberBar.frame_thickness)
+	else: #否则(本数字阵列显示器的方向是垂直)
+		n_numbers.position = Vector2(NumberBar.bar_width + scroll_animation_now_offset.x - NumberBar.frame_thickness, -EditableGrids.animate_now_offset.y)
+	## /01
+
+func _physics_process(delta: float) -> void:
+	## 00更新数字节点
 	for member in n_numbers.get_children() as Array[NumberArrayDisplayer_Member]: #遍历成员
 		if (direction == Direction.HORIZONTAL): #如果本数字阵列显示器的方向是水平的
 			member.add_theme_font_size_override(&"font_size", int(side_length / get_text_min_width(member.text).z * DEFAULT_FONT_SIZE)) #覆写字体大小使其填满格子
@@ -81,15 +91,7 @@ func _process(delta: float) -> void:
 				#side_length * (2.0 * member.column + 1.0) / 2.0 - member.size.y / 2.0
 				side_length * member.column
 			)
-	## /01
-	## 02更新Numbers控制节点
-	if (direction == Direction.HORIZONTAL): #如果本数字阵列显示器的方向是水平的
-		#### 实验中
-		#n_numbers.position = Vector2(-EditableGrids.animate_now_offset.x, NumberBar.bar_width)
-		n_numbers.position = Vector2(-EditableGrids.animate_now_offset.x, NumberBar.bar_width + scroll_animation_now_offset.y - NumberBar.frame_thickness)
-	else: #否则(本数字阵列显示器的方向是垂直)
-		n_numbers.position = Vector2(NumberBar.bar_width + scroll_animation_now_offset.x - NumberBar.frame_thickness, -EditableGrids.animate_now_offset.y)
-	## /02
+	## /00
 
 ## 设置新数字，将重新放置节点
 func set_numbers(new_numbers: Array[PackedInt32Array]) -> void:

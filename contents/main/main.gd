@@ -1,6 +1,6 @@
 extends Node2D
 class_name Main
-## 主场景根类
+## 主场景根类。也代表着游戏的中枢
 
 ## 伪单例FakeSingleton
 static var fs: Main:
@@ -106,6 +106,24 @@ static var game_mode: GameMode = GameMode.SANDBOX
 static var auto_fill: AutoFill = AutoFill.COMMON
 ## 题目数据
 static var puzzle_data: PuzzleData
+## 当前使用的种子(用于解题模式记录当前题目的种子)
+static var current_seed: String
+## 通关检查旗标，为true时需要进行通关检查
+static var win_check_flag: bool = false
+## 解题计时器-小时，更新计时器只需要给秒加数即可，重置计时器需要给三个数分别设置为0
+static var puzzle_timer_hour: int = 0
+## 解题计时器-分钟，更新计时器只需要给秒加数即可，重置计时器需要给三个数分别设置为0
+static var puzzle_timer_minute: int = 0:
+	set(value):
+		puzzle_timer_minute = value
+		puzzle_timer_hour += puzzle_timer_minute / 60
+		puzzle_timer_minute %= 60
+## 解题计时器-秒，更新计时器只需要给秒加数即可，重置计时器需要给三个数分别设置为0
+static var puzzle_timer_second: float = 0.0:
+	set(value):
+		puzzle_timer_second = value
+		puzzle_timer_minute += puzzle_timer_second / 60.0
+		puzzle_timer_second = fmod(puzzle_timer_second, 60.0)
 
 func _enter_tree() -> void:
 	fs = self #定义伪单例
@@ -121,6 +139,18 @@ func _process(delta: float) -> void:
 		debug_print()
 	## /00
 
+func _physics_process(delta: float) -> void:
+	## 00通关检查
+	if (win_check_flag): #如果需要检查通关
+		win_check_flag = false #关闭通关检查旗标
+		if (check_puzzle_win()): #如果检查胜利时返回为true
+			puzzle_win() #使解题模式胜利
+	## /00
+	## 01计时器更新
+	if (game_mode == GameMode.PUZZLE): #如果当前是解题模式
+		puzzle_timer_second += delta #计时器加数
+	## /01
+
 func push_error_format(source_class_name: String, error_handle: ErrorHandle, error_type: ErrorType) -> void:
 	pass #### 以后写
 
@@ -128,7 +158,6 @@ func push_error_format(source_class_name: String, error_handle: ErrorHandle, err
 ## 请通过在本方法内写入print以实现输出调试信息
 func debug_print() -> void:
 	pass
-	print(NumberArrayDisplayer.max_scroll_units)
 
 ## 本方法尚不确定是否要投入使用，目前考虑稍微降低一点抽象程度
 ## 新建游戏的高级封装，返回成功与否(如果因各种原因导致最终没有新建游戏，将返回false)
@@ -144,13 +173,19 @@ func debug_print() -> void:
 	#return false
 
 ## 新建解题模式游戏的低级封装
-static func start_new_puzzle(new_puzzle_data: PuzzleData, new_size: Vector2i) -> void:
+static func start_new_puzzle(new_puzzle_data: PuzzleData, new_size: Vector2i, new_seed: String) -> void:
 	PaperArea.fs.clear_base_grids() #清空基本题纸的内容
 	PaperArea.fs.reset_grids_size(new_size) #重设网格尺寸(不影响题纸内容)
 	NumberBar.fs.resize_grids(new_size) #重设数字栏网格尺寸(不影响内容)
 	puzzle_data = new_puzzle_data #设置题目数据
+	current_seed = new_seed #记录种子
 	NumberBar.fs.set_number_array_displayers(new_puzzle_data) #设置数字栏
 	game_mode = GameMode.PUZZLE #将游戏模式设为解题
+	## 00重设计时器
+	puzzle_timer_hour = 0
+	puzzle_timer_minute = 0
+	puzzle_timer_second = 0.0
+	## /00
 
 ## 新建沙盒模式游戏的低级封装
 static func start_new_sandbox(clear_grids: bool, new_size: Vector2i) -> void:
@@ -160,6 +195,23 @@ static func start_new_sandbox(clear_grids: bool, new_size: Vector2i) -> void:
 	PaperArea.fs.reset_grids_size(new_size) #重设网格尺寸(不影响题纸内容)
 	NumberBar.fs.resize_grids(new_size) #重设数字栏网格尺寸(不影响内容)
 	game_mode = GameMode.SANDBOX #将游戏模式设为沙盒
+
+## 沙盒化(只在解题模式有效)
+static func sandboxize() -> void:
+	game_mode = GameMode.SANDBOX #将模式设为沙盒模式
+	NumberBar.fs.clear_number_array_displayers() #清除数字栏数字
+	#### 今后加入了填充着色以后还要写对着色的剔除，使所有填充都恢复为默认填充
+
+## 检查解题模式胜利，返回判断结果
+static func check_puzzle_win() -> bool:
+	return puzzle_data.is_same(PaperArea.fs.n_base_grids.to_grids_data().to_puzzle_data())
+
+## 使解题模式胜利
+static func puzzle_win() -> void:
+	sandboxize() #沙盒化
+	var win_popup: DetailPopup_Win = PopupManager.create_popup(&"Win") as DetailPopup_Win #新建胜利弹窗
+	PopupManager.add_popup(win_popup) #将弹窗添加到场景树
+	win_popup.set_contents(current_seed, EditableGrids.global_grid_size, puzzle_timer_hour, puzzle_timer_minute, int(puzzle_timer_second)) #设置弹窗的信息
 
 ## 按钮禁用检查，传入一个按钮名称，返回该按钮在当前状态下是否应该禁用(返回true代表禁用)。请妥善考虑本方法的调用频率
 static func button_disable_check(button_name: StringName) -> bool:
@@ -270,7 +322,11 @@ static func on_button_trigged(button_name: StringName) -> void:
 					print("Main: 种子验证通过，正在新建解题游戏")
 					## 创建新解题游戏
 					PopupManager.fs.emit_signal(&"close_popup", &"Paper_New") #关闭菜单
-					start_new_puzzle(seed_deserializated.generator._generate(seed_deserializated, menu_detail_state.popup_newpaper_size).to_puzzle_data(), menu_detail_state.popup_newpaper_size) #开始新解题游戏
+					start_new_puzzle( #开始新解题游戏
+						seed_deserializated.generator._generate(seed_deserializated, menu_detail_state.popup_newpaper_size).to_puzzle_data(), #题目数据
+						menu_detail_state.popup_newpaper_size, #尺寸
+						seed #种子
+					)
 				else: #否则(种子不合法或不可用)
 					print("Main: 种子验证未被通过，取消新建解题游戏")
 					PopupManager.fs.emit_signal(&"custom_popup_notify", &"New_Paper_SeedInvalid") #通知新建题纸菜单种子不可用
@@ -278,10 +334,18 @@ static func on_button_trigged(button_name: StringName) -> void:
 				print("Main: 正在尝试新建沙盒游戏")
 				start_new_sandbox(true, menu_detail_state.popup_newpaper_size) #创建新沙盒模式游戏
 				PopupManager.fs.emit_signal(&"close_popup", &"Paper_New") #关闭菜单
+			menu_detail_state.popup_newpaper_seed = "" #清空记录在菜单上的种子
+			menu_detail_state.popup_newpaper_size = Vector2i(5, 5) #重置尺寸设置
 		&"Popup_NewPaper_Cancel": #弹出菜单-新建题纸.取消
 			PopupManager.fs.emit_signal(&"close_popup", &"Paper_New") #关闭菜单
-		&"Popup_About_Back": #弹出菜单-关于
+			menu_detail_state.popup_newpaper_size = Vector2i(5, 5) #重置尺寸设置
+		&"Popup_About_Back": #弹出菜单-关于.返回
 			PopupManager.fs.emit_signal(&"close_popup", &"About") #关闭菜单
+		&"Popup_Win_CopySeed": #弹出菜单-胜利.复制种子
+			print("正在复制种子到操作系统剪贴板")
+			DisplayServer.clipboard_set(current_seed) #将种子放置到系统的剪贴板
+		&"Popup_Win_Back": #弹出菜单-胜利.返回
+			PopupManager.fs.emit_signal(&"close_popup", &"Win")
 	SideBar.update_detail_buttons_disable() #更新按钮禁用状态
 #endregion
 
