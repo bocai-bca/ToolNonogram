@@ -264,6 +264,8 @@ static func on_button_trigged(button_name: StringName) -> void:
 			NumberBar.icon_texture = ICON_TEXTURES[&"Hand"] #将工具提示图标设为拖手图标
 		&"ClassButton_Scaler": #侧边栏工具类别层按钮-缩放工具
 			SideBar.fs.switch_focus(SideBar.FocusClass.INTERACT, FocusTool.SCALER) #将侧边栏焦点切换到交互-缩放工具
+		&"ClassButton_UndoRedo": #侧边栏工具类别层按钮-撤销重做
+			SideBar.fs.switch_focus(SideBar.FocusClass.INTERACT, FocusTool.UNDO_REDO) #将侧边栏焦点切换到交互-撤销重做
 		&"ClassButton_Brush": #侧边栏工具类别层按钮-笔刷工具
 			SideBar.fs.switch_focus(SideBar.FocusClass.EDIT, FocusTool.BRUSH) #将侧边栏焦点切换到擦写-笔刷工具
 			if (tools_detail_state.brush_mode == ToolsDetailState.BrushMode.BRUSH): #如果笔刷模式为画笔

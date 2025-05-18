@@ -141,6 +141,11 @@ static var TOOL_DETAIL_DATA_LIST_SCALER: Array[DetailNodeDataObject] = [
 	DetailNodeDataObject.new(DetailNodeType.MULTI_BUTTONS, [&"DetailButton_ScalerNumberBarLarger", &"DetailButton_ScalerNumberBarSmaller"], [&"Back", &"Back"], ["数字栏\n放大", "数字栏\n缩小"]),
 	DetailNodeDataObject.new(DetailNodeType.MULTI_BUTTONS, [&"DetailButton_ScalerGridsLarger", &"DetailButton_ScalerGridsSmaller"], [&"Back", &"Back"], ["答题网格\n放大", "答题网格\n缩小"]),
 ]
+## [只读]撤销重做的详细层数据列表
+static var TOOL_DETAIL_DATA_LIST_UNDO_REDO: Array[DetailNodeDataObject] = [
+	DetailNodeDataObject.new(DetailNodeType.SINGLE_BUTTON, [&"DetailButton_Undo"], [&"Back"], ["撤销\n"]),
+	DetailNodeDataObject.new(DetailNodeType.SINGLE_BUTTON, [&"DetailButton_Redo"], [&"Back"], ["重做\n"]),
+]
 ## [只读]笔刷工具的详细层数据列表
 static var TOOL_DETAIL_DATA_LIST_BRUSH: Array[DetailNodeDataObject] = [
 	DetailNodeDataObject.new(DetailNodeType.MULTI_BUTTONS, [&"DetailButton_BrushModeBrush", &"DetailButton_BrushModePencil"], [&"Detail_Brush_Brush", &"Detail_Brush_Pencil"], ["笔刷模式\n画笔", "笔刷模式\n铅笔"]),
@@ -294,7 +299,7 @@ func _process(delta: float) -> void:
 ## 切换焦点的高级封装，用于切换层次面板的展开和收起、按钮名称和纹理的设置、一些游戏系统变量的设置，理论上不允许出现输入的两个参数是不相符的层次连接关系的状况。目前还有焦点工具相关的操作没写
 func switch_focus(target_class: FocusClass, target_detail: Main.FocusTool) -> void:
 	#### 要做的事情：判断类别层和详细层何时需要打开或收起，并在其需要动的时候动，不需要动的时候不动。面板的开关与否是由焦点决定的，本函数只在改变了焦点的时候
-	## 00穷举判断面板是否应当切换开关状态
+	## 穷举判断面板是否应当切换开关状态
 	#var new_should_class_panel_open: bool #一个布尔型，记录接下来的类别层面板是否应该打开
 	#var current_class_panel_open: bool #一个布尔型，记录当前的类别曾面板是否是打开状态
 	var new_focus_panel: Panels = get_new_focus_panel(target_class, target_detail) #获取接下来的焦点面板
@@ -375,22 +380,26 @@ func switch_class_buttons_using(target_focus_class: FocusClass) -> void:
 
 ## 清除和实例化详细层内容节点，例如详细层按钮、分隔符等
 func switch_detail_button_using(target_focus_tool: Main.FocusTool) -> void:
-	#### 清除所有按钮
+	## 00清除所有按钮
 	for n_detail_node in detail_nodes_list: #遍历所有被列表记录在案的详细层节点
 		n_detail_node.queue_free() #将其标记为删除
 	detail_nodes_list.clear() #清除详细层节点列表
-	#### 收集一份需要实例化的节点的列表
+	## /00
+	## 01收集一份需要实例化的节点的列表
 	var new_node_task_list: Array[DetailNodeDataObject] #声明一个列表，记录存放将要实例化的详细层节点的数据对象，一个数据对象代表一个实例化任务
 	match (target_focus_tool): #匹配目标焦点工具
 		Main.FocusTool.NONE: #无(拖手工具)
 			new_node_task_list = [] #将实例化列表设为一个空列表
 		Main.FocusTool.SCALER: #缩放工具
 			new_node_task_list = TOOL_DETAIL_DATA_LIST_SCALER #将实例化任务列表设为缩放工具数据列表
+		Main.FocusTool.UNDO_REDO: #撤销重做
+			new_node_task_list = TOOL_DETAIL_DATA_LIST_UNDO_REDO #将实例化任务列表设为撤销重做数据列表
 		Main.FocusTool.BRUSH: #笔刷工具
 			new_node_task_list = TOOL_DETAIL_DATA_LIST_BRUSH #将实例化任务列表设为笔刷数据列表
 		Main.FocusTool.ERASER: #擦除工具
 			new_node_task_list = TOOL_DETAIL_DATA_LIST_ERASER #将实例化任务列表设为擦除工具数据列表
-	#### 实例化节点到场景树中
+	## /01
+	## 02实例化节点到场景树中
 	for new_node_task in new_node_task_list: #遍历实例化任务列表
 		var new_node: Control
 		if (new_node_task.node_type == DetailNodeType.SPACING): #如果任务是分隔线
@@ -401,6 +410,7 @@ func switch_detail_button_using(target_focus_tool: Main.FocusTool) -> void:
 		n_detail_nodes_container.add_child(new_node) #将新创建的节点添加到场景树中
 		detail_nodes_list.append(new_node) #将新创建的节点添加到列表中
 		update_detail_buttons_disable()
+	## /02
 
 ## 更新详细层按钮禁用状态，将遍历detail_nodes_list收录的所有详细层节点调用它们的check_disable()方法。本方法建议在按钮发生点击后等状况进行调用
 static func update_detail_buttons_disable() -> void:
