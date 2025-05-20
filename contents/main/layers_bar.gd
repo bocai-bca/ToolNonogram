@@ -42,3 +42,23 @@ func _process(delta: float) -> void:
 	n_shadow.scale = Vector2(SHADOW_SCALE_X_BASE_MULTI * window_size.y, window_size.y) #设置阴影的大小
 	n_shadow.position = Vector2(bar_width - n_shadow.texture.get_size().x * n_shadow.scale.x / 2.0, window_size.y / 2.0) #设置阴影的位置
 	## /00
+
+## 类-图层颜色数据对象
+class LayerColorDataObject:
+	## 图层栏标签颜色(正常)
+	var tab_color_normal: Color
+	## 图层栏标签颜色(悬浮)
+	var tab_color_hover: Color
+	## 图层栏标签颜色(按下)
+	var tab_color_pressed: Color
+	## 网格线框颜色
+	var grids_color: Color
+	## 网格背景颜色
+	var grids_background_color: Color
+	func _init(new_tab_color_normal: Color, new_tab_color_hover: Color, new_tab_color_pressed: Color, new_grids_color: Color, new_grids_background_color: Color) -> void:
+		tab_color_normal = new_tab_color_normal
+		tab_color_hover = new_tab_color_hover
+		tab_color_pressed = new_tab_color_pressed
+		grids_color = new_grids_color
+		grids_background_color = new_grids_background_color
+		

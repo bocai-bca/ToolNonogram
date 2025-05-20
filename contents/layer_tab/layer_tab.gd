@@ -4,6 +4,7 @@ class_name LayerTab
 
 @onready var n_panel: Panel = $Panel as Panel
 @onready var n_number: Label = $Number as Label
+@onready var n_button: Button = $Button as Button
 
 ## 默认字体大小，需要手动根据主题中填写的值设置
 const DEFAULT_FONT_SIZE: int = 64
@@ -21,6 +22,9 @@ var index: int:
 		index = value
 		n_number.text = str(index)
 
+func _ready() -> void:
+	n_button.button_down.connect(on_button_down)
+
 func _process(delta: float) -> void:
 	var window_size: Vector2 = Vector2(get_window().size) #获取窗口大小
 	## 00更新面板
@@ -33,3 +37,10 @@ func _process(delta: float) -> void:
 	n_number.size = Vector2.ZERO #重设尺寸到最小
 	n_number.position = (n_panel.size - n_number.size) / 2.0 #更新位置
 	## /01
+	## 02更新按钮
+	n_button.size = n_panel.size #设置按钮的尺寸
+	## /02
+
+## 信号方法-按钮被按下
+func on_button_down() -> void:
+	n_panel
