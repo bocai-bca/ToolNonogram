@@ -21,6 +21,8 @@ const BAR_SHADOW_MODULATE: Color = Color(0.0, 0.0, 0.0, 0.4)
 const BAR_WIDTH_MULTI: float = 1.0 / 8.0
 ## 阴影缩放X基值乘数，基于视口纵向长度。设定合适的值以影响阴影的横向宽度，除数为默认窗口高度，被除数为想要的默认X缩放倍率(基于所使用纹理的尺寸的X)
 const SHADOW_SCALE_X_BASE_MULTI: float = 2.0 / 1080.0
+## 包含基底图层在内，最多允许拥有几个图层及标签
+const MAX_TAB_COUNT: int = 7
 
 ## 图层栏横向宽度
 static var bar_width: float = 135.0
