@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://dsyodv46dneyp"]
+[gd_scene load_steps=25 format=3 uid="uid://dsyodv46dneyp"]
 
 [ext_resource type="Script" uid="uid://ddw07f0fi354e" path="res://contents/main/main.gd" id="1_400j3"]
 [ext_resource type="PackedScene" uid="uid://dymxav2uetw0l" path="res://contents/editable_grids/editable_grids.tscn" id="2_3fq6y"]
@@ -12,6 +12,7 @@
 [ext_resource type="TileSet" uid="uid://3x76mo7fq5a5" path="res://contents/grids_tile_set.tres" id="6_5huld"]
 [ext_resource type="Texture2D" uid="uid://dwjqbrpd8o0bf" path="res://contents/icon_hand_0.png" id="6_xbqcj"]
 [ext_resource type="Script" uid="uid://cenox043hlynv" path="res://contents/main/menu.gd" id="9_wy7hg"]
+[ext_resource type="PackedScene" uid="uid://60nxtkeqg8t5" path="res://contents/layer_tab/layer_tab.tscn" id="10_g83xj"]
 [ext_resource type="LabelSettings" uid="uid://vocixu51rmfu" path="res://contents/main/sidebar_label_settings.tres" id="11_1a5w3"]
 [ext_resource type="Script" uid="uid://cfg4aul0nvkn0" path="res://contents/main/popup_manager.gd" id="13_k1fi1"]
 
@@ -176,6 +177,9 @@ self_modulate = Color(0, 0, 0, 0.4)
 position = Vector2(71, 540)
 scale = Vector2(2, 1080)
 texture = ExtResource("4_dg2sw")
+
+[node name="BaseLayerTab" parent="LayersBar" instance=ExtResource("10_g83xj")]
+position = Vector2(0, 926)
 
 [node name="SideBar" type="Node2D" parent="."]
 position = Vector2(1920, 540)

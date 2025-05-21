@@ -11,7 +11,11 @@ const DEFAULT_FONT_SIZE: int = 64
 ## 默认圆角半径
 const DEFAULT_CORNER_RADIUS: int = 30
 
+## 面板的StyleBox资源
 static var panel_stylebox: StyleBoxFlat = preload("res://contents/layer_tab/panel_stylebox.tres") as StyleBoxFlat
+
+## 坐标动画起点位置
+var pos_animation_start: float = 926.0 #这个默认值是默认分辨率下的基底图层的标签的Y坐标，当需要生成一个动态的图层标签时，这个值需要在实例化新节点之后立即设置一个合适的值
 
 ## 序号，零始制。同时影响该实例在Y上的位置
 var index: int:
