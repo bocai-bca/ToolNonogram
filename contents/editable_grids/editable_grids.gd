@@ -74,11 +74,11 @@ func clear_slot(pos: Vector2i) -> void:
 ## 进行凌驾于动画之上的网格实际偏移量更新，使用拖手工具拖拽网格时需每帧调用此方法。参数请传入一个鼠标于一帧内在屏幕上坐标的移动量
 static func update_offset_on_grabbing(offset_delta: Vector2) -> void:
 	animate_start_offset += offset_delta #将本次的偏移量加进动画起始移动量
-	animate_start_offset = Vector2(
+	var start_offset_clamped: Vector2 = Vector2(
 		clampf(animate_start_offset.x, 0.0, (EditableGrids.global_grid_size.x - 1) * Main.TILE_NORMAL_SIZE * global_scale_rate),
 		clampf(animate_start_offset.y, 0.0, (EditableGrids.global_grid_size.y - 1) * Main.TILE_NORMAL_SIZE * global_scale_rate)
 	) #钳制坐标，防止超出左上角屏幕范围
-	display_offset = Vector2i((animate_start_offset / Main.TILE_NORMAL_SIZE / global_scale_rate).round()) #将动画起始偏移量除以砖瓦大小和全局缩放率后取整
+	display_offset = Vector2i((start_offset_clamped / Main.TILE_NORMAL_SIZE / global_scale_rate).round()) #将动画起始偏移量除以砖瓦大小和全局缩放率后取整
 	animate_start_zoom_blocks = animate_now_zoom_blocks #将起始缩放格子数设为当前的缩放格子数
 
 ## 更新动画数据，调用此方法来设定新的动画缓动目标值，包含网格的缩放和偏移量，设置动画的新目标值会重置动画计时器，因此请勿尽可能降低调用此方法的频率

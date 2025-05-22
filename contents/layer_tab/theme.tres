@@ -3,5 +3,5 @@
 [ext_resource type="StyleBox" uid="uid://0qvo5yddb1vj" path="res://contents/layer_tab/panel_stylebox.tres" id="1_rsboa"]
 
 [resource]
-default_font_size = 64
+default_font_size = 135
 Panel/styles/panel = ExtResource("1_rsboa")

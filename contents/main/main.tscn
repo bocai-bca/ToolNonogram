@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://dsyodv46dneyp"]
+[gd_scene load_steps=26 format=3 uid="uid://dsyodv46dneyp"]
 
 [ext_resource type="Script" uid="uid://ddw07f0fi354e" path="res://contents/main/main.gd" id="1_400j3"]
 [ext_resource type="PackedScene" uid="uid://dymxav2uetw0l" path="res://contents/editable_grids/editable_grids.tscn" id="2_3fq6y"]
@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://dwjqbrpd8o0bf" path="res://contents/icon_hand_0.png" id="6_xbqcj"]
 [ext_resource type="Script" uid="uid://cenox043hlynv" path="res://contents/main/menu.gd" id="9_wy7hg"]
 [ext_resource type="PackedScene" uid="uid://60nxtkeqg8t5" path="res://contents/layer_tab/layer_tab.tscn" id="10_g83xj"]
+[ext_resource type="PackedScene" uid="uid://86woabqraupa" path="res://contents/layer_tab_void/layer_tab_void.tscn" id="10_m0i3e"]
 [ext_resource type="LabelSettings" uid="uid://vocixu51rmfu" path="res://contents/main/sidebar_label_settings.tres" id="11_1a5w3"]
 [ext_resource type="Script" uid="uid://cfg4aul0nvkn0" path="res://contents/main/popup_manager.gd" id="13_k1fi1"]
 
@@ -178,6 +179,24 @@ position = Vector2(71, 540)
 scale = Vector2(2, 1080)
 texture = ExtResource("4_dg2sw")
 
+[node name="LayerTabVoid_1" parent="LayersBar" instance=ExtResource("10_m0i3e")]
+position = Vector2(0, 772)
+
+[node name="LayerTabVoid_2" parent="LayersBar" instance=ExtResource("10_m0i3e")]
+position = Vector2(0, 618)
+
+[node name="LayerTabVoid_3" parent="LayersBar" instance=ExtResource("10_m0i3e")]
+position = Vector2(0, 464)
+
+[node name="LayerTabVoid_4" parent="LayersBar" instance=ExtResource("10_m0i3e")]
+position = Vector2(0, 310)
+
+[node name="LayerTabVoid_5" parent="LayersBar" instance=ExtResource("10_m0i3e")]
+position = Vector2(0, 156)
+
+[node name="LayerTabVoid_6" parent="LayersBar" instance=ExtResource("10_m0i3e")]
+position = Vector2(0, 2)
+
 [node name="BaseLayerTab" parent="LayersBar" instance=ExtResource("10_g83xj")]
 position = Vector2(0, 926)
 
@@ -217,11 +236,11 @@ button_name = &"SideButton_InteractClass"
 hover_tip_text = "工具类别
 交互"
 
-[node name="SideButton_SelectionClass" parent="SideBar" instance=ExtResource("4_u7q6r")]
+[node name="SideButton_LayersClass" parent="SideBar" instance=ExtResource("4_u7q6r")]
 position = Vector2(-90, 0)
-button_name = &"SideButton_SelectionClass"
+button_name = &"SideButton_LayersClass"
 hover_tip_text = "工具类别
-选区"
+图层"
 
 [node name="SideButton_EditClass" parent="SideBar" instance=ExtResource("4_u7q6r")]
 position = Vector2(-90, 0)

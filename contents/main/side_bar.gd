@@ -17,7 +17,8 @@ static var fs: SideBar:
 @onready var n_shadow: Sprite2D = $Shadow as Sprite2D
 @onready var n_buttons: Array[SideButton] = [ #参见BUTTONS_TEXTURES_NAME
 	$SideButton_InteractClass as SideButton,
-	$SideButton_SelectionClass as SideButton,
+	#$SideButton_SelectionClass as SideButton,
+	$SideButton_LayersClass as SideButton,
 	$SideButton_EditClass as SideButton,
 	$SideButton_LockClass as SideButton,
 	$SideButton_Menu as SideButton,
@@ -50,7 +51,8 @@ enum FocusClass{
 	INTERACT, #交互
 	SELECTION, #选区
 	EDIT, #擦写
-	LOCK, #锁定
+	LOCK, #锁定,
+	LAYER, #图层
 }
 ## 详细层节点类型
 enum DetailNodeType{
@@ -64,7 +66,8 @@ enum DetailNodeType{
 ## 按钮纹理名称列表，索引按序一对一对应于n_buttons数组中的每个元素的索引(例如本数组[0]对应n_buttons[0])，值对应于Main.ICON_TEXTURES常量的键，以此来捆绑n_buttons中的节点实例使用的纹理资源
 const BUTTONS_TEXTURES_NAME: Array[StringName] = [
 	&"Class_Interact",
-	&"Class_Selection",
+	#&"Class_Selection",
+	&"Class_Layers",
 	&"Class_Edit",
 	&"Class_Lock",
 	&"Menu",
@@ -117,6 +120,7 @@ static var INTERACT_CLASS_BUTTONS_DATA_LIST: Array[ClassButtonDataObject] = [
 ]
 ## [只读]工具类别层选区类按钮的数据列表，按按钮由上到下的顺序排序
 static var SELECTION_CLASS_BUTTONS_DATA_LIST: Array[ClassButtonDataObject] = [
+	#### 暂时计划删除选区类
 	ClassButtonDataObject.new(&"ClassButton_SelectionFastEdit", &"Back", "选区\n快速编辑"),
 	ClassButtonDataObject.new(&"ClassButton_SelectionEditManually", &"Back", "选区\n精确编辑"),
 	ClassButtonDataObject.new(&"ClassButton_SelectionUndoRedo", &"Back", "选区\n撤销与重做"),
@@ -136,10 +140,16 @@ static var LOCK_CLASS_BUTTONS_DATA_LIST: Array[ClassButtonDataObject] = [
 	ClassButtonDataObject.new(&"ClassButton_SmartLock", &"Back", "锁定\n智能锁定"),
 	ClassButtonDataObject.new(&"ClassButton_Back", &"Back", "返回\n"),
 ]
+## [只读]工具类别层图层类按钮的数据列表，按按钮由上到下的顺序排序
+static var LAYER_CLASS_BUTTONS_DATA_LIST: Array[ClassButtonDataObject] = [
+	#### 暂不确定是否制作图层类
+	
+]
 ## [只读]缩放工具的详细层数据列表
 static var TOOL_DETAIL_DATA_LIST_SCALER: Array[DetailNodeDataObject] = [
 	DetailNodeDataObject.new(DetailNodeType.MULTI_BUTTONS, [&"DetailButton_ScalerNumberBarLarger", &"DetailButton_ScalerNumberBarSmaller"], [&"Back", &"Back"], ["数字栏\n放大", "数字栏\n缩小"]),
-	DetailNodeDataObject.new(DetailNodeType.MULTI_BUTTONS, [&"DetailButton_ScalerGridsLarger", &"DetailButton_ScalerGridsSmaller"], [&"Back", &"Back"], ["答题网格\n放大", "答题网格\n缩小"]),
+	DetailNodeDataObject.new(DetailNodeType.SINGLE_BUTTON, [&"DetailButton_ScalerNumberBarAdapt"], [&"Back"], ["数字栏\n适应内容"]),
+	DetailNodeDataObject.new(DetailNodeType.MULTI_BUTTONS, [&"DetailButton_ScalerGridsMaximize", &"DetailButton_ScalerGridsLarger", &"DetailButton_ScalerGridsSmaller"], [&"Back", &"Back", &"Back"], ["答题网格\n最大化", "答题网格\n放大", "答题网格\n缩小"]),
 ]
 ## [只读]撤销重做的详细层数据列表
 static var TOOL_DETAIL_DATA_LIST_UNDO_REDO: Array[DetailNodeDataObject] = [
@@ -377,6 +387,14 @@ func switch_class_buttons_using(target_focus_class: FocusClass) -> void:
 				n_class_buttons[j].n_icon.texture = Main.ICON_TEXTURES[LOCK_CLASS_BUTTONS_DATA_LIST[j].texture_name] #设置纹理
 				n_class_buttons[j].button_name = LOCK_CLASS_BUTTONS_DATA_LIST[j].button_name #设置按钮名称
 				n_class_buttons[j].hover_tip_text = LOCK_CLASS_BUTTONS_DATA_LIST[j].tip_text #设置按钮提示文本
+		FocusClass.LAYER: #图层
+			for i in LAYER_CLASS_BUTTONS_DATA_LIST.size(): #按索引遍历选区类按钮表
+				var j: int = LAYER_CLASS_BUTTONS_DATA_LIST.size() - i - 1 #逆序索引
+				n_class_buttons[j].is_enable = true #启用按钮
+				class_buttons_using.append(n_class_buttons[j]) #将按钮添加到使用列表
+				n_class_buttons[j].n_icon.texture = Main.ICON_TEXTURES[LAYER_CLASS_BUTTONS_DATA_LIST[j].texture_name] #设置纹理
+				n_class_buttons[j].button_name = LAYER_CLASS_BUTTONS_DATA_LIST[j].button_name #设置按钮名称
+				n_class_buttons[j].hover_tip_text = LAYER_CLASS_BUTTONS_DATA_LIST[j].tip_text #设置按钮提示文本
 
 ## 清除和实例化详细层内容节点，例如详细层按钮、分隔符等
 func switch_detail_button_using(target_focus_tool: Main.FocusTool) -> void:
@@ -398,6 +416,9 @@ func switch_detail_button_using(target_focus_tool: Main.FocusTool) -> void:
 			new_node_task_list = TOOL_DETAIL_DATA_LIST_BRUSH #将实例化任务列表设为笔刷数据列表
 		Main.FocusTool.ERASER: #擦除工具
 			new_node_task_list = TOOL_DETAIL_DATA_LIST_ERASER #将实例化任务列表设为擦除工具数据列表
+		_: #default
+			push_error("SideBar: 在创建详细层内容节点过程中未能收集到节点实例化任务列表，因为：target_focus_tool参数值不匹配任何已知的焦点工具。")
+			return
 	## /01
 	## 02实例化节点到场景树中
 	for new_node_task in new_node_task_list: #遍历实例化任务列表

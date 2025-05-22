@@ -13,6 +13,14 @@ static var fs: LayersBar:
 @onready var n_back_color: ColorRect = $BackColor as ColorRect
 @onready var n_shadow: Sprite2D = $Shadow as Sprite2D
 @onready var n_base_tab: LayerTab = $BaseLayerTab as LayerTab
+@onready var n_void_tabs: Array[LayerTabVoid] = [
+	$LayerTabVoid_1 as LayerTabVoid,
+	$LayerTabVoid_2 as LayerTabVoid,
+	$LayerTabVoid_3 as LayerTabVoid,
+	$LayerTabVoid_4 as LayerTabVoid,
+	$LayerTabVoid_5 as LayerTabVoid,
+	$LayerTabVoid_6 as LayerTabVoid,
+]
 
 ## 图层栏背景颜色，施加给n_back_color的color属性
 const BAR_BACKGROUND_COLOR: Color = Color(0.5, 0.5, 0.5, 1.0)

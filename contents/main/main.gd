@@ -54,6 +54,7 @@ enum FocusTool{
 const ICON_TEXTURES: Dictionary[StringName, CompressedTexture2D] = {
 	&"Class_Interact": preload("res://contents/icon_class_interact_0.png"),
 	&"Class_Selection": preload("res://contents/icon_class_selection_0.png"),
+	&"Class_Layers": preload("res://contents/icon_back_0.png"),
 	&"Class_Edit": preload("res://contents/icon_class_edit_0.png"),
 	&"Class_Lock": preload("res://contents/icon_class_lock_0.png"),
 	&"Detail_Brush": preload("res://contents/icon_detail_brush_0.png"),
