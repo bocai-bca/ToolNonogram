@@ -1,6 +1,6 @@
 extends Node2D
 class_name LayerTabVoid
-## 图层虚标签。显示在图层栏上的标签，用于点击创建图层
+## 图层虚标签。显示在图层栏上的标签(未显示的图层的标签)，用于点击切换图层
 
 @onready var n_panel: Panel = $Panel as Panel
 @onready var n_text: Label = $Text as Label

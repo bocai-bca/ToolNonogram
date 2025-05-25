@@ -18,6 +18,10 @@ enum FillType{
 const ANIMATION_TIME: float = 0.25
 ## 偏移量动画和缩放动画的插值缓动曲线
 const ANIMATION_EASE: float = -2.0
+## 基底网格的背景颜色
+const BASE_GRIDS_BACK_COLOR: Color = Color(1.0, 1.0, 1.0, 1.0)
+## 悬浮网格的背景颜色
+const HOVER_GRIDS_BACK_COLOR: Color = Color(1.0, 1.0, 1.0, 0.5)
 
 ## 显示偏移量(网格的整数坐标移动偏移量)，表示当前画面中最左上角的格子应当是网格中的哪个坐标的格子
 static var display_offset: Vector2i = Vector2i(0, 0)
@@ -44,8 +48,18 @@ static var animate_now_zoom_blocks: float:
 static var global_grid_size: Vector2i = Vector2i(5, 5) #网格实例的节点的初始尺寸是5*5
 ## 全局缩放率
 static var global_scale_rate: float = 1.0
+## 是否是基底网格
+@export var is_base_grids: bool
 ## 本地网格尺寸，表示本EditableGrids实例中TileMapLayer节点所显示的网格尺寸，用于调整大小时读写
 var local_grid_size: Vector2i = Vector2i(5, 5)
+
+func _ready() -> void:
+	## 00设置颜色
+	if (is_base_grids): #如果是基底网格
+		n_back_color.color = BASE_GRIDS_BACK_COLOR #将背景颜色设为基底网格
+	else:
+		n_back_color.color = HOVER_GRIDS_BACK_COLOR #将背景颜色设为悬浮网格
+	## /00
 
 func _process(delta: float) -> void:
 	var window_size: Vector2 = Vector2(get_window().size) #获取窗口大小

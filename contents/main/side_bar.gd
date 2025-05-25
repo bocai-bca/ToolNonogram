@@ -143,7 +143,7 @@ static var LOCK_CLASS_BUTTONS_DATA_LIST: Array[ClassButtonDataObject] = [
 ## [只读]工具类别层图层类按钮的数据列表，按按钮由上到下的顺序排序
 static var LAYER_CLASS_BUTTONS_DATA_LIST: Array[ClassButtonDataObject] = [
 	#### 暂不确定是否制作图层类
-	
+
 ]
 ## [只读]缩放工具的详细层数据列表
 static var TOOL_DETAIL_DATA_LIST_SCALER: Array[DetailNodeDataObject] = [

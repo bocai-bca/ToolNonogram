@@ -94,6 +94,31 @@ ignore_texture_size = true
 
 [node name="BaseGrids" parent="PaperArea" instance=ExtResource("2_3fq6y")]
 position = Vector2(270, 270)
+is_base_grids = true
+
+[node name="HoverGrids_1" parent="PaperArea" instance=ExtResource("2_3fq6y")]
+visible = false
+position = Vector2(270, 270)
+
+[node name="HoverGrids_2" parent="PaperArea" instance=ExtResource("2_3fq6y")]
+visible = false
+position = Vector2(270, 270)
+
+[node name="HoverGrids_3" parent="PaperArea" instance=ExtResource("2_3fq6y")]
+visible = false
+position = Vector2(270, 270)
+
+[node name="HoverGrids_4" parent="PaperArea" instance=ExtResource("2_3fq6y")]
+visible = false
+position = Vector2(270, 270)
+
+[node name="HoverGrids_5" parent="PaperArea" instance=ExtResource("2_3fq6y")]
+visible = false
+position = Vector2(270, 270)
+
+[node name="HoverGrids_6" parent="PaperArea" instance=ExtResource("2_3fq6y")]
+visible = false
+position = Vector2(270, 270)
 
 [node name="NumberBar" type="Node2D" parent="."]
 position = Vector2(135, 0)

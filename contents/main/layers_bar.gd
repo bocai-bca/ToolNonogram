@@ -70,4 +70,3 @@ class LayerColorDataObject:
 		tab_color_pressed = new_tab_color_pressed
 		grids_color = new_grids_color
 		grids_background_color = new_grids_background_color
-		

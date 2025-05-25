@@ -13,7 +13,12 @@ static var fs: PaperArea:
 @onready var n_base_click: TextureButton = $BaseClick as TextureButton
 @onready var n_base_grids: EditableGrids = $BaseGrids as EditableGrids
 @onready var n_hover_grids: Array[EditableGrids] = [
-
+	$HoverGrids_1 as EditableGrids,
+	$HoverGrids_2 as EditableGrids,
+	$HoverGrids_3 as EditableGrids,
+	$HoverGrids_4 as EditableGrids,
+	$HoverGrids_5 as EditableGrids,
+	$HoverGrids_6 as EditableGrids,
 ]
 
 ## 偏移量动画倒计时器控制开关，为true时计时器继续计时，为false时暂停计时

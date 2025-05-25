@@ -125,6 +125,8 @@ static var puzzle_timer_second: float = 0.0:
 		puzzle_timer_second = value
 		puzzle_timer_minute += puzzle_timer_second / 60.0
 		puzzle_timer_second = fmod(puzzle_timer_second, 60.0)
+## 当前所在的焦点图层序号(0为基底图层)
+static var focus_layer: int = 0
 
 func _enter_tree() -> void:
 	fs = self #定义伪单例
