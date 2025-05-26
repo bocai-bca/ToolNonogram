@@ -97,27 +97,21 @@ position = Vector2(270, 270)
 is_base_grids = true
 
 [node name="HoverGrids_1" parent="PaperArea" instance=ExtResource("2_3fq6y")]
-visible = false
 position = Vector2(270, 270)
 
 [node name="HoverGrids_2" parent="PaperArea" instance=ExtResource("2_3fq6y")]
-visible = false
 position = Vector2(270, 270)
 
 [node name="HoverGrids_3" parent="PaperArea" instance=ExtResource("2_3fq6y")]
-visible = false
 position = Vector2(270, 270)
 
 [node name="HoverGrids_4" parent="PaperArea" instance=ExtResource("2_3fq6y")]
-visible = false
 position = Vector2(270, 270)
 
 [node name="HoverGrids_5" parent="PaperArea" instance=ExtResource("2_3fq6y")]
-visible = false
 position = Vector2(270, 270)
 
 [node name="HoverGrids_6" parent="PaperArea" instance=ExtResource("2_3fq6y")]
-visible = false
 position = Vector2(270, 270)
 
 [node name="NumberBar" type="Node2D" parent="."]
@@ -206,21 +200,27 @@ texture = ExtResource("4_dg2sw")
 
 [node name="LayerTabVoid_1" parent="LayersBar" instance=ExtResource("10_m0i3e")]
 position = Vector2(0, 772)
+index = 1
 
 [node name="LayerTabVoid_2" parent="LayersBar" instance=ExtResource("10_m0i3e")]
 position = Vector2(0, 618)
+index = 2
 
 [node name="LayerTabVoid_3" parent="LayersBar" instance=ExtResource("10_m0i3e")]
 position = Vector2(0, 464)
+index = 3
 
 [node name="LayerTabVoid_4" parent="LayersBar" instance=ExtResource("10_m0i3e")]
 position = Vector2(0, 310)
+index = 4
 
 [node name="LayerTabVoid_5" parent="LayersBar" instance=ExtResource("10_m0i3e")]
 position = Vector2(0, 156)
+index = 5
 
 [node name="LayerTabVoid_6" parent="LayersBar" instance=ExtResource("10_m0i3e")]
 position = Vector2(0, 2)
+index = 6
 
 [node name="BaseLayerTab" parent="LayersBar" instance=ExtResource("10_g83xj")]
 position = Vector2(0, 926)

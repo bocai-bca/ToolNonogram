@@ -1,15 +1,10 @@
-extends Node2D
+extends LayerTabBase
 class_name LayerTab
 ## 图层标签。显示在图层栏上的标签，用于点击切换图层
 
 @onready var n_panel: Panel = $Panel as Panel
 @onready var n_number: Label = $Number as Label
 @onready var n_button: TextureButton = $Button as TextureButton
-
-## 默认字体大小，需要手动根据主题中填写的值设置
-const DEFAULT_FONT_SIZE: int = 135
-## 默认圆角半径
-const DEFAULT_CORNER_RADIUS: int = 30
 
 ## 面板的StyleBox资源
 static var r_panel_stylebox: StyleBoxFlat = preload("res://contents/layer_tab/panel_stylebox.tres") as StyleBoxFlat
@@ -32,7 +27,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	var window_size: Vector2 = Vector2(get_window().size) #获取窗口大小
 	## 00更新面板
-	n_panel.size = Vector2(LayersBar.bar_width, window_size.y / LayersBar.MAX_TAB_COUNT) #设置尺寸
+	n_panel.size = Vector2(LayersBar.bar_width, window_size.y / Main.MAX_LAYER_COUNT) #设置尺寸
 	r_panel_stylebox.corner_radius_top_left = int(DEFAULT_CORNER_RADIUS * window_size.y / Main.WINDOW_SIZE_DEFAULT.y) #设置左上角圆角半径
 	r_panel_stylebox.corner_radius_bottom_left = r_panel_stylebox.corner_radius_top_left #设置左下角圆角半径
 	## /00

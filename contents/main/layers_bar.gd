@@ -2,6 +2,12 @@ extends Node2D
 class_name LayersBar
 ## 图层栏
 
+## 标签分为一般LayerTab和LayerTabVoid(虚标签)，本来计划这些全都是动态的节点，即用即生成，但是想了想决定都静态使用
+## 图层栏上涉及点击的全都是静止的LayerTabBase节点，剩下的都是和图层网格一块动的只负责视觉的标签节点
+
+## 信号-图层标签被点击，附带一个表示被点击标签所属序号的参数
+signal tab_clicked(index: int)
+
 ## 伪单例FakeSingleton
 static var fs: LayersBar:
 	get:
@@ -30,8 +36,6 @@ const BAR_SHADOW_MODULATE: Color = Color(0.0, 0.0, 0.0, 0.4)
 const BAR_WIDTH_MULTI: float = 1.0 / 8.0
 ## 阴影缩放X基值乘数，基于视口纵向长度。设定合适的值以影响阴影的横向宽度，除数为默认窗口高度，被除数为想要的默认X缩放倍率(基于所使用纹理的尺寸的X)
 const SHADOW_SCALE_X_BASE_MULTI: float = 2.0 / 1080.0
-## 包含基底图层在内，最多允许拥有几个图层及标签
-const MAX_TAB_COUNT: int = 7
 
 ## 图层栏横向宽度
 static var bar_width: float = 135.0
@@ -51,6 +55,16 @@ func _process(delta: float) -> void:
 	n_shadow.scale = Vector2(SHADOW_SCALE_X_BASE_MULTI * window_size.y, window_size.y) #设置阴影的大小
 	n_shadow.position = Vector2(bar_width - n_shadow.texture.get_size().x * n_shadow.scale.x / 2.0, window_size.y / 2.0) #设置阴影的位置
 	## /00
+	## 01更新虚标签
+	for i in n_void_tabs.size(): #按索引遍历虚标签节点列表
+		if (i < Main.focus_layer): #索引数+1=标签序号，如果索引数小于焦点图层序号，意味着当前虚标签为焦点或在焦点图层之下(即应当显示此虚标签对应的图层)
+			n_void_tabs[i].modulate.a = move_toward(n_void_tabs[i].modulate.a, LayerTabVoid.ALPHA_HIDE, delta * LayerTabVoid.ALPHA_DIFF_SPEED) #更新alpha到隐藏值
+		else: #否则(虚标签在焦点之上，即此虚标签对应的图层应当不显示，那么就需要显示虚标签)
+			if (n_void_tabs[i].is_mouse_inside): #如果鼠标在该虚标签内
+				n_void_tabs[i].modulate.a = move_toward(n_void_tabs[i].modulate.a, LayerTabVoid.ALPHA_HIGHLIGHT, delta * LayerTabVoid.ALPHA_DIFF_SPEED) #更新alpha到高亮值
+			else: #否则(鼠标不在该虚标签内)
+				n_void_tabs[i].modulate.a = move_toward(n_void_tabs[i].modulate.a, LayerTabVoid.ALPHA_NORMAL, delta * LayerTabVoid.ALPHA_DIFF_SPEED) #更新alpha到正常值
+	## /01
 
 ## 类-图层颜色数据对象
 class LayerColorDataObject:

@@ -78,6 +78,8 @@ const WINDOW_SIZE_DEFAULT: Vector2i = Vector2i(1920, 1080)
 const NUMBER_BAR_ICON_SIZE_RATE: float = 0.25
 ## 砖瓦一般大小(边长)，单位是像素，该值需要手动参考tile_set中的砖瓦像素尺寸设定值。用于参与网格的变换计算
 const TILE_NORMAL_SIZE: float = 160.0
+## 最多允许拥有几个图层及图层栏标签(不包含基底图层)
+const MAX_LAYER_COUNT: int = 6
 
 ## 当前菜单是否处于开启状态
 static var is_menu_open: bool:
