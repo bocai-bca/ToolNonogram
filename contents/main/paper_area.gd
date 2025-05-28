@@ -22,6 +22,17 @@ static var fs: PaperArea:
 ]
 @onready var n_back_color: ColorRect = $BackColor as ColorRect
 
+## 图层网格填充内容GridsData每个格子的填充数据枚举
+enum LayerGridsSlot{
+	EMPTY = 0, #空格
+	FILL_NORMAL = 1, #无着色实心块
+	CROSS_NORMAL = 2, #无着色叉叉
+	FILL_AUTOFILL = 3, #自动填充实心块(黄色)
+	CROSS_AUTOFILL = 4, #自动填充叉叉(黄色)
+	FILL_VERIFIED = 5, #已验证的自动填充实心块(蓝色)
+	CROSS_VERIFIED = 6, #已验证的自动填充叉叉(蓝色)
+}
+
 ## 偏移量动画倒计时器控制开关，为true时计时器继续计时，为false时暂停计时
 static var is_allow_grids_animation_timer_update: bool = true
 ## 偏移量动画倒计时器，即为0时到达终点。这个计时器本该在EditableGrids类里以和相关的静态成员一起搭配使用，但是EditableGrids是非单例的类，不宜在它的_process中更新计时器，因此委托在此处进行
@@ -43,7 +54,10 @@ var focus_layer_grids: EditableGrids:
 			push_error("PaperArea: 无法获取焦点所在图层网格并返回null，因为：Main.focus_layer所代表的焦点图层序号超出n_hover_grids列表记录的悬浮图层数量。")
 			return null
 		return n_hover_grids[Main.focus_layer - 1] #返回悬浮网格列表按这个方式的索引结果
-
+## 所有图层的图层网格填充内容列表，可以简称为图层内容列表
+static var layers_grids_map: Array[GridsData] = []
+## 所有图层的图层网格锁定内容列表，可以简称为图层锁定列表
+static var layers_lock_map: Array[GridsData] = []
 
 func _enter_tree() -> void:
 	fs = self #定义伪单例
@@ -101,8 +115,10 @@ func _process(delta: float) -> void:
 					if (EditableGrids.is_pos_in_grid(click_state.current_grid_pos)): #如果鼠标所在的坐标有效
 						match (Main.tools_detail_state.brush_fill_type): #匹配笔刷工具的填充类型
 							ToolsDetailState.ToolFillType.FILL: #实心块
+								####
 								n_base_grids.write_slot(click_state.current_grid_pos, EditableGrids.FillType.FILL) #将指定格子填写为实心块
 							ToolsDetailState.ToolFillType.CROSS: #叉叉
+								#### 
 								n_base_grids.write_slot(click_state.current_grid_pos, EditableGrids.FillType.CROSS) #将指定格子填写为叉叉
 				elif (click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS and not click_state.is_pressing() and click_state.is_just()): #如果鼠标未被点击，且刚刚松开，且上一次按下位置是答题网格
 					if (Main.game_mode == Main.GameMode.PUZZLE): #如果当前处于解题模式
@@ -110,13 +126,13 @@ func _process(delta: float) -> void:
 			Main.FocusTool.ERASER: #擦除工具
 				if (click_state.is_pressing() and click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS): #如果鼠标正被点击，且按下位置处于答题网格中
 					if (EditableGrids.is_pos_in_grid(click_state.current_grid_pos)): #如果鼠标所在的坐标有效
+						####
 						n_base_grids.clear_slot(click_state.current_grid_pos)
 				elif (click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS and not click_state.is_pressing() and click_state.is_just()): #如果鼠标未被点击，且刚刚松开
 					if (Main.game_mode == Main.GameMode.PUZZLE): #如果当前处于解题模式
 						Main.win_check_flag = true #开启胜利检查旗标
 
-func _physics_process(delta: float) -> void:
-	pass
+
 
 #region 系统级变更题纸的方法集
 ## 清空基本题纸的内容
@@ -130,11 +146,12 @@ func clear_base_grids() -> void:
 	n_base_grids.n_edit_map.clear()
 
 ## 重设网格尺寸(不会影响题纸的内容，可能导致内容超出新的尺寸)
+## 本方法在将来可能不再有用，请考虑重写一到两个新函数以实现对图层内容的尺寸修改和答题网格(EditableGrids)的尺寸修改
 func reset_grids_size(new_size: Vector2i) -> void:
 	if (n_base_grids == null):
 		push_error("PaperArea: 未能重设网格尺寸，因为：解引用n_base_grids时返回null。")
 		return
-	EditableGrids.global_grid_size = new_size #设置全局网格尺寸
+	Main.global_grid_size = new_size #设置全局网格尺寸
 	n_base_grids.resize_local_grids(new_size) #重绘基本题纸的本地网格
 	Main.grids_zoom_blocks = new_size.y #设置新的缩放格子数，使得新网格适应全屏
 #endregion

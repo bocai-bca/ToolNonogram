@@ -48,8 +48,6 @@ static var animate_now_zoom_blocks: float:
 	get:
 		return lerpf(float(Main.grids_zoom_blocks), animate_start_zoom_blocks, ease(PaperArea.grids_animation_timer / ANIMATION_TIME, ANIMATION_EASE))
 #static var animation_timer: float = 0.0 #交由PaperArea处理，请访问PaperArea.grids_animation_timer
-## 全局网格尺寸
-static var global_grid_size: Vector2i = Vector2i(5, 5) #网格实例的节点的初始尺寸是5*5
 ## 全局缩放率
 static var global_scale_rate: float = 1.0
 ## 是否是基底网格
@@ -106,8 +104,8 @@ func clear_slot(pos: Vector2i) -> void:
 static func update_offset_on_grabbing(offset_delta: Vector2) -> void:
 	animate_start_offset += offset_delta #将本次的偏移量加进动画起始移动量
 	var start_offset_clamped: Vector2 = Vector2(
-		clampf(animate_start_offset.x, 0.0, (EditableGrids.global_grid_size.x - 1) * Main.TILE_NORMAL_SIZE * global_scale_rate),
-		clampf(animate_start_offset.y, 0.0, (EditableGrids.global_grid_size.y - 1) * Main.TILE_NORMAL_SIZE * global_scale_rate)
+		clampf(animate_start_offset.x, 0.0, (Main.global_grid_size.x - 1) * Main.TILE_NORMAL_SIZE * global_scale_rate),
+		clampf(animate_start_offset.y, 0.0, (Main.global_grid_size.y - 1) * Main.TILE_NORMAL_SIZE * global_scale_rate)
 	) #钳制坐标，防止超出左上角屏幕范围
 	display_offset = Vector2i((start_offset_clamped / Main.TILE_NORMAL_SIZE / global_scale_rate).round()) #将动画起始偏移量除以砖瓦大小和全局缩放率后取整
 	animate_start_zoom_blocks = animate_now_zoom_blocks #将起始缩放格子数设为当前的缩放格子数
@@ -148,7 +146,7 @@ static func atlas_coords_to_fill_type(coords: Vector2i) -> FillType:
 static func is_pos_in_grid(pos: Vector2i) -> bool:
 	if (pos.x < 0 or pos.y < 0): #如果坐标任一值小于0
 		return false #返回否
-	if (pos.x >= global_grid_size.x or pos.y >= global_grid_size.y): #如果坐标任一值大于其对应的尺寸的值
+	if (pos.x >= Main.global_grid_size.x or pos.y >= Main.global_grid_size.y): #如果坐标任一值大于其对应的尺寸的值
 		return false #返回否
 	return true #返回是
 
@@ -166,9 +164,9 @@ func resize_local_grids(new_size: Vector2i) -> void:
 ## 转换到GridsData，用于检测答题网格是否通关。转换时需要按GridsData.SlotType存储格子信息，而不是本类的FillType
 ## 本方法今后可以考虑废弃重写，因为现在EditableGrids类不会自己存便于读取的局面数据，需要从TileMapLayer节点里还原格子的数据，这个过程是费劲的
 func to_grids_data() -> GridsData:
-	var result: GridsData = GridsData.new(global_grid_size) #新建一个GridsData实例，用于寄存和返回结果
-	for x in global_grid_size.x: #遍历全局尺寸的X
-		for y in global_grid_size.y: #遍历全局尺寸的Y
+	var result: GridsData = GridsData.new(Main.global_grid_size) #新建一个GridsData实例，用于寄存和返回结果
+	for x in Main.global_grid_size.x: #遍历全局尺寸的X
+		for y in Main.global_grid_size.y: #遍历全局尺寸的Y
 			result.set_slot( #给result的特定格子设置数据
 				Vector2i(x, y), #将要操作的result的格子
 				fill_type_to_grids_data_slot_type( #将本类的FillType枚举转换到GridsData类的SlotType枚举

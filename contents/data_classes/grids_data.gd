@@ -17,10 +17,10 @@ var array: PackedByteArray = []
 var width: int
 
 ## 构造方法，将返回一个尺寸为给定尺寸、填充内容为全空的GridsData实例
-func _init(size: Vector2i) -> void:
+func _init(size: Vector2i, init_fill: SlotType = SlotType.EMPTY) -> void:
 	width = size.x #设置横排元素数量
 	array.resize(size.x * size.y) #初始化尺寸
-	array.fill(SlotType.EMPTY) #将内容设为全空
+	array.fill(init_fill) #将内容设为全空
 
 ## 读取，超出索引边界时返回给定的失败返回值(默认为0)
 func get_slot(index: Vector2i, failed_return: int = 0) -> SlotType:

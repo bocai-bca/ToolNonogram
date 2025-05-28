@@ -2,6 +2,8 @@ extends RefCounted
 class_name LayerData
 ## 图层数据，记录一个图层的所有内容
 
+## 本类可能将不会被使用，考虑删除
+
 ## 填充图，使用GridsData来存储一个图层上的所有内容
 ## 每个格子的数值代表：
 ## 	0 = 空格

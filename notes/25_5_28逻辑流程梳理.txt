@@ -1,0 +1,68 @@
+所有模块：
+PaperArea输入侦测、EditableGrids填充内容、UndoRedoServer登记、UndoRedoServer移动焦点、UndoRedoServer清空、自动填充服务器执行、PaperArea保存内容、PaperArea尺寸修改(含对内容的修改)、EditableGrids尺寸修改(只更新grids_map的尺寸，而edit_map的内容需要重新填充)、NumberBar重设尺寸、NumberBar设置内容
+
+一次撤销动作的流程：
+	事前触发：
+		SideBar菜单按钮按下
+		Main按钮名称匹配
+	URS转移当前历史记录对象并返回历史记录
+	Main还原到历史记录
+	PaperArea还原到历史记录
+	EditableGrids填充内容
+
+一次重做动作的流程：
+	事前触发：
+		SideBar菜单按钮按下
+		Main按钮名称匹配
+	URS转移当前历史记录对象并返回历史记录
+	Main还原到历史记录
+	PaperArea还原到历史记录
+	EditableGrids填充内容
+
+用户输入后的流程：
+	事前触发：
+		PaperArea捕获用户输入，映射到答题网格的格子坐标
+	PaperArea保存内容(写入用户编辑的内容)
+	自动填充服务器执行
+	PaperArea保存内容(写入自动填充服务器编辑的内容)
+	URS登记
+	EditableGrids填充内容
+
+清空网格的流程：
+	事前触发：
+		Menu按钮按下
+		Main按钮名称匹配
+	PaperArea保存内容
+	URS登记
+	EditableGrids填充内容
+
+沙盒化的流程：
+	事前触发：
+		Menu按钮按下
+		Main按钮名称匹配
+	Main相关设置更改(游戏模式等)
+	URS清空
+	PaperArea保存内容(清除所有着色内容)
+	EditableGrids填充内容
+
+修改尺寸的流程：
+	事前触发：
+		Menu按钮按下
+		Popup确定
+		Main按钮名称匹配
+	Main相关设置更改(全局网格尺寸等)
+	URS清空
+	PaperArea尺寸修改
+	EditableGrids尺寸修改
+	EditableGrids填充内容
+
+新开局(通常初始化)的流程：
+	事前触发：
+		不知道
+	URS清空
+	Main相关设置更改(题目数据、游戏模式、全局网格尺寸、解题计时器等)
+	PaperArea保存内容(清空全部内容)
+	PaperArea尺寸修改
+	NumberBar重设尺寸
+	NumberBar设置内容
+	EditableGrids填充内容(清空全部内容)

@@ -132,6 +132,8 @@ static var puzzle_timer_second: float = 0.0:
 static var focus_layer: int = 0
 ## 当前已有图层数量，表达方式为当前启用的图层中最高的序号数
 static var activiting_layers_count: int = 0
+## 全局网格尺寸
+static var global_grid_size: Vector2i = Vector2i(5, 5) #网格实例的节点的初始尺寸是5*5
 
 func _enter_tree() -> void:
 	fs = self #定义伪单例
@@ -167,6 +169,25 @@ func push_error_format(source_class_name: String, error_handle: ErrorHandle, err
 func debug_print() -> void:
 	pass
 
+#func get_file_lines() -> void:
+	#var num: int = 0
+	#var scripts: PackedStringArray = get_file_in_folders_resursion("res://") #如果使用其他路径确保末尾带/
+	#for script in scripts:
+		#var fa: FileAccess = FileAccess.open(script, FileAccess.READ)
+		#var lines: int = fa.get_as_text().count("\n")
+		#print(script, "=", lines)
+		#num += lines
+	#print("总计=",num)
+#func get_file_in_folders_resursion(path: String) -> PackedStringArray:
+	#var files: PackedStringArray = []
+	#var da: DirAccess = DirAccess.open(path)
+	#for file in da.get_files():
+		#if (file.ends_with(".gd")):
+			#files.append(path + file)
+	#for dir in da.get_directories():
+		#files.append_array(get_file_in_folders_resursion(path + dir + "/"))
+	#return files
+
 ## 本方法尚不确定是否要投入使用，目前考虑稍微降低一点抽象程度
 ## 新建游戏的高级封装，返回成功与否(如果因各种原因导致最终没有新建游戏，将返回false)
 #static func start_new_game(new_mode: GameMode, new_game_settings: NewGameSettings) -> bool:
@@ -174,14 +195,15 @@ func debug_print() -> void:
 		#GameMode.PUZZLE: #解题模式
 			#return true
 		#GameMode.SANDBOX: #沙盒模式
-			#if (start_new_sandbox(new_game_settings.clear_grids, new_game_settings.size)): #如果新建沙盒模式时成功
+			#if (start_new_sandbox_old(new_game_settings.clear_grids, new_game_settings.size)): #如果新建沙盒模式时成功
 				#game_mode = GameMode.SANDBOX #将游戏模式调整为沙盒
 				#return true
 			#return false
 	#return false
 
 ## 新建解题模式游戏的低级封装
-static func start_new_puzzle(new_puzzle_data: PuzzleData, new_size: Vector2i, new_seed: String) -> void:
+## 本方法已不适应新的需求，需逐渐被解除依赖最终彻底弃用
+static func start_new_puzzle_old(new_puzzle_data: PuzzleData, new_size: Vector2i, new_seed: String) -> void:
 	PaperArea.fs.clear_base_grids() #清空基本题纸的内容
 	PaperArea.fs.reset_grids_size(new_size) #重设网格尺寸(不影响题纸内容)
 	NumberBar.fs.resize_grids(new_size) #重设数字栏网格尺寸(不影响内容)
@@ -196,13 +218,18 @@ static func start_new_puzzle(new_puzzle_data: PuzzleData, new_size: Vector2i, ne
 	## /00
 
 ## 新建沙盒模式游戏的低级封装
-static func start_new_sandbox(clear_grids: bool, new_size: Vector2i) -> void:
+## 本方法已不适应新的需求，需逐渐被解除依赖最终彻底弃用
+static func start_new_sandbox_old(clear_grids: bool, new_size: Vector2i) -> void:
 	if (clear_grids): #如果需要清空网格
 		PaperArea.fs.clear_base_grids() #清空基本题纸的内容
 		#### 此处缺少当不清空网格时清除处于新尺寸画布外的笔迹的清除操作(如沙盒化)
 	PaperArea.fs.reset_grids_size(new_size) #重设网格尺寸(不影响题纸内容)
 	NumberBar.fs.resize_grids(new_size) #重设数字栏网格尺寸(不影响内容)
 	game_mode = GameMode.SANDBOX #将游戏模式设为沙盒
+
+## 新建沙盒模式游戏的低级封装(新)
+static func start_new_sandbox(new_size: Vector2i) -> void:
+	pass
 
 ## 沙盒化(只在解题模式有效)
 static func sandboxize() -> void:
@@ -219,7 +246,7 @@ static func puzzle_win() -> void:
 	sandboxize() #沙盒化
 	var win_popup: DetailPopup_Win = PopupManager.create_popup(&"Win") as DetailPopup_Win #新建胜利弹窗
 	PopupManager.add_popup(win_popup) #将弹窗添加到场景树
-	win_popup.set_contents(current_seed, EditableGrids.global_grid_size, puzzle_timer_hour, puzzle_timer_minute, int(puzzle_timer_second)) #设置弹窗的信息
+	win_popup.set_contents(current_seed, global_grid_size, puzzle_timer_hour, puzzle_timer_minute, int(puzzle_timer_second)) #设置弹窗的信息
 
 ## 按钮禁用检查，传入一个按钮名称，返回该按钮在当前状态下是否应该禁用(返回true代表禁用)。请妥善考虑本方法的调用频率
 static func button_disable_check(button_name: StringName) -> bool:
@@ -296,9 +323,9 @@ static func on_button_trigged(button_name: StringName) -> void:
 		&"DetailButton_ScalerNumberBarSmaller": #侧边栏工具详细层按钮-数字栏缩小
 			NumberBar.fs.icon_zoom_smaller() #缩小
 		&"DetailButton_ScalerGridsLarger": #侧边栏工具详细层按钮-答题网格放大
-			EditableGrids.update_animation_data(EditableGrids.display_offset, clampi(grids_zoom_blocks - 1, 1, EditableGrids.global_grid_size.y)) #调用题纸网格类的更新动画方法
+			EditableGrids.update_animation_data(EditableGrids.display_offset, clampi(grids_zoom_blocks - 1, 1, global_grid_size.y)) #调用题纸网格类的更新动画方法
 		&"DetailButton_ScalerGridsSmaller": #侧边栏工具详细层按钮-答题网格缩小
-			EditableGrids.update_animation_data(EditableGrids.display_offset, clampi(grids_zoom_blocks + 1, 1, EditableGrids.global_grid_size.y)) #调用题纸网格类的更新动画方法
+			EditableGrids.update_animation_data(EditableGrids.display_offset, clampi(grids_zoom_blocks + 1, 1, global_grid_size.y)) #调用题纸网格类的更新动画方法
 		&"DetailButton_BrushModeBrush": #侧边栏工具详细层按钮-笔刷工具.模式.画笔
 			tools_detail_state.brush_mode = ToolsDetailState.BrushMode.BRUSH #将工具详细状态的笔刷模式设为画笔
 			NumberBar.icon_texture = ICON_TEXTURES[&"Detail_Brush_Brush"] #将工具提示图标设为笔刷工具.画笔图标
@@ -334,7 +361,7 @@ static func on_button_trigged(button_name: StringName) -> void:
 					print("Main: 种子验证通过，正在新建解题游戏")
 					## 创建新解题游戏
 					PopupManager.fs.emit_signal(&"close_popup", &"Paper_New") #关闭菜单
-					start_new_puzzle( #开始新解题游戏
+					start_new_puzzle_old( #开始新解题游戏
 						seed_deserializated.generator._generate(seed_deserializated, menu_detail_state.popup_newpaper_size).to_puzzle_data(), #题目数据
 						menu_detail_state.popup_newpaper_size, #尺寸
 						seed #种子
@@ -344,7 +371,7 @@ static func on_button_trigged(button_name: StringName) -> void:
 					PopupManager.fs.emit_signal(&"custom_popup_notify", &"New_Paper_SeedInvalid") #通知新建题纸菜单种子不可用
 			else: #否则(选择的模式为沙盒)
 				print("Main: 正在尝试新建沙盒游戏")
-				start_new_sandbox(true, menu_detail_state.popup_newpaper_size) #创建新沙盒模式游戏
+				start_new_sandbox_old(true, menu_detail_state.popup_newpaper_size) #创建新沙盒模式游戏
 				PopupManager.fs.emit_signal(&"close_popup", &"Paper_New") #关闭菜单
 			menu_detail_state.popup_newpaper_seed = "" #清空记录在菜单上的种子
 			menu_detail_state.popup_newpaper_size = Vector2i(5, 5) #重置尺寸设置
