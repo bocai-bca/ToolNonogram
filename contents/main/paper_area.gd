@@ -20,6 +20,7 @@ static var fs: PaperArea:
 	$HoverGrids_5 as EditableGrids,
 	$HoverGrids_6 as EditableGrids,
 ]
+@onready var n_back_color: ColorRect = $BackColor as ColorRect
 
 ## 偏移量动画倒计时器控制开关，为true时计时器继续计时，为false时暂停计时
 static var is_allow_grids_animation_timer_update: bool = true
@@ -33,12 +34,26 @@ static var grids_free_height: float = 0.0
 static var can_mouse_interactive: bool:
 	get:
 		return (PopupManager.alive_popup_count == 0 and not Main.is_menu_open) #返回判据，返回true需要：当前没有弹出菜单、没有打开底部菜单
+## [只读]焦点所在图层网格
+var focus_layer_grids: EditableGrids:
+	get:
+		if (Main.focus_layer == 0): #如果焦点图层序号为0
+			return n_base_grids #返回基底网格
+		if (Main.focus_layer - 1 >= n_hover_grids.size()): #如果焦点序号大于悬浮网格数量
+			push_error("PaperArea: 无法获取焦点所在图层网格并返回null，因为：Main.focus_layer所代表的焦点图层序号超出n_hover_grids列表记录的悬浮图层数量。")
+			return null
+		return n_hover_grids[Main.focus_layer - 1] #返回悬浮网格列表按这个方式的索引结果
+
 
 func _enter_tree() -> void:
 	fs = self #定义伪单例
 
+func _ready() -> void:
+	n_base_grids.is_layer_show = true #使基底图层可见
+
 func _process(delta: float) -> void:
 	var window_size: Vector2 = Vector2(get_window().size) #获取窗口大小
+	n_back_color.size = window_size #更新背景颜色矩形的尺寸
 	position = Vector2(LayersBar.bar_width, 0.0) #更新题纸区域的坐标
 	grids_free_height = window_size.y - NumberBar.bar_width #计算可用空间高度
 	if (is_allow_grids_animation_timer_update): #如果当前允许计时器更新

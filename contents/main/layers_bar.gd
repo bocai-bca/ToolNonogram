@@ -57,9 +57,9 @@ func _process(delta: float) -> void:
 	## /00
 	## 01更新虚标签
 	for i in n_void_tabs.size(): #按索引遍历虚标签节点列表
-		if (i < Main.focus_layer): #索引数+1=标签序号，如果索引数小于焦点图层序号，意味着当前虚标签为焦点或在焦点图层之下(即应当显示此虚标签对应的图层)
+		if (i < Main.focus_layer or i >= Main.activiting_layers_count): #索引数+1=标签序号，如果索引数小于焦点图层序号，意味着当前虚标签为焦点或在焦点图层之下(即应当显示此虚标签对应的图层)，或索引数大于等于含基底图层的最高的启用图层的索引数
 			n_void_tabs[i].modulate.a = move_toward(n_void_tabs[i].modulate.a, LayerTabVoid.ALPHA_HIDE, delta * LayerTabVoid.ALPHA_DIFF_SPEED) #更新alpha到隐藏值
-		else: #否则(虚标签在焦点之上，即此虚标签对应的图层应当不显示，那么就需要显示虚标签)
+		else: #否则如果该虚标签是(虚标签在焦点之上，即此虚标签对应的图层应当不显示，那么就需要显示虚标签)
 			if (n_void_tabs[i].is_mouse_inside): #如果鼠标在该虚标签内
 				n_void_tabs[i].modulate.a = move_toward(n_void_tabs[i].modulate.a, LayerTabVoid.ALPHA_HIGHLIGHT, delta * LayerTabVoid.ALPHA_DIFF_SPEED) #更新alpha到高亮值
 			else: #否则(鼠标不在该虚标签内)

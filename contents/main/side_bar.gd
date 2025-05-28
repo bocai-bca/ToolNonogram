@@ -18,7 +18,7 @@ static var fs: SideBar:
 @onready var n_buttons: Array[SideButton] = [ #参见BUTTONS_TEXTURES_NAME
 	$SideButton_InteractClass as SideButton,
 	#$SideButton_SelectionClass as SideButton,
-	$SideButton_LayersClass as SideButton,
+	#$SideButton_LayersClass as SideButton,
 	$SideButton_EditClass as SideButton,
 	$SideButton_LockClass as SideButton,
 	$SideButton_Menu as SideButton,
@@ -49,10 +49,10 @@ enum Panels{
 enum FocusClass{
 	NONE, #无
 	INTERACT, #交互
-	SELECTION, #选区
+	#SELECTION, #选区
 	EDIT, #擦写
 	LOCK, #锁定,
-	LAYER, #图层
+	#LAYER, #图层
 }
 ## 详细层节点类型
 enum DetailNodeType{
@@ -67,7 +67,7 @@ enum DetailNodeType{
 const BUTTONS_TEXTURES_NAME: Array[StringName] = [
 	&"Class_Interact",
 	#&"Class_Selection",
-	&"Class_Layers",
+	#&"Class_Layers",
 	&"Class_Edit",
 	&"Class_Lock",
 	&"Menu",
@@ -116,17 +116,18 @@ static var INTERACT_CLASS_BUTTONS_DATA_LIST: Array[ClassButtonDataObject] = [
 	ClassButtonDataObject.new(&"ClassButton_Scaler", &"Back", "交互\n缩放工具"),
 	ClassButtonDataObject.new(&"ClassButton_Ruler", &"Back", "交互\n量尺工具"),
 	ClassButtonDataObject.new(&"ClassButton_UndoRedo", &"Back", "交互\n撤销与重做"),
+	ClassButtonDataObject.new(&"ClassButton_Layers", &"Back", "交互\n图层管理"),
 	ClassButtonDataObject.new(&"ClassButton_Back", &"Back", "返回\n"),
 ]
 ## [只读]工具类别层选区类按钮的数据列表，按按钮由上到下的顺序排序
-static var SELECTION_CLASS_BUTTONS_DATA_LIST: Array[ClassButtonDataObject] = [
+#static var SELECTION_CLASS_BUTTONS_DATA_LIST: Array[ClassButtonDataObject] = [
 	#### 暂时计划删除选区类
-	ClassButtonDataObject.new(&"ClassButton_SelectionFastEdit", &"Back", "选区\n快速编辑"),
-	ClassButtonDataObject.new(&"ClassButton_SelectionEditManually", &"Back", "选区\n精确编辑"),
-	ClassButtonDataObject.new(&"ClassButton_SelectionUndoRedo", &"Back", "选区\n撤销与重做"),
-	ClassButtonDataObject.new(&"ClassButton_SelectionEnd", &"Back", "选区\n结束选区"),
-	ClassButtonDataObject.new(&"ClassButton_Back", &"Back", "返回\n"),
-]
+	#ClassButtonDataObject.new(&"ClassButton_SelectionFastEdit", &"Back", "选区\n快速编辑"),
+	#ClassButtonDataObject.new(&"ClassButton_SelectionEditManually", &"Back", "选区\n精确编辑"),
+	#ClassButtonDataObject.new(&"ClassButton_SelectionUndoRedo", &"Back", "选区\n撤销与重做"),
+	#ClassButtonDataObject.new(&"ClassButton_SelectionEnd", &"Back", "选区\n结束选区"),
+	#ClassButtonDataObject.new(&"ClassButton_Back", &"Back", "返回\n"),
+#]
 ## [只读]工具类别层擦写类按钮的数据列表，按按钮由上到下的顺序排序
 static var EDIT_CLASS_BUTTONS_DATA_LIST: Array[ClassButtonDataObject] = [
 	ClassButtonDataObject.new(&"ClassButton_Brush", &"Detail_Brush", "擦写\n笔刷工具"),
@@ -141,10 +142,10 @@ static var LOCK_CLASS_BUTTONS_DATA_LIST: Array[ClassButtonDataObject] = [
 	ClassButtonDataObject.new(&"ClassButton_Back", &"Back", "返回\n"),
 ]
 ## [只读]工具类别层图层类按钮的数据列表，按按钮由上到下的顺序排序
-static var LAYER_CLASS_BUTTONS_DATA_LIST: Array[ClassButtonDataObject] = [
+#static var LAYER_CLASS_BUTTONS_DATA_LIST: Array[ClassButtonDataObject] = [
 	#### 暂不确定是否制作图层类
-
-]
+	#ClassButtonDataObject.new(&"ClassButton_Back", &"Back", "返回\n"),
+#]
 ## [只读]缩放工具的详细层数据列表
 static var TOOL_DETAIL_DATA_LIST_SCALER: Array[DetailNodeDataObject] = [
 	DetailNodeDataObject.new(DetailNodeType.MULTI_BUTTONS, [&"DetailButton_ScalerNumberBarLarger", &"DetailButton_ScalerNumberBarSmaller"], [&"Back", &"Back"], ["数字栏\n放大", "数字栏\n缩小"]),
@@ -155,6 +156,13 @@ static var TOOL_DETAIL_DATA_LIST_SCALER: Array[DetailNodeDataObject] = [
 static var TOOL_DETAIL_DATA_LIST_UNDO_REDO: Array[DetailNodeDataObject] = [
 	DetailNodeDataObject.new(DetailNodeType.SINGLE_BUTTON, [&"DetailButton_Undo"], [&"Back"], ["撤销\n"]),
 	DetailNodeDataObject.new(DetailNodeType.SINGLE_BUTTON, [&"DetailButton_Redo"], [&"Back"], ["重做\n"]),
+]
+## [只读]图层管理的详细层数据列表
+static var TOOL_DETAIL_DATA_LIST_LAYERS: Array[DetailNodeDataObject] = [
+	DetailNodeDataObject.new(DetailNodeType.SINGLE_BUTTON, [&"DetailButton_LayersNew"], [&"Back"], ["图层管理\n新建图层"]),
+	DetailNodeDataObject.new(DetailNodeType.MULTI_BUTTONS, [&"DetailButton_LayersMoveUp", &"DetailButton_LayersMoveDown"], [&"Back", &"Back"], ["图层管理\n向上移动", "图层管理\n向下移动"]),
+	DetailNodeDataObject.new(DetailNodeType.SINGLE_BUTTON, [&"DetailButton_LayersMergeDown"], [&"Back"], ["图层管理\n向下合并"]),
+	DetailNodeDataObject.new(DetailNodeType.SINGLE_BUTTON, [&"DetailButton_LayersDelete"], [&"Back"], ["图层管理\n删除图层"]),
 ]
 ## [只读]笔刷工具的详细层数据列表
 static var TOOL_DETAIL_DATA_LIST_BRUSH: Array[DetailNodeDataObject] = [
@@ -363,14 +371,14 @@ func switch_class_buttons_using(target_focus_class: FocusClass) -> void:
 				n_class_buttons[j].n_icon.texture = Main.ICON_TEXTURES[INTERACT_CLASS_BUTTONS_DATA_LIST[j].texture_name] #设置纹理
 				n_class_buttons[j].button_name = INTERACT_CLASS_BUTTONS_DATA_LIST[j].button_name #设置按钮名称
 				n_class_buttons[j].hover_tip_text = INTERACT_CLASS_BUTTONS_DATA_LIST[j].tip_text #设置按钮提示文本
-		FocusClass.SELECTION: #选区
-			for i in SELECTION_CLASS_BUTTONS_DATA_LIST.size(): #按索引遍历选区类按钮表
-				var j: int = SELECTION_CLASS_BUTTONS_DATA_LIST.size() - i - 1 #逆序索引
-				n_class_buttons[j].is_enable = true #启用按钮
-				class_buttons_using.append(n_class_buttons[j]) #将按钮添加到使用列表
-				n_class_buttons[j].n_icon.texture = Main.ICON_TEXTURES[SELECTION_CLASS_BUTTONS_DATA_LIST[j].texture_name] #设置纹理
-				n_class_buttons[j].button_name = SELECTION_CLASS_BUTTONS_DATA_LIST[j].button_name #设置按钮名称
-				n_class_buttons[j].hover_tip_text = SELECTION_CLASS_BUTTONS_DATA_LIST[j].tip_text #设置按钮提示文本
+		#FocusClass.SELECTION: #选区
+			#for i in SELECTION_CLASS_BUTTONS_DATA_LIST.size(): #按索引遍历选区类按钮表
+				#var j: int = SELECTION_CLASS_BUTTONS_DATA_LIST.size() - i - 1 #逆序索引
+				#n_class_buttons[j].is_enable = true #启用按钮
+				#class_buttons_using.append(n_class_buttons[j]) #将按钮添加到使用列表
+				#n_class_buttons[j].n_icon.texture = Main.ICON_TEXTURES[SELECTION_CLASS_BUTTONS_DATA_LIST[j].texture_name] #设置纹理
+				#n_class_buttons[j].button_name = SELECTION_CLASS_BUTTONS_DATA_LIST[j].button_name #设置按钮名称
+				#n_class_buttons[j].hover_tip_text = SELECTION_CLASS_BUTTONS_DATA_LIST[j].tip_text #设置按钮提示文本
 		FocusClass.EDIT: #擦写
 			for i in EDIT_CLASS_BUTTONS_DATA_LIST.size(): #按索引遍历选区类按钮表
 				var j: int = EDIT_CLASS_BUTTONS_DATA_LIST.size() - i - 1 #逆序索引
@@ -387,14 +395,14 @@ func switch_class_buttons_using(target_focus_class: FocusClass) -> void:
 				n_class_buttons[j].n_icon.texture = Main.ICON_TEXTURES[LOCK_CLASS_BUTTONS_DATA_LIST[j].texture_name] #设置纹理
 				n_class_buttons[j].button_name = LOCK_CLASS_BUTTONS_DATA_LIST[j].button_name #设置按钮名称
 				n_class_buttons[j].hover_tip_text = LOCK_CLASS_BUTTONS_DATA_LIST[j].tip_text #设置按钮提示文本
-		FocusClass.LAYER: #图层
-			for i in LAYER_CLASS_BUTTONS_DATA_LIST.size(): #按索引遍历选区类按钮表
-				var j: int = LAYER_CLASS_BUTTONS_DATA_LIST.size() - i - 1 #逆序索引
-				n_class_buttons[j].is_enable = true #启用按钮
-				class_buttons_using.append(n_class_buttons[j]) #将按钮添加到使用列表
-				n_class_buttons[j].n_icon.texture = Main.ICON_TEXTURES[LAYER_CLASS_BUTTONS_DATA_LIST[j].texture_name] #设置纹理
-				n_class_buttons[j].button_name = LAYER_CLASS_BUTTONS_DATA_LIST[j].button_name #设置按钮名称
-				n_class_buttons[j].hover_tip_text = LAYER_CLASS_BUTTONS_DATA_LIST[j].tip_text #设置按钮提示文本
+		#FocusClass.LAYER: #图层
+			#for i in LAYER_CLASS_BUTTONS_DATA_LIST.size(): #按索引遍历选区类按钮表
+				#var j: int = LAYER_CLASS_BUTTONS_DATA_LIST.size() - i - 1 #逆序索引
+				#n_class_buttons[j].is_enable = true #启用按钮
+				#class_buttons_using.append(n_class_buttons[j]) #将按钮添加到使用列表
+				#n_class_buttons[j].n_icon.texture = Main.ICON_TEXTURES[LAYER_CLASS_BUTTONS_DATA_LIST[j].texture_name] #设置纹理
+				#n_class_buttons[j].button_name = LAYER_CLASS_BUTTONS_DATA_LIST[j].button_name #设置按钮名称
+				#n_class_buttons[j].hover_tip_text = LAYER_CLASS_BUTTONS_DATA_LIST[j].tip_text #设置按钮提示文本
 
 ## 清除和实例化详细层内容节点，例如详细层按钮、分隔符等
 func switch_detail_button_using(target_focus_tool: Main.FocusTool) -> void:
@@ -412,6 +420,8 @@ func switch_detail_button_using(target_focus_tool: Main.FocusTool) -> void:
 			new_node_task_list = TOOL_DETAIL_DATA_LIST_SCALER #将实例化任务列表设为缩放工具数据列表
 		Main.FocusTool.UNDO_REDO: #撤销重做
 			new_node_task_list = TOOL_DETAIL_DATA_LIST_UNDO_REDO #将实例化任务列表设为撤销重做数据列表
+		Main.FocusTool.LAYERS: #图层管理
+			new_node_task_list = TOOL_DETAIL_DATA_LIST_LAYERS #将实例化任务列表设为图层管理数据列表
 		Main.FocusTool.BRUSH: #笔刷工具
 			new_node_task_list = TOOL_DETAIL_DATA_LIST_BRUSH #将实例化任务列表设为笔刷数据列表
 		Main.FocusTool.ERASER: #擦除工具

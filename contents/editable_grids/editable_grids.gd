@@ -22,6 +22,10 @@ const ANIMATION_EASE: float = -2.0
 const BASE_GRIDS_BACK_COLOR: Color = Color(1.0, 1.0, 1.0, 1.0)
 ## 悬浮网格的背景颜色
 const HOVER_GRIDS_BACK_COLOR: Color = Color(1.0, 1.0, 1.0, 0.5)
+## 图层翻动效果时间
+const LAYER_FLIP_TIME: float = 0.6
+## 图层翻动效果缓动曲线值
+const LAYER_FLIP_EASE_CURVE: float = 5.0
 
 ## 显示偏移量(网格的整数坐标移动偏移量)，表示当前画面中最左上角的格子应当是网格中的哪个坐标的格子
 static var display_offset: Vector2i = Vector2i(0, 0)
@@ -52,6 +56,13 @@ static var global_scale_rate: float = 1.0
 @export var is_base_grids: bool
 ## 本地网格尺寸，表示本EditableGrids实例中TileMapLayer节点所显示的网格尺寸，用于调整大小时读写
 var local_grid_size: Vector2i = Vector2i(5, 5)
+## 当前网格所隶属于的图层是否显示，控制图层翻动效果的目的地
+var is_layer_show: bool = false:
+	set(value):
+		is_layer_show = value
+		layer_flip_timer = LAYER_FLIP_TIME
+## 图层翻动效果动画倒计时器
+var layer_flip_timer: float = 0.0
 
 func _ready() -> void:
 	## 00设置颜色
@@ -63,14 +74,20 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	var window_size: Vector2 = Vector2(get_window().size) #获取窗口大小
+	layer_flip_timer = move_toward(layer_flip_timer, 0.0, delta) #更新翻页计时器
 	## 00更新网格的变换
 	global_scale_rate = PaperArea.grids_free_height / (animate_now_zoom_blocks * Main.TILE_NORMAL_SIZE) #计算全局缩放率
 	scale = global_scale_rate * Vector2.ONE #计算缩放的值
-	position = Vector2(NumberBar.bar_width, NumberBar.bar_width) - animate_now_offset #计算坐标并应用
+	var pos_show: Vector2 = Vector2(NumberBar.bar_width, NumberBar.bar_width) - animate_now_offset #计算图层显示时的坐标
+	var pos_hide: Vector2 = Vector2(pos_show.x, pos_show.y - window_size.y) #计算图层隐藏时的坐标
+	if (is_layer_show): #如果本图层显示
+		position = pos_show.lerp(pos_hide, ease(layer_flip_timer / LAYER_FLIP_TIME, LAYER_FLIP_EASE_CURVE)) #应用插值后的坐标
+	else: #否则(如果本图层不显示)
+		position = pos_hide.lerp(pos_show, ease(layer_flip_timer / LAYER_FLIP_TIME, LAYER_FLIP_EASE_CURVE)) #应用插值后的坐标
 	## /00
 	## 01更新背景
-	n_back_color.size = window_size / scale #更新背景颜色矩形的尺寸为视口尺寸
-	n_back_color.position = -position / scale #将本类根节点的坐标的相反数赋给背景颜色矩形的坐标，达到使其坐标恒定处于一个原点的作用
+	n_back_color.size = local_grid_size * Main.TILE_NORMAL_SIZE #更新背景颜色矩形的尺寸为视口尺寸
+	#n_back_color.position = Vector2(-position.x / scale.x, -position.y / scale.y + window_size.y - n_back_color.size.y) #将本类根节点的坐标的相反数赋给背景颜色矩形的坐标，达到使其坐标恒定处于一个原点的作用
 	## /01
 
 ## 获取鼠标指针处于的格子坐标(原点为0,0)

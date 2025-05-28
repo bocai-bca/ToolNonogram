@@ -40,6 +40,7 @@ enum FocusTool{
 	SCALER, #缩放工具
 	RULER, #量尺工具
 	UNDO_REDO, #撤销重做
+	LAYERS, #图层管理
 	SELECTION_FAST_EDIT, #选区快速编辑
 	SELECTION_EDIT_MANUALLY, #选区精确编辑
 	SELECTION_UNDO_REDO, #选区撤销重做
@@ -129,6 +130,8 @@ static var puzzle_timer_second: float = 0.0:
 		puzzle_timer_second = fmod(puzzle_timer_second, 60.0)
 ## 当前所在的焦点图层序号(0为基底图层)
 static var focus_layer: int = 0
+## 当前已有图层数量，表达方式为当前启用的图层中最高的序号数
+static var activiting_layers_count: int = 0
 
 func _enter_tree() -> void:
 	fs = self #定义伪单例
@@ -245,8 +248,8 @@ static func on_button_trigged(button_name: StringName) -> void:
 	match (button_name): #匹配检查button_name
 		&"SideButton_InteractClass": #侧边栏按钮-交互类
 			SideBar.fs.switch_focus(SideBar.FocusClass.INTERACT, FocusTool.NONE) #将侧边栏焦点切换到类别层的交互类
-		&"SideButton_SelectionClass": #侧边栏按钮-选区类
-			SideBar.fs.switch_focus(SideBar.FocusClass.SELECTION, FocusTool.NONE) #将侧边栏焦点切换到类别层的选区类
+		#&"SideButton_SelectionClass": #侧边栏按钮-选区类
+			#SideBar.fs.switch_focus(SideBar.FocusClass.SELECTION, FocusTool.NONE) #将侧边栏焦点切换到类别层的选区类
 		&"SideButton_EditClass": #侧边栏按钮-擦写类
 			SideBar.fs.switch_focus(SideBar.FocusClass.EDIT, FocusTool.NONE) #将侧边栏焦点切换到类别层的擦写类
 		&"SideButton_LockClass": #侧边栏按钮-锁定类
@@ -271,6 +274,8 @@ static func on_button_trigged(button_name: StringName) -> void:
 			SideBar.fs.switch_focus(SideBar.FocusClass.INTERACT, FocusTool.SCALER) #将侧边栏焦点切换到交互-缩放工具
 		&"ClassButton_UndoRedo": #侧边栏工具类别层按钮-撤销重做
 			SideBar.fs.switch_focus(SideBar.FocusClass.INTERACT, FocusTool.UNDO_REDO) #将侧边栏焦点切换到交互-撤销重做
+		&"ClassButton_Layers": #侧边栏工具类别层按钮-图层管理
+			SideBar.fs.switch_focus(SideBar.FocusClass.INTERACT, FocusTool.LAYERS) #将侧边栏焦点切换倒交互-图层管理
 		&"ClassButton_Brush": #侧边栏工具类别层按钮-笔刷工具
 			SideBar.fs.switch_focus(SideBar.FocusClass.EDIT, FocusTool.BRUSH) #将侧边栏焦点切换到擦写-笔刷工具
 			if (tools_detail_state.brush_mode == ToolsDetailState.BrushMode.BRUSH): #如果笔刷模式为画笔

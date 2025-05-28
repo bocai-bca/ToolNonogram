@@ -9,7 +9,7 @@ class_name LayerTabVoid
 ## 默认边框厚度
 const DEFAULT_BORDER_WIDTH: int = 10
 ## 变更alpha的速度，单位为秒
-const ALPHA_DIFF_SPEED: float = 2.0
+const ALPHA_DIFF_SPEED: float = 4.0
 ## alpha值-不显示
 const ALPHA_HIDE: float = 0.0
 ## alpha值-通常
