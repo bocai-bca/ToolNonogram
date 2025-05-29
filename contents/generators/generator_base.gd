@@ -18,6 +18,12 @@ class_name Generator
 ## 			一个可选参数示例。
 ## 			该参数的其余描述。
 
+## 用于生成器返回的GridsData中格子数值的含义
+enum GridsDataSlotType{
+	EMPTY = 0, #空格
+	FILL = 1, #实心块
+}
+
 ## [虚函数-声明]种子前缀匹配检查方法，检查输入的种子前缀是否属于本生成器(对于空前缀应当返回false)
 static func _is_seed_prefix_matched(seed_prefix: StringName) -> bool:
 	return seed_prefix == &"BASE" #基类这里作示范，假设了基类的种子前缀为&"BASE"

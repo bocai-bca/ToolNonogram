@@ -29,6 +29,17 @@ const LAYER_FLIP_TIME: float = 0.6
 ## 图层翻动效果缓动曲线值
 const LAYER_FLIP_EASE_CURVE: float = 5.0
 
+## 图集坐标
+const ATLAS_COORDS: Dictionary[PaperArea.LayerGridsSlot, Vector2i] = {
+	PaperArea.LayerGridsSlot.EMPTY: Vector2i(-1, -1),
+	PaperArea.LayerGridsSlot.FILL_NORMAL: Vector2i(1, 1),
+	PaperArea.LayerGridsSlot.CROSS_NORMAL: Vector2i(2, 1),
+	PaperArea.LayerGridsSlot.FILL_AUTOFILL: Vector2i(1, 1),
+	PaperArea.LayerGridsSlot.CROSS_AUTOFILL: Vector2i(2, 1),
+	PaperArea.LayerGridsSlot.FILL_VERIFIED: Vector2i(1, 1),
+	PaperArea.LayerGridsSlot.CROSS_VERIFIED: Vector2i(2, 1),
+}
+
 ## 显示偏移量(网格的整数坐标移动偏移量)，表示当前画面中最左上角的格子应当是网格中的哪个坐标的格子
 static var display_offset: Vector2i = Vector2i(0, 0)
 ## 实际动画偏移量(节点的浮点数坐标偏移量)，相当于以浮点数表示的display_offset，与节点的坐标挂钩最紧密的坐标
@@ -99,8 +110,8 @@ func get_mouse_pos() -> Vector2i:
 	#n_edit_map.set_cell(pos, 0, fill_type_to_atlas_coords(fill_type))
 
 ## 对一个格子进行擦除，不含非法坐标检测。本方法是临时测试用的，以后可能需要重写
-func clear_slot(pos: Vector2i) -> void:
-	n_edit_map.erase_cell(pos)
+#func clear_slot(pos: Vector2i) -> void:
+	#n_edit_map.erase_cell(pos)
 
 ## 进行凌驾于动画之上的网格实际偏移量更新，使用拖手工具拖拽网格时需每帧调用此方法。参数请传入一个鼠标于一帧内在屏幕上坐标的移动量
 static func update_offset_on_grabbing(offset_delta: Vector2) -> void:
@@ -195,8 +206,9 @@ func resize_local_grids(new_size: Vector2i) -> void:
 func fill_map_from_grids_data(grids_data: GridsData) -> void:
 	for x in grids_data.get_size(): #遍历局面数据的X
 		for y in grids_data.get_size(): #遍历局面数据的Y
-			match (grids_data.get_slot(Vector2i(x, y))): #匹配该格子的内容
+			var slot_value: PaperArea.LayerGridsSlot = grids_data.get_slot(Vector2i(x, y)) #获取当前格子的值
+			match (slot_value): #匹配该格子的内容
 				PaperArea.LayerGridsSlot.EMPTY: #空格
 					continue
 				PaperArea.LayerGridsSlot.FILL_NORMAL: #无着色实心块
-					n_edit_map_normal.set_cell()
+					n_edit_map_normal.set_cell(ATLAS_COORDS[slot_value])
