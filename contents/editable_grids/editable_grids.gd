@@ -6,13 +6,15 @@ class_name EditableGrids
 ## 网格层，用于显示答题网格的网格本身的层
 @onready var n_grid_map: TileMapLayer = $GridMap as TileMapLayer
 ## 修改层，用于显示玩家可以修改填充内容的填充层
-@onready var n_edit_map: TileMapLayer = $EditMap as TileMapLayer
+@onready var n_edit_map_normal: TileMapLayer = $EditMap_Normal as TileMapLayer
+@onready var n_edit_map_autofill: TileMapLayer = $EditMap_AutoFill as TileMapLayer
+@onready var n_edit_map_verified: TileMapLayer = $EditMap_Verified as TileMapLayer
 
-enum FillType{
-	EMPTY, #空格
-	FILL, #实心块
-	CROSS, #叉叉
-}
+#enum FillType{ #本枚举已由PaperArea.LayerGridsSlot替代
+	#EMPTY, #空格
+	#FILL, #实心块
+	#CROSS, #叉叉
+#}
 
 ## 偏移量动画和缩放动画的动画播放速度，以偏移量动画举例即从实际动画偏移量从动画起始偏移量过度到终点显示偏移量所需的时间
 const ANIMATION_TIME: float = 0.25
@@ -93,8 +95,8 @@ func get_mouse_pos() -> Vector2i:
 	return n_grid_map.local_to_map(get_local_mouse_position())
 
 ## 对一个格子进行写入(擦除有专门的方法，不能用这个擦除)，不含非法坐标检测。本方法是临时测试用的，以后需要重写
-func write_slot(pos: Vector2i, fill_type: FillType) -> void:
-	n_edit_map.set_cell(pos, 0, fill_type_to_atlas_coords(fill_type))
+#func write_slot(pos: Vector2i, fill_type: FillType) -> void:
+	#n_edit_map.set_cell(pos, 0, fill_type_to_atlas_coords(fill_type))
 
 ## 对一个格子进行擦除，不含非法坐标检测。本方法是临时测试用的，以后可能需要重写
 func clear_slot(pos: Vector2i) -> void:
@@ -120,27 +122,27 @@ static func update_animation_data(new_display_offset: Vector2i, new_zoom_blocks:
 
 ## 给定一个格子填充类型，返回一个图集中对应砖瓦的二维向量索引
 ## 与atlas_coords_to_fill_type()互为反方法
-static func fill_type_to_atlas_coords(fill_type: FillType) -> Vector2i:
-	match (fill_type): #匹配填充类型
-		FillType.EMPTY: #空格
-			return Vector2i(-1, -1)
-		FillType.FILL: #实心块
-			return Vector2i(1, 1)
-		FillType.CROSS: #叉叉
-			return Vector2i(2, 1)
-	return Vector2i(0, 0)
+#static func fill_type_to_atlas_coords(fill_type: FillType) -> Vector2i:
+	#match (fill_type): #匹配填充类型
+		#FillType.EMPTY: #空格
+			#return Vector2i(-1, -1)
+		#FillType.FILL: #实心块
+			#return Vector2i(1, 1)
+		#FillType.CROSS: #叉叉
+			#return Vector2i(2, 1)
+	#return Vector2i(0, 0)
 
 ## 给定一个具体中对应砖瓦的二维向量索引，返回一个格子填充类型。若给定的二维向量无效，则返回0
 ## fill_type_to_atlas_coords()互为反方法
-static func atlas_coords_to_fill_type(coords: Vector2i) -> FillType:
-	match (coords): #匹配二维向量索引
-		Vector2i(-1, -1): #空格
-			return FillType.EMPTY
-		Vector2i(1, 1): #实心块
-			return FillType.FILL
-		Vector2i(2, 1): #叉叉
-			return FillType.CROSS
-	return 0
+#static func atlas_coords_to_fill_type(coords: Vector2i) -> FillType:
+	#match (coords): #匹配二维向量索引
+		#Vector2i(-1, -1): #空格
+			#return FillType.EMPTY
+		#Vector2i(1, 1): #实心块
+			#return FillType.FILL
+		#Vector2i(2, 1): #叉叉
+			#return FillType.CROSS
+	#return 0
 
 ## 检测给定的整数坐标是否在网格内，或者说是否是个在当前网格尺寸中有效的格子坐标
 static func is_pos_in_grid(pos: Vector2i) -> bool:
@@ -163,28 +165,38 @@ func resize_local_grids(new_size: Vector2i) -> void:
 
 ## 转换到GridsData，用于检测答题网格是否通关。转换时需要按GridsData.SlotType存储格子信息，而不是本类的FillType
 ## 本方法今后可以考虑废弃重写，因为现在EditableGrids类不会自己存便于读取的局面数据，需要从TileMapLayer节点里还原格子的数据，这个过程是费劲的
-func to_grids_data() -> GridsData:
-	var result: GridsData = GridsData.new(Main.global_grid_size) #新建一个GridsData实例，用于寄存和返回结果
-	for x in Main.global_grid_size.x: #遍历全局尺寸的X
-		for y in Main.global_grid_size.y: #遍历全局尺寸的Y
-			result.set_slot( #给result的特定格子设置数据
-				Vector2i(x, y), #将要操作的result的格子
-				fill_type_to_grids_data_slot_type( #将本类的FillType枚举转换到GridsData类的SlotType枚举
-					atlas_coords_to_fill_type( #根据图集砖瓦索引找到该格子对应的FillType
-						n_edit_map.get_cell_atlas_coords( #获取修改层上给定坐标处格子的图集砖瓦索引
-							Vector2i(x, y) #将要读取的修改层格子
-						)
-					)
-				)
-			)
-	return result
+#func to_grids_data() -> GridsData:
+	#var result: GridsData = GridsData.new(Main.global_grid_size) #新建一个GridsData实例，用于寄存和返回结果
+	#for x in Main.global_grid_size.x: #遍历全局尺寸的X
+		#for y in Main.global_grid_size.y: #遍历全局尺寸的Y
+			#result.set_slot( #给result的特定格子设置数据
+				#Vector2i(x, y), #将要操作的result的格子
+				#fill_type_to_grids_data_slot_type( #将本类的FillType枚举转换到GridsData类的SlotType枚举
+					#atlas_coords_to_fill_type( #根据图集砖瓦索引找到该格子对应的FillType
+						#n_edit_map.get_cell_atlas_coords( #获取修改层上给定坐标处格子的图集砖瓦索引
+							#Vector2i(x, y) #将要读取的修改层格子
+						#)
+					#)
+				#)
+			#)
+	#return result
 
 ## 将本类的FillType枚举转换到GridsData的SlotType枚举，使用空格作为无接住时的返回值
-static func fill_type_to_grids_data_slot_type(fill_type: FillType) -> GridsData.SlotType:
-	match (fill_type): #匹配填充类型
-		FillType.EMPTY: #空格
-			return GridsData.SlotType.EMPTY
-		FillType.FILL: #实心块
-			return GridsData.SlotType.FILL
-		_:
-			return GridsData.SlotType.EMPTY
+#static func fill_type_to_grids_data_slot_type(fill_type: FillType) -> GridsData.SlotType:
+	#match (fill_type): #匹配填充类型
+		#FillType.EMPTY: #空格
+			#return GridsData.SlotType.EMPTY
+		#FillType.FILL: #实心块
+			#return GridsData.SlotType.FILL
+		#_:
+			#return GridsData.SlotType.EMPTY
+
+## 通过GridsData填充修改层内容
+func fill_map_from_grids_data(grids_data: GridsData) -> void:
+	for x in grids_data.get_size(): #遍历局面数据的X
+		for y in grids_data.get_size(): #遍历局面数据的Y
+			match (grids_data.get_slot(Vector2i(x, y))): #匹配该格子的内容
+				PaperArea.LayerGridsSlot.EMPTY: #空格
+					continue
+				PaperArea.LayerGridsSlot.FILL_NORMAL: #无着色实心块
+					n_edit_map_normal.set_cell()

@@ -5,6 +5,7 @@
 
 [node name="EditableGrids" type="Node2D"]
 script = ExtResource("1_wfhjk")
+is_base_grids = null
 
 [node name="BackColor" type="ColorRect" parent="."]
 offset_right = 800.0
@@ -20,10 +21,23 @@ occlusion_enabled = false
 collision_enabled = false
 navigation_enabled = false
 
-[node name="EditMap" type="TileMapLayer" parent="."]
+[node name="EditMap_Normal" type="TileMapLayer" parent="."]
 self_modulate = Color(0, 0, 0, 1)
 texture_filter = 1
 tile_set = ExtResource("1_k0k3y")
 occlusion_enabled = false
 collision_enabled = false
 navigation_enabled = false
+
+[node name="EditMap_AutoFill" type="TileMapLayer" parent="."]
+self_modulate = Color(1, 0.583333, 0, 1)
+texture_filter = 1
+tile_set = ExtResource("1_k0k3y")
+occlusion_enabled = false
+collision_enabled = false
+navigation_enabled = false
+
+[node name="EditMap_Verified" type="TileMapLayer" parent="."]
+self_modulate = Color(0, 0.666667, 1, 1)
+texture_filter = 1
+tile_set = ExtResource("1_k0k3y")
