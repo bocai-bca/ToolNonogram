@@ -28,9 +28,10 @@ const HOVER_GRIDS_BACK_COLOR: Color = Color(1.0, 1.0, 1.0, 0.5)
 const LAYER_FLIP_TIME: float = 0.6
 ## 图层翻动效果缓动曲线值
 const LAYER_FLIP_EASE_CURVE: float = 5.0
-
+## 图集源ID
+const TILE_SET_SOURCE_ID: int = 0
 ## 图集坐标
-const ATLAS_COORDS: Dictionary[PaperArea.LayerGridsSlot, Vector2i] = {
+const TILE_SET_ATLAS_COORDS: Dictionary[PaperArea.LayerGridsSlot, Vector2i] = {
 	PaperArea.LayerGridsSlot.EMPTY: Vector2i(-1, -1),
 	PaperArea.LayerGridsSlot.FILL_NORMAL: Vector2i(1, 1),
 	PaperArea.LayerGridsSlot.CROSS_NORMAL: Vector2i(2, 1),
@@ -204,6 +205,9 @@ func resize_local_grids(new_size: Vector2i) -> void:
 
 ## 通过GridsData填充修改层内容
 func fill_map_from_grids_data(grids_data: GridsData) -> void:
+	n_edit_map_normal.clear() #清空无着色层
+	n_edit_map_autofill.clear() #清空自动填充层
+	n_edit_map_verified.clear() #清空已验证层
 	for x in grids_data.get_size(): #遍历局面数据的X
 		for y in grids_data.get_size(): #遍历局面数据的Y
 			var slot_value: PaperArea.LayerGridsSlot = grids_data.get_slot(Vector2i(x, y)) #获取当前格子的值
@@ -211,4 +215,14 @@ func fill_map_from_grids_data(grids_data: GridsData) -> void:
 				PaperArea.LayerGridsSlot.EMPTY: #空格
 					continue
 				PaperArea.LayerGridsSlot.FILL_NORMAL: #无着色实心块
-					n_edit_map_normal.set_cell(ATLAS_COORDS[slot_value])
+					n_edit_map_normal.set_cell(Vector2i(x, y), TILE_SET_SOURCE_ID, TILE_SET_ATLAS_COORDS[slot_value]) #在无着色层填充格子
+				PaperArea.LayerGridsSlot.CROSS_NORMAL: #无着色叉叉
+					n_edit_map_normal.set_cell(Vector2i(x, y), TILE_SET_SOURCE_ID, TILE_SET_ATLAS_COORDS[slot_value]) #在无着色层填充格子
+				PaperArea.LayerGridsSlot.FILL_AUTOFILL: #自动填充实心块
+					n_edit_map_autofill.set_cell(Vector2i(x, y), TILE_SET_SOURCE_ID, TILE_SET_ATLAS_COORDS[slot_value]) #在自动填充层填充格子
+				PaperArea.LayerGridsSlot.CROSS_AUTOFILL: #自动填充叉叉
+					n_edit_map_autofill.set_cell(Vector2i(x, y), TILE_SET_SOURCE_ID, TILE_SET_ATLAS_COORDS[slot_value]) #在自动填充层填充格子
+				PaperArea.LayerGridsSlot.FILL_VERIFIED: #已验证实心块
+					n_edit_map_verified.set_cell(Vector2i(x, y), TILE_SET_SOURCE_ID, TILE_SET_ATLAS_COORDS[slot_value]) #在已验证层填充格子
+				PaperArea.LayerGridsSlot.CROSS_VERIFIED: #已验证叉叉
+					n_edit_map_verified.set_cell(Vector2i(x, y), TILE_SET_SOURCE_ID, TILE_SET_ATLAS_COORDS[slot_value]) #在已验证层填充格子

@@ -45,6 +45,8 @@ func set_slot(index: Vector2i, slot_value: int) -> void:
 func get_size() -> Vector2i:
 	return Vector2i(width, array.size() / width) #X不用讲，Y的话是根据"长*高=面积"反过来得到"高=面积/长"
 
+
+
 ## 转换到PuzzleData
 ## 相同GridsData转换出的PuzzleData的引用是不同的，若要对比PuzzleData是否相同可以使用PuzzleData.is_same()
 #func to_puzzle_data() -> PuzzleData:

@@ -112,8 +112,8 @@ static var auto_fill: AutoFill = AutoFill.COMMON
 static var puzzle_data: PuzzleData
 ## 当前使用的种子(用于解题模式记录当前题目的种子)
 static var current_seed: String
-## 通关检查旗标，为true时需要进行通关检查
-static var win_check_flag: bool = false
+## 通关检查旗标，为true时需要进行通关检查，考虑进行弃用
+#static var win_check_flag: bool = false
 ## 解题计时器-小时，更新计时器只需要给秒加数即可，重置计时器需要给三个数分别设置为0
 static var puzzle_timer_hour: int = 0
 ## 解题计时器-分钟，更新计时器只需要给秒加数即可，重置计时器需要给三个数分别设置为0
@@ -151,10 +151,10 @@ func _process(delta: float) -> void:
 
 func _physics_process(delta: float) -> void:
 	## 00通关检查
-	if (win_check_flag): #如果需要检查通关
-		win_check_flag = false #关闭通关检查旗标
-		if (check_puzzle_win()): #如果检查胜利时返回为true
-			puzzle_win() #使解题模式胜利
+	#if (win_check_flag): #如果需要检查通关
+		#win_check_flag = false #关闭通关检查旗标
+		#if (check_puzzle_win()): #如果检查胜利时返回为true
+			#puzzle_win() #使解题模式胜利
 	## /00
 	## 01计时器更新
 	if (game_mode == GameMode.PUZZLE): #如果当前是解题模式

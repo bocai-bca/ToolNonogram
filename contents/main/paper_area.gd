@@ -33,6 +33,11 @@ enum LayerGridsSlot{
 	CROSS_VERIFIED = 6, #已验证的自动填充叉叉(蓝色)
 }
 
+## [只读]擦写工具处理器
+static var HANDLERS: Dictionary[StringName, EditToolHandler] = {
+	&"brush": EditToolHandler_Brush.new(),
+	&"pencil": EditToolHandler_Pencil.new(),
+}
 ## 偏移量动画倒计时器控制开关，为true时计时器继续计时，为false时暂停计时
 static var is_allow_grids_animation_timer_update: bool = true
 ## 偏移量动画倒计时器，即为0时到达终点。这个计时器本该在EditableGrids类里以和相关的静态成员一起搭配使用，但是EditableGrids是非单例的类，不宜在它的_process中更新计时器，因此委托在此处进行
@@ -58,6 +63,8 @@ var focus_layer_grids: EditableGrids:
 static var layers_grids_map: Array[GridsData] = []
 ## 所有图层的图层网格锁定内容列表，可以简称为图层锁定列表
 static var layers_lock_map: Array[GridsData] = []
+## 用于实时编辑的临时填充图层
+static var temp_grids_map: GridsData
 
 func _enter_tree() -> void:
 	fs = self #定义伪单例
@@ -111,30 +118,37 @@ func _process(delta: float) -> void:
 						NumberBar.is_allow_number_array_displayer_scroll_animation_timer_side_update = true #开启计时器
 				## /
 			Main.FocusTool.BRUSH: #笔刷工具
-				if (click_state.is_pressing() and click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS): #如果鼠标正被点击，且按下位置处于答题网格中
-					if (EditableGrids.is_pos_in_grid(click_state.current_grid_pos)): #如果鼠标所在的坐标有效
-						match (Main.tools_detail_state.brush_fill_type): #匹配笔刷工具的填充类型
-							ToolsDetailState.ToolFillType.FILL: #实心块
-								####
+				#if (click_state.is_pressing() and click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS): #如果鼠标正被点击，且按下位置处于答题网格中
+					#if (EditableGrids.is_pos_in_grid(click_state.current_grid_pos)): #如果鼠标所在的坐标有效
+						#match (Main.tools_detail_state.brush_fill_type): #匹配笔刷工具的填充类型
+							#ToolsDetailState.ToolFillType.FILL: #实心块
 								#n_base_grids.write_slot(click_state.current_grid_pos, EditableGrids.FillType.FILL) #将指定格子填写为实心块
-								pass
-							ToolsDetailState.ToolFillType.CROSS: #叉叉
-								#### 
+							#ToolsDetailState.ToolFillType.CROSS: #叉叉
 								#n_base_grids.write_slot(click_state.current_grid_pos, EditableGrids.FillType.CROSS) #将指定格子填写为叉叉
-								pass
-				elif (click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS and not click_state.is_pressing() and click_state.is_just()): #如果鼠标未被点击，且刚刚松开，且上一次按下位置是答题网格
-					if (Main.game_mode == Main.GameMode.PUZZLE): #如果当前处于解题模式
-						Main.win_check_flag = true #开启胜利检查旗标
+				#elif (click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS and not click_state.is_pressing() and click_state.is_just()): #如果鼠标未被点击，且刚刚松开，且上一次按下位置是答题网格
+					#if (Main.game_mode == Main.GameMode.PUZZLE): #如果当前处于解题模式
+						#Main.win_check_flag = true #开启胜利检查旗标
+				if (click_state.is_pressing()): #如果鼠标正按下
+					match (Main.tools_detail_state.brush_mode): #匹配笔刷模式
+						ToolsDetailState.BrushMode.BRUSH: #画笔
+							HANDLERS[&"brush"]._process() #调用处理器的过程方法
+						ToolsDetailState.BrushMode.PENCIL: #铅笔
+							HANDLERS[&"pencil"]._process() #调用处理器的过程方法
+				elif (click_state.is_just()): #否则如果刚刚处于此状态(意思是刚刚松开)
+					match (Main.tools_detail_state.brush_mode): #匹配笔刷模式
+						ToolsDetailState.BrushMode.BRUSH: #画笔
+							HANDLERS[&"brush"]._end() #调用处理器的结束方法
+						ToolsDetailState.BrushMode.PENCIL: #铅笔
+							HANDLERS[&"pencil"]._end() #调用处理器的结束方法
 			Main.FocusTool.ERASER: #擦除工具
-				if (click_state.is_pressing() and click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS): #如果鼠标正被点击，且按下位置处于答题网格中
-					if (EditableGrids.is_pos_in_grid(click_state.current_grid_pos)): #如果鼠标所在的坐标有效
-						####
-						n_base_grids.clear_slot(click_state.current_grid_pos)
-				elif (click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS and not click_state.is_pressing() and click_state.is_just()): #如果鼠标未被点击，且刚刚松开
-					if (Main.game_mode == Main.GameMode.PUZZLE): #如果当前处于解题模式
-						Main.win_check_flag = true #开启胜利检查旗标
-
-
+				#if (click_state.is_pressing() and click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS): #如果鼠标正被点击，且按下位置处于答题网格中
+					#if (EditableGrids.is_pos_in_grid(click_state.current_grid_pos)): #如果鼠标所在的坐标有效
+						#####
+						#n_base_grids.clear_slot(click_state.current_grid_pos)
+				#elif (click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS and not click_state.is_pressing() and click_state.is_just()): #如果鼠标未被点击，且刚刚松开
+					#if (Main.game_mode == Main.GameMode.PUZZLE): #如果当前处于解题模式
+						#Main.win_check_flag = true #开启胜利检查旗标
+				pass
 
 #region 系统级变更题纸的方法集
 ## 清空基本题纸的内容
