@@ -45,7 +45,23 @@ func set_slot(index: Vector2i, slot_value: int) -> void:
 func get_size() -> Vector2i:
 	return Vector2i(width, array.size() / width) #X不用讲，Y的话是根据"长*高=面积"反过来得到"高=面积/长"
 
-
+## 被向下合并，类似于图像编辑软件的两个图层合并，本方法应由图层关系于下方被合并的GridsData执行，传入的参数是图层关系于上方的GridsData
+## 上方的GridsData中所有非0格子都将覆盖方法执行方GridsData的格子
+## 例如：
+## 	A = [0, 1, 0] 被合并方
+## 	B = [1, 0, 1] 合并方
+## 	A.be_merge_down(B)
+## 	A = [1, 1, 1] 合并完成后的被合并方
+func be_merge_down(up_layer: GridsData) -> void:
+	var grids_size: Vector2i = get_size() #获取尺寸
+	if (grids_size != up_layer.get_size()): #尺寸不匹配
+		push_error("GridsData: 取消合并，因为：给定的GridsData实例与本实例的尺寸不匹配。")
+		return
+	for x in grids_size: #遍历X
+		for y in grids_size: #遍历Y
+			var slot_value: int = up_layer.get_slot(Vector2i(x, y)) #合并方的当前坐标格子的值
+			if (slot_value != 0): #如果合并方该格子的值不为0
+				set_slot(Vector2i(x, y), slot_value) #将被合并方的该格子设为合并方该格子的值
 
 ## 转换到PuzzleData
 ## 相同GridsData转换出的PuzzleData的引用是不同的，若要对比PuzzleData是否相同可以使用PuzzleData.is_same()

@@ -51,20 +51,30 @@ static var can_mouse_interactive: bool:
 	get:
 		return (PopupManager.alive_popup_count == 0 and not Main.is_menu_open) #返回判据，返回true需要：当前没有弹出菜单、没有打开底部菜单
 ## [只读]焦点所在图层网格
-var focus_layer_grids: EditableGrids:
-	get:
-		if (Main.focus_layer == 0): #如果焦点图层序号为0
-			return n_base_grids #返回基底网格
-		if (Main.focus_layer - 1 >= n_hover_grids.size()): #如果焦点序号大于悬浮网格数量
-			push_error("PaperArea: 无法获取焦点所在图层网格并返回null，因为：Main.focus_layer所代表的焦点图层序号超出n_hover_grids列表记录的悬浮图层数量。")
-			return null
-		return n_hover_grids[Main.focus_layer - 1] #返回悬浮网格列表按这个方式的索引结果
+#var focus_layer_grids: EditableGrids:
+	#get:
+		#if (Main.focus_layer == 0): #如果焦点图层序号为0
+			#return n_base_grids #返回基底网格
+		#if (Main.focus_layer - 1 >= n_hover_grids.size()): #如果焦点序号大于悬浮网格数量
+			#push_error("PaperArea: 无法获取焦点所在图层网格并返回null，因为：Main.focus_layer所代表的焦点图层序号超出n_hover_grids列表记录的悬浮图层数量。")
+			#return null
+		#return n_hover_grids[Main.focus_layer - 1] #返回悬浮网格列表按这个方式的索引结果
 ## 所有图层的图层网格填充内容列表，可以简称为图层内容列表
 static var layers_grids_map: Array[GridsData] = []
 ## 所有图层的图层网格锁定内容列表，可以简称为图层锁定列表
 static var layers_lock_map: Array[GridsData] = []
 ## 用于实时编辑的临时填充图层
 static var temp_grids_map: GridsData
+## [只读]焦点网格节点
+var focus_grids_node: EditableGrids:
+	get:
+		if (Main.focus_layer == 0): #如果焦点图层序号为0，意味着焦点为基底图层
+			return n_base_grids #返回基底网格节点
+		return n_hover_grids[Main.focus_layer - 1] #返回调整了索引的悬浮网格节点
+## [只读]焦点图层内容图
+static var focus_grids_map: GridsData:
+	get:
+		return layers_grids_map[Main.focus_layer] #返回以焦点图层序号索引的图层内容列表元素
 
 func _enter_tree() -> void:
 	fs = self #定义伪单例
@@ -128,18 +138,20 @@ func _process(delta: float) -> void:
 				#elif (click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS and not click_state.is_pressing() and click_state.is_just()): #如果鼠标未被点击，且刚刚松开，且上一次按下位置是答题网格
 					#if (Main.game_mode == Main.GameMode.PUZZLE): #如果当前处于解题模式
 						#Main.win_check_flag = true #开启胜利检查旗标
-				if (click_state.is_pressing()): #如果鼠标正按下
+				if (click_state.is_pressing() and click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS): #如果鼠标正按下，并且按下位置是答题网格
 					match (Main.tools_detail_state.brush_mode): #匹配笔刷模式
 						ToolsDetailState.BrushMode.BRUSH: #画笔
-							HANDLERS[&"brush"]._process() #调用处理器的过程方法
+							HANDLERS[&"brush"]._process(click_state, temp_grids_map) #调用处理器的过程方法
 						ToolsDetailState.BrushMode.PENCIL: #铅笔
-							HANDLERS[&"pencil"]._process() #调用处理器的过程方法
+							HANDLERS[&"pencil"]._process(click_state, temp_grids_map) #调用处理器的过程方法
 				elif (click_state.is_just()): #否则如果刚刚处于此状态(意思是刚刚松开)
 					match (Main.tools_detail_state.brush_mode): #匹配笔刷模式
 						ToolsDetailState.BrushMode.BRUSH: #画笔
-							HANDLERS[&"brush"]._end() #调用处理器的结束方法
+							HANDLERS[&"brush"]._end(click_state, temp_grids_map, layers_grids_map[Main.focus_layer]) #调用处理器的结束方法
+							after_player_input() #执行玩家输入停止后的流程封装方法
 						ToolsDetailState.BrushMode.PENCIL: #铅笔
-							HANDLERS[&"pencil"]._end() #调用处理器的结束方法
+							HANDLERS[&"pencil"]._end(click_state, temp_grids_map, layers_grids_map[Main.focus_layer]) #调用处理器的结束方法
+							after_player_input() #执行玩家输入停止后的流程封装方法
 			Main.FocusTool.ERASER: #擦除工具
 				#if (click_state.is_pressing() and click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS): #如果鼠标正被点击，且按下位置处于答题网格中
 					#if (EditableGrids.is_pos_in_grid(click_state.current_grid_pos)): #如果鼠标所在的坐标有效
@@ -149,6 +161,14 @@ func _process(delta: float) -> void:
 					#if (Main.game_mode == Main.GameMode.PUZZLE): #如果当前处于解题模式
 						#Main.win_check_flag = true #开启胜利检查旗标
 				pass
+
+## 玩家在答题网格的输入停止后的一系列流程的封装
+func after_player_input() -> void:
+	## 00将局面提交给自动填充服务器
+	## /00
+	## 01将局面更新到砖瓦图节点
+	focus_grids_node.fill_map_from_grids_data(focus_grids_map)
+	## /01
 
 #region 系统级变更题纸的方法集
 ## 清空基本题纸的内容

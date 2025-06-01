@@ -6,9 +6,9 @@ class_name EditToolHandler
 var is_started: bool = false
 
 ## [虚函数-声明]过程方法，在工具按下的每个帧都调用此方法
-func _process() -> void:
+func _process(click_state: PaperArea.ClickState, temp_grids_map: GridsData) -> void:
 	pass
 
 ## [虚函数-声明]结束方法，在工具停止按下的首个帧调用此方法
-func _end() -> void:
+func _end(click_state: PaperArea.ClickState, temp_grids_map: GridsData, focus_grids_map: GridsData) -> void:
 	pass
