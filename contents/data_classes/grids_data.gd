@@ -6,7 +6,7 @@ class_name GridsData
 ## 在外部时常通过枚举指代一个格子的填充类型，在GDScript下枚举可直接以整型读取，所以在本类中读写时只要确保写入方和读出方使用的是同一枚举，即可保留枚举信息
 
 ## 格子类型，本枚举与EditableGrids.FillType功能类似但请注意避免混淆，请在生成器相关的场合中尽可能使用本枚举
-## 本枚举已转移至PuzzleData
+## 本枚举弃用，因为需要使GridsData按照高度自由的容器使用设计。先前生成器使用的枚举现转由Generator定义，先前EditableGrids使用的枚举现转由PaperArea定义
 #enum SlotType{
 	#EMPTY = 0, #空格
 	#FILL = 1, #实心块

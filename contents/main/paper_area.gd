@@ -168,9 +168,12 @@ func _process(delta: float) -> void:
 func after_player_input() -> void:
 	## 00将局面提交给自动填充服务器
 	## /00
-	## 01将局面更新到砖瓦图节点
-	focus_grids_node.fill_map_from_grids_data(focus_grids_map)
+	## 01令撤消重做服务器记录当前时刻的数据
+	UndoRedoServer_Array.insert_add(UndoRedoServer_Array.UndoRedoObject.new(Main.activiting_layers_count, layers_grids_map, layers_lock_map))
 	## /01
+	## 02将局面更新到砖瓦图节点
+	focus_grids_node.fill_map_from_grids_data(focus_grids_map)
+	## /02
 
 #region 系统级变更题纸的方法集
 ## 清空基本题纸的内容

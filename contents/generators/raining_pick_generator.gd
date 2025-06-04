@@ -70,16 +70,16 @@ static func _generate(seed_deserializated: SeedParser.SeedDeserializated, size: 
 	## 01总循环
 	while (current_try < max_try): #当已尝试次数小于最大尝试次数时继续循环
 		random_slot = Vector2i(randi_range(0, size.x - 1), randi_range(0, size.y - 1)) #随机取得一个格子
-		if (result.get_slot(random_slot) == GridsData.SlotType.EMPTY): #如果抽到空格
-			result.set_slot(random_slot, GridsData.SlotType.FILL) #将该格子填充
+		if (result.get_slot(random_slot) == GridsDataSlotType.EMPTY): #如果抽到空格
+			result.set_slot(random_slot, GridsDataSlotType.FILL) #将该格子填充
 			current_success += 1 #记录成功次数
 		else: #否则(抽到填充格)
 			## 02二次抽取
 			current_retry = 0 #初始化二次抽取次数
 			while (current_retry < max_retry): #当二次抽取次数小于最大二次抽取次数时继续循环
 				random_slot = Vector2i(randi_range(0, size.x - 1), randi_range(0, size.y - 1)) #随机取得一个格子
-				if (result.get_slot(random_slot) == GridsData.SlotType.EMPTY): #如果抽到空格
-					result.set_slot(random_slot, GridsData.SlotType.FILL) #将该格子填充
+				if (result.get_slot(random_slot) == GridsDataSlotType.EMPTY): #如果抽到空格
+					result.set_slot(random_slot, GridsDataSlotType.FILL) #将该格子填充
 					current_success += 1 #记录成功次数
 					break #跳出二次抽取
 				current_retry += 1 #累积一次二次抽取次数
