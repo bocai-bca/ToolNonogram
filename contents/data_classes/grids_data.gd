@@ -12,7 +12,7 @@ class_name GridsData
 	#FILL = 1, #实心块
 #}
 
-## 扁平数组，代表一个二维数组，采用y*a+x的方式进行排列(a为每个横排的元素数量)
+## 扁平数组，相当于GridsData实例所存储的数据，代表一个二维数组，采用y*a+x的方式进行排列(a为每个横排的元素数量)
 var array: PackedByteArray = []
 ## 每个横排的元素数，能代表该"矩形"的横向宽度
 var width: int
@@ -62,6 +62,12 @@ func be_merge_down(up_layer: GridsData) -> void:
 			var slot_value: int = up_layer.get_slot(Vector2i(x, y)) #合并方的当前坐标格子的值
 			if (slot_value != 0): #如果合并方该格子的值不为0
 				set_slot(Vector2i(x, y), slot_value) #将被合并方的该格子设为合并方该格子的值
+
+## 复制当前GridsData实例，返回另一个独立的新GridsData实例
+func duplicate() -> GridsData:
+	var new_grids_data: GridsData = GridsData.new(get_size()) #新建一个空的GridsData实例
+	new_grids_data.array = array.duplicate() #将本实例的array复制一份放到新实例
+	return new_grids_data #返回新实例
 
 ## 转换到PuzzleData
 ## 相同GridsData转换出的PuzzleData的引用是不同的，若要对比PuzzleData是否相同可以使用PuzzleData.is_same()

@@ -138,7 +138,9 @@ func _process(delta: float) -> void:
 				#elif (click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS and not click_state.is_pressing() and click_state.is_just()): #如果鼠标未被点击，且刚刚松开，且上一次按下位置是答题网格
 					#if (Main.game_mode == Main.GameMode.PUZZLE): #如果当前处于解题模式
 						#Main.win_check_flag = true #开启胜利检查旗标
-				if (click_state.is_pressing() and click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS): #如果鼠标正按下，并且按下位置是答题网格
+				if (click_state.pressed_at_area != ClickState.AreaOfPaper.GRIDS): #如果鼠标按下位置不是答题网格
+					pass
+				elif (click_state.is_pressing()): #如果鼠标正按下，并且按下位置是答题网格
 					match (Main.tools_detail_state.brush_mode): #匹配笔刷模式
 						ToolsDetailState.BrushMode.BRUSH: #画笔
 							HANDLERS[&"brush"]._process(click_state, temp_grids_map) #调用处理器的过程方法
