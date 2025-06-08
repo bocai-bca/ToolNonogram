@@ -16,3 +16,9 @@ class_name AutoFillServerBase
 ## 	进行蓝色级别的填充和验证，对于一些简单的题目能够做到全自动通关
 func smart_autofill(grids_source: GridsData) -> void:
 	pass
+
+## [虚函数-声明]一般填充，将对传入的GridsData就地修改
+## 一般填充：
+## 	进行黄色级别的填充和验证，对于一些简单的题目能够做到全自动通关
+func common_autofill(grids_source: GridsData) -> void:
+	pass

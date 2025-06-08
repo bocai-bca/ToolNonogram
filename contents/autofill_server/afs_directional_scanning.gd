@@ -1,0 +1,3 @@
+extends AutoFillServerBase
+class_name AutoFillServer_DirectionfulScanning
+## 自动填充服务器-有向扫描

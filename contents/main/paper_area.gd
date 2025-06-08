@@ -37,6 +37,7 @@ enum LayerGridsSlot{
 static var HANDLERS: Dictionary[StringName, EditToolHandler] = {
 	&"brush": EditToolHandler_Brush.new(),
 	&"pencil": EditToolHandler_Pencil.new(),
+	&"eraser": EditToolHandler_Eraser.new(),
 }
 ## 偏移量动画倒计时器控制开关，为true时计时器继续计时，为false时暂停计时
 static var is_allow_grids_animation_timer_update: bool = true
@@ -149,10 +150,10 @@ func _process(delta: float) -> void:
 				elif (click_state.is_just()): #否则如果刚刚处于此状态(意思是刚刚松开)
 					match (Main.tools_detail_state.brush_mode): #匹配笔刷模式
 						ToolsDetailState.BrushMode.BRUSH: #画笔
-							HANDLERS[&"brush"]._end(click_state, temp_grids_map, layers_grids_map[Main.focus_layer]) #调用处理器的结束方法
+							HANDLERS[&"brush"]._end(click_state, temp_grids_map, focus_grids_map) #调用处理器的结束方法
 							after_player_input() #执行玩家输入停止后的流程封装方法
 						ToolsDetailState.BrushMode.PENCIL: #铅笔
-							HANDLERS[&"pencil"]._end(click_state, temp_grids_map, layers_grids_map[Main.focus_layer]) #调用处理器的结束方法
+							HANDLERS[&"pencil"]._end(click_state, temp_grids_map, focus_grids_map) #调用处理器的结束方法
 							after_player_input() #执行玩家输入停止后的流程封装方法
 			Main.FocusTool.ERASER: #擦除工具
 				#if (click_state.is_pressing() and click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS): #如果鼠标正被点击，且按下位置处于答题网格中
@@ -167,6 +168,10 @@ func _process(delta: float) -> void:
 ## 玩家在答题网格的输入停止后的一系列流程的封装
 func after_player_input() -> void:
 	## 00将局面提交给自动填充服务器
+	if (Main.auto_fill == Main.AutoFill.COMMON): #如果当前的自动填充模式是一般
+		Main.AUTOFILL_SERVER_INSTANCE.common_autofill(focus_grids_map) #将当前焦点网格内容图发到自动填充服务器执行一般自动填充
+	elif (Main.auto_fill == Main.AutoFill.SMART): #否则如果当前的自动填充模式是智能
+		Main.AUTOFILL_SERVER_INSTANCE.smart_autofill(focus_grids_map) #将当前焦点网格内容图发到自动填充服务器执行智能自动填充
 	## /00
 	## 01令撤消重做服务器记录当前时刻的数据
 	UndoRedoServer_Array.insert_add(UndoRedoServer_Array.UndoRedoObject.new(Main.activiting_layers_count, layers_grids_map, layers_lock_map))

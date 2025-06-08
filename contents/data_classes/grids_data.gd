@@ -46,6 +46,7 @@ func get_size() -> Vector2i:
 	return Vector2i(width, array.size() / width) #X不用讲，Y的话是根据"长*高=面积"反过来得到"高=面积/长"
 
 ## 被向下合并，类似于图像编辑软件的两个图层合并，本方法应由图层关系于下方被合并的GridsData执行，传入的参数是图层关系于上方的GridsData
+## 本方法将就地修改被合并方GridsData(被调用方法的实例)，而不改动合并方(方法传入的实例)的数据，即便在方法执行完毕后，合并方也将保持原样(不会被删除或者清空)
 ## 上方的GridsData中所有非0格子都将覆盖方法执行方GridsData的格子
 ## 例如：
 ## 	A = [0, 1, 0] 被合并方
@@ -68,6 +69,10 @@ func duplicate() -> GridsData:
 	var new_grids_data: GridsData = GridsData.new(get_size()) #新建一个空的GridsData实例
 	new_grids_data.array = array.duplicate() #将本实例的array复制一份放到新实例
 	return new_grids_data #返回新实例
+
+## 以指定值覆盖填充所有格子
+func fill(slot_value: int = 0) -> void:
+	array.fill(slot_value)
 
 ## 转换到PuzzleData
 ## 相同GridsData转换出的PuzzleData的引用是不同的，若要对比PuzzleData是否相同可以使用PuzzleData.is_same()

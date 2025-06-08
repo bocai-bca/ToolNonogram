@@ -82,6 +82,9 @@ const TILE_NORMAL_SIZE: float = 160.0
 ## 最多允许拥有几个图层及图层栏标签(不包含基底图层)
 const MAX_LAYER_COUNT: int = 6
 
+## [只读]自动填充服务器实例，存放一个自动填充服务器实例，通过更改不同的初始赋值可以指定使用不同的(基于不同算法的)自动填充服务器
+static var AUTOFILL_SERVER_INSTANCE: AutoFillServerBase = AutoFillServer_DirectionfulScanning.new()
+
 ## 当前菜单是否处于开启状态
 static var is_menu_open: bool:
 	get:
