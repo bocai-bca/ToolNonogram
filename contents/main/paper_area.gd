@@ -142,11 +142,12 @@ func _process(delta: float) -> void:
 				if (click_state.pressed_at_area != ClickState.AreaOfPaper.GRIDS): #如果鼠标按下位置不是答题网格
 					pass
 				elif (click_state.is_pressing()): #如果鼠标正按下，并且按下位置是答题网格
-					match (Main.tools_detail_state.brush_mode): #匹配笔刷模式
-						ToolsDetailState.BrushMode.BRUSH: #画笔
-							HANDLERS[&"brush"]._process(click_state, temp_grids_map) #调用处理器的过程方法
-						ToolsDetailState.BrushMode.PENCIL: #铅笔
-							HANDLERS[&"pencil"]._process(click_state, temp_grids_map) #调用处理器的过程方法
+					if (click_state.current_grid_pos != click_state.last_update_grid_pos): #如果本帧鼠标所在的网格坐标不与上一帧相同(即若鼠标指针未移动则不进行以下操作，用来节省性能)
+						match (Main.tools_detail_state.brush_mode): #匹配笔刷模式
+							ToolsDetailState.BrushMode.BRUSH: #画笔
+								HANDLERS[&"brush"]._process(click_state, temp_grids_map) #调用处理器的过程方法
+							ToolsDetailState.BrushMode.PENCIL: #铅笔
+								HANDLERS[&"pencil"]._process(click_state, temp_grids_map) #调用处理器的过程方法
 				elif (click_state.is_just()): #否则如果刚刚处于此状态(意思是刚刚松开)
 					match (Main.tools_detail_state.brush_mode): #匹配笔刷模式
 						ToolsDetailState.BrushMode.BRUSH: #画笔
