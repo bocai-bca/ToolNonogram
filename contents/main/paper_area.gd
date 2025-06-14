@@ -38,6 +38,7 @@ static var HANDLERS: Dictionary[StringName, EditToolHandler] = {
 	&"brush": EditToolHandler_Brush.new(),
 	&"pencil": EditToolHandler_Pencil.new(),
 	&"eraser": EditToolHandler_Eraser.new(),
+	&"dishcloth": EditToolHandler_Dishcloth.new(),
 }
 ## 偏移量动画倒计时器控制开关，为true时计时器继续计时，为false时暂停计时
 static var is_allow_grids_animation_timer_update: bool = true
@@ -163,7 +164,22 @@ func _process(delta: float) -> void:
 				#elif (click_state.pressed_at_area == ClickState.AreaOfPaper.GRIDS and not click_state.is_pressing() and click_state.is_just()): #如果鼠标未被点击，且刚刚松开
 					#if (Main.game_mode == Main.GameMode.PUZZLE): #如果当前处于解题模式
 						#Main.win_check_flag = true #开启胜利检查旗标
-				pass
+				if (click_state.pressed_at_area != ClickState.AreaOfPaper.GRIDS): #如果鼠标按下位置不是答题网格
+					pass
+				elif (click_state.is_pressing()): #如果鼠标正按下，并且按下位置是答题网格
+					match (Main.tools_detail_state.brush_mode): #匹配擦除模式
+						ToolsDetailState.EraserMode.DISHCLOTH: #抹布
+							HANDLERS[&"dishcloth"]._process(click_state, temp_grids_map) #调用处理器的过程方法
+						ToolsDetailState.EraserMode.ERASER: #橡皮
+							HANDLERS[&"eraser"]._process(click_state, temp_grids_map) #调用处理器的过程方法
+				elif (click_state.is_just()): #否则如果刚刚处于此状态(意思是刚刚松开)
+					match (Main.tools_detail_state.brush_mode): #匹配笔刷模式
+						ToolsDetailState.EraserMode.DISHCLOTH: #抹布
+							HANDLERS[&"dishcloth"]._end(click_state, temp_grids_map, focus_grids_map) #调用处理器的结束方法
+							after_player_input() #执行玩家输入停止后的流程封装方法
+						ToolsDetailState.EraserMode.ERASER: #橡皮
+							HANDLERS[&"eraser"]._end(click_state, temp_grids_map, focus_grids_map) #调用处理器的结束方法
+							after_player_input() #执行玩家输入停止后的流程封装方法
 
 ## 玩家在答题网格的输入停止后的一系列流程的封装
 func after_player_input() -> void:
@@ -181,6 +197,12 @@ func after_player_input() -> void:
 	## /02
 
 #region 系统级变更题纸的方法集
+## 初始化所有图层填充内容(适用于只有一个基底图层的情况，调用此方法的同时请更改图层数量为只有基底图层，否则会发生空引用异常)
+func init_all_layers(new_size: Vector2i) -> void:
+	temp_grids_map = GridsData.new(new_size, LayerGridsSlot.EMPTY) #重设临时图层内容为一个新GridsData
+	layers_grids_map = [GridsData.new(new_size, LayerGridsSlot.EMPTY)] #重设图层内容列表为只容纳一个新GridsData的列表
+	layers_lock_map = [GridsData.new(new_size, LayerGridsSlot.EMPTY)] #重设锁定内容列表为只容纳一个新GridsData的列表
+
 ## 清空基本题纸的内容
 func clear_base_grids() -> void:
 	if (n_base_grids == null):

@@ -81,6 +81,8 @@ const NUMBER_BAR_ICON_SIZE_RATE: float = 0.25
 const TILE_NORMAL_SIZE: float = 160.0
 ## 最多允许拥有几个图层及图层栏标签(不包含基底图层)
 const MAX_LAYER_COUNT: int = 6
+## 游戏初始化时默认的创建尺寸
+const DEFAULT_INIT_SIZE: Vector2i = Vector2i(5, 5)
 
 ## [只读]自动填充服务器实例，存放一个自动填充服务器实例，通过更改不同的初始赋值可以指定使用不同的(基于不同算法的)自动填充服务器
 static var AUTOFILL_SERVER_INSTANCE: AutoFillServerBase = AutoFillServer_DirectionfulScanning.new()
@@ -143,7 +145,7 @@ func _enter_tree() -> void:
 	get_window().min_size = WINDOW_SIZE_MINIMUM #设置窗口最小尺寸
 
 func _ready() -> void:
-	pass
+	start_new_sandbox(DEFAULT_INIT_SIZE) #游戏初始化时创建局面，因为本步骤将实例化非常多的东西而至关重要
 
 func _process(delta: float) -> void:
 	#n_paper_area.position = Vector2(LayersBar.bar_width, 0.0) #更新题纸区域的坐标
@@ -191,19 +193,6 @@ func debug_print() -> void:
 		#files.append_array(get_file_in_folders_resursion(path + dir + "/"))
 	#return files
 
-## 本方法尚不确定是否要投入使用，目前考虑稍微降低一点抽象程度
-## 新建游戏的高级封装，返回成功与否(如果因各种原因导致最终没有新建游戏，将返回false)
-#static func start_new_game(new_mode: GameMode, new_game_settings: NewGameSettings) -> bool:
-	#match (new_mode): #匹配游戏模式
-		#GameMode.PUZZLE: #解题模式
-			#return true
-		#GameMode.SANDBOX: #沙盒模式
-			#if (start_new_sandbox_old(new_game_settings.clear_grids, new_game_settings.size)): #如果新建沙盒模式时成功
-				#game_mode = GameMode.SANDBOX #将游戏模式调整为沙盒
-				#return true
-			#return false
-	#return false
-
 ## 新建解题模式游戏的低级封装
 ## 本方法已不适应新的需求，需逐渐被解除依赖最终彻底弃用
 static func start_new_puzzle_old(new_puzzle_data: PuzzleData, new_size: Vector2i, new_seed: String) -> void:
@@ -232,7 +221,11 @@ static func start_new_sandbox_old(clear_grids: bool, new_size: Vector2i) -> void
 
 ## 新建沙盒模式游戏的低级封装(新)
 static func start_new_sandbox(new_size: Vector2i) -> void:
-	pass
+	PaperArea.fs.init_all_layers(new_size) #重设所有图层内容
+	PaperArea.fs.clear_base_grids() #清空基本题纸的内容 ####此处可能需要修改，因为可能需要不止清空基底网格
+	PaperArea.fs.reset_grids_size(new_size) #重设网格尺寸(不影响题纸内容)
+	NumberBar.fs.resize_grids(new_size) #重设数字栏网格尺寸(不影响内容)
+	game_mode = GameMode.SANDBOX #将游戏模式设为沙盒
 
 ## 沙盒化(只在解题模式有效)
 static func sandboxize() -> void:
