@@ -23,14 +23,32 @@ func _process(click_state: PaperArea.ClickState, temp_grids_map: GridsData) -> v
 	if (not is_inited): #如果尚未初始化
 		pass
 	## /01
+	var current_fill_type: PaperArea.LayerGridsSlot = PaperArea.LayerGridsSlot.EMPTY #创建局部变量记录当前使用的填充类型(实心块还是叉叉)
+	match (Main.tools_detail_state.brush_fill_type): #匹配工具详细层状态的笔刷填充类型
+		ToolsDetailState.ToolFillType.FILL: #实心块
+			current_fill_type = PaperArea.LayerGridsSlot.FILL_NORMAL #将填充类型设为无着色实心块
+		ToolsDetailState.ToolFillType.CROSS: #叉叉
+			current_fill_type = PaperArea.LayerGridsSlot.CROSS_NORMAL #将填充类型设为无着色叉叉
 	## 02设置方向
 	if (direction == Direction.UNSPECIFIED): #如果方向未指定
-		pass #### 这里继续写方向指定，接下来要看看click_state提供了哪些数据，好进行方向判断
+		var pos_offset: Vector2i = (click_state.current_grid_pos - click_state.pressed_grid_pos).abs() #计算当前帧鼠标的网格坐标与按下时网格坐标的差值
+		if (pos_offset.x >= pos_offset.y): #如果坐标差值的X大于等于Y
+			direction = Direction.HORIZONTAL #将方向设为水平
+		else: #否则(坐标差值的X小于Y)
+			direction = Direction.VERTICAL #将方向设为垂直
+		temp_grids_map.set_slot(click_state.current_grid_pos, current_fill_type) #将鼠标当前所在格子填充为指定的填充类型
 	## /02
-	if (Main.tools_detail_state.brush_fill_type == ToolsDetailState.ToolFillType.FILL): #如果工具处于实心块填充类型
-		temp_grids_map.set_slot(click_state.current_grid_pos, PaperArea.LayerGridsSlot.FILL_NORMAL) #将临时网格的鼠标指针所在位置填充为无着色实心块
-	elif (Main.tools_detail_state.brush_fill_type == ToolsDetailState.ToolFillType.CROSS): #如果工具处于叉叉填充类型
-		temp_grids_map.set_slot(click_state.current_grid_pos, PaperArea.LayerGridsSlot.CROSS_NORMAL) #将临时网格的鼠标指针所在位置填充为无着色叉叉
+	else: #否则(方向已指定)
+		var end_pos: Vector2i = click_state.pressed_grid_pos #声明局部Vec2i记录本次铅笔工具的终点位置
+		match (direction): #匹配方向
+			Direction.HORIZONTAL: #水平
+				end_pos.x = click_state.current_grid_pos.x #更新且仅更新目标坐标的X到鼠标所在网格坐标的X
+				for x in range(mini(click_state.current_grid_pos.x, end_pos.x), maxi(click_state.current_grid_pos.x, end_pos.x) + 1): #遍历所需填充的格子
+					temp_grids_map.set_slot(Vector2i(x, end_pos.y), current_fill_type) #将当前遍历到达的坐标填充为指定的填充类型
+			Direction.VERTICAL: #垂直
+				end_pos.y = click_state.current_grid_pos.y #更新且仅更新目标坐标的Y到鼠标所在网格坐标的Y
+				for y in range(mini(click_state.current_grid_pos.y, end_pos.y), maxi(click_state.current_grid_pos.y, end_pos.y) + 1): #遍历所需填充的格子
+					temp_grids_map.set_slot(Vector2i(end_pos.x, y), current_fill_type) #将当前遍历到达的坐标填充为指定的填充类型
 
 ## [虚函数-实现]结束方法，在工具停止按下的首个帧调用此方法
 func _end(click_state: PaperArea.ClickState, temp_grids_map: GridsData, focus_grids_map: GridsData) -> void:
