@@ -195,8 +195,26 @@ func debug_print() -> void:
 
 ## 新建解题模式游戏的低级封装
 ## 本方法已不适应新的需求，需逐渐被解除依赖最终彻底弃用
-static func start_new_puzzle_old(new_puzzle_data: PuzzleData, new_size: Vector2i, new_seed: String) -> void:
-	PaperArea.fs.clear_base_grids() #清空基本题纸的内容
+#static func start_new_puzzle_old(new_puzzle_data: PuzzleData, new_size: Vector2i, new_seed: String) -> void:
+	#PaperArea.fs.clear_base_grids() #清空基本题纸的内容
+	#PaperArea.fs.reset_grids_size(new_size) #重设网格尺寸(不影响题纸内容)
+	#NumberBar.fs.resize_grids(new_size) #重设数字栏网格尺寸(不影响内容)
+	#puzzle_data = new_puzzle_data #设置题目数据
+	#current_seed = new_seed #记录种子
+	#NumberBar.fs.set_number_array_displayers(new_puzzle_data) #设置数字栏
+	#game_mode = GameMode.PUZZLE #将游戏模式设为解题
+	### 00重设计时器
+	#puzzle_timer_hour = 0
+	#puzzle_timer_minute = 0
+	#puzzle_timer_second = 0.0
+	### /00
+
+## 新建解题模式游戏的低级封装(新)
+static func start_new_puzzle(new_puzzle_data: PuzzleData, new_size: Vector2i, new_seed: String) -> void:
+	UndoRedoServer_Array.clear() #清空撤销重做对象列表
+	PaperArea.fs.init_all_layers(new_size) #重设所有图层内容
+	activiting_layers_count = 0 #将图层数量设为只有基底图层
+	PaperArea.fs.clear_all_grids() #清空所有题纸网格的内容
 	PaperArea.fs.reset_grids_size(new_size) #重设网格尺寸(不影响题纸内容)
 	NumberBar.fs.resize_grids(new_size) #重设数字栏网格尺寸(不影响内容)
 	puzzle_data = new_puzzle_data #设置题目数据
@@ -208,41 +226,51 @@ static func start_new_puzzle_old(new_puzzle_data: PuzzleData, new_size: Vector2i
 	puzzle_timer_minute = 0
 	puzzle_timer_second = 0.0
 	## /00
+	print("Main: 新建解题步骤结束，游戏已变更到解题模式")
 
 ## 新建沙盒模式游戏的低级封装
 ## 本方法已不适应新的需求，需逐渐被解除依赖最终彻底弃用
-static func start_new_sandbox_old(clear_grids: bool, new_size: Vector2i) -> void:
-	if (clear_grids): #如果需要清空网格
-		PaperArea.fs.clear_base_grids() #清空基本题纸的内容
-		#### 此处缺少当不清空网格时清除处于新尺寸画布外的笔迹的清除操作(如沙盒化)
-	PaperArea.fs.reset_grids_size(new_size) #重设网格尺寸(不影响题纸内容)
-	NumberBar.fs.resize_grids(new_size) #重设数字栏网格尺寸(不影响内容)
-	game_mode = GameMode.SANDBOX #将游戏模式设为沙盒
+#static func start_new_sandbox_old(clear_grids: bool, new_size: Vector2i) -> void:
+	#if (clear_grids): #如果需要清空网格
+		#PaperArea.fs.clear_base_grids() #清空基本题纸的内容
+		##### 此处缺少当不清空网格时清除处于新尺寸画布外的笔迹的清除操作(如沙盒化)
+	#PaperArea.fs.reset_grids_size(new_size) #重设网格尺寸(不影响题纸内容)
+	#NumberBar.fs.resize_grids(new_size) #重设数字栏网格尺寸(不影响内容)
+	#game_mode = GameMode.SANDBOX #将游戏模式设为沙盒
 
 ## 新建沙盒模式游戏的低级封装(新)
 static func start_new_sandbox(new_size: Vector2i) -> void:
+	UndoRedoServer_Array.clear() #清空撤销重做对象列表
 	PaperArea.fs.init_all_layers(new_size) #重设所有图层内容
-	PaperArea.fs.clear_base_grids() #清空基本题纸的内容 ####此处可能需要修改，因为可能需要不止清空基底网格
+	activiting_layers_count = 0 #将图层数量设为只有基底图层
+	PaperArea.fs.clear_all_grids() #清空所有题纸网格的内容
 	PaperArea.fs.reset_grids_size(new_size) #重设网格尺寸(不影响题纸内容)
 	NumberBar.fs.resize_grids(new_size) #重设数字栏网格尺寸(不影响内容)
 	game_mode = GameMode.SANDBOX #将游戏模式设为沙盒
+	print("Main: 新建沙盒步骤结束，游戏已变更到沙盒模式")
 
 ## 沙盒化(只在解题模式有效)
 static func sandboxize() -> void:
+	UndoRedoServer_Array.clear() #清空撤销重做对象列表
 	game_mode = GameMode.SANDBOX #将模式设为沙盒模式
 	NumberBar.fs.clear_number_array_displayers() #清除数字栏数字
-	#### 今后加入了填充着色以后还要写对着色的剔除，使所有填充都恢复为默认填充
+	PaperArea.fs.grids_cull_color() #剔除各个答题网格的填充颜色
+	print("Main: 沙盒化步骤结束，游戏已变更到沙盒模式")
 
 ## 检查解题模式胜利，返回判断结果
 static func check_puzzle_win() -> bool:
-	return puzzle_data.is_same(PaperArea.fs.n_base_grids.to_grids_data().to_puzzle_data())
+	if (PaperArea.layers_grids_map.is_empty()): #如果图层内容列表为空
+		push_error("Main: 解题模式判断胜利时发生问题，因为：PaperArea.layers_grids_map为空")
+		return false
+	return puzzle_data.is_same(PuzzleData.from_grids_data(PaperArea.layers_grids_map[0]))
 
 ## 使解题模式胜利
 static func puzzle_win() -> void:
-	sandboxize() #沙盒化
 	var win_popup: DetailPopup_Win = PopupManager.create_popup(&"Win") as DetailPopup_Win #新建胜利弹窗
 	PopupManager.add_popup(win_popup) #将弹窗添加到场景树
 	win_popup.set_contents(current_seed, global_grid_size, puzzle_timer_hour, puzzle_timer_minute, int(puzzle_timer_second)) #设置弹窗的信息
+	print("Main: 解题游戏胜利")
+	sandboxize() #沙盒化
 
 ## 按钮禁用检查，传入一个按钮名称，返回该按钮在当前状态下是否应该禁用(返回true代表禁用)。请妥善考虑本方法的调用频率
 static func button_disable_check(button_name: StringName) -> bool:
@@ -285,7 +313,8 @@ static func on_button_trigged(button_name: StringName) -> void:
 			PopupManager.add_popup(PopupManager.create_popup(&"Paper_New")) #新建一个新建题纸弹出菜单
 			is_menu_open = false #关闭菜单
 		&"MenuButton_Clear": #菜单按钮-清除网格
-			PaperArea.fs.clear_base_grids() #清空基本题纸的内容
+			PaperArea.fs.clear_all_grids() #清空所有题纸网格的内容
+			Main.activiting_layers_count = 0 #将图层数量设为只有基底图层
 			is_menu_open = false #关闭菜单
 		&"MenuButton_About": #菜单按钮-关于
 			PopupManager.add_popup(PopupManager.create_popup(&"About")) #新建一个关于弹出菜单
@@ -357,8 +386,8 @@ static func on_button_trigged(button_name: StringName) -> void:
 					print("Main: 种子验证通过，正在新建解题游戏")
 					## 创建新解题游戏
 					PopupManager.fs.emit_signal(&"close_popup", &"Paper_New") #关闭菜单
-					start_new_puzzle_old( #开始新解题游戏
-						seed_deserializated.generator._generate(seed_deserializated, menu_detail_state.popup_newpaper_size).to_puzzle_data(), #题目数据
+					start_new_puzzle( #开始新解题游戏
+						PuzzleData.from_grids_data(seed_deserializated.generator._generate(seed_deserializated, menu_detail_state.popup_newpaper_size)), #题目数据
 						menu_detail_state.popup_newpaper_size, #尺寸
 						seed #种子
 					)
@@ -367,7 +396,7 @@ static func on_button_trigged(button_name: StringName) -> void:
 					PopupManager.fs.emit_signal(&"custom_popup_notify", &"New_Paper_SeedInvalid") #通知新建题纸菜单种子不可用
 			else: #否则(选择的模式为沙盒)
 				print("Main: 正在尝试新建沙盒游戏")
-				start_new_sandbox_old(true, menu_detail_state.popup_newpaper_size) #创建新沙盒模式游戏
+				start_new_sandbox(menu_detail_state.popup_newpaper_size) #创建新沙盒模式游戏
 				PopupManager.fs.emit_signal(&"close_popup", &"Paper_New") #关闭菜单
 			menu_detail_state.popup_newpaper_seed = "" #清空记录在菜单上的种子
 			menu_detail_state.popup_newpaper_size = Vector2i(5, 5) #重置尺寸设置

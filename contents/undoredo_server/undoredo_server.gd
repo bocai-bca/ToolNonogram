@@ -42,6 +42,7 @@ static func can_now_redo() -> bool:
 static func clear() -> void:
 	objects.clear()
 	current_index = 0
+	print("UndoRedoServer_Array: 已清空撤销重做对象列表")
 
 ## 插入新撤消重做对象到焦点处，将删除焦点所在位置到之前的列表头部之间的所有对象
 ## 当试图添加null时会拒绝并报错
@@ -56,9 +57,11 @@ static func insert_add(new_object: UndoRedoObject) -> void:
 			break
 		objects.remove_at(0) #从列表头部移除一个对象
 		current_index -= 1 #焦点索引向头部移动一次
+		print("UndoRedoServer_Array: 因撤销重做对象列表长度达到上限而移除一个对象")
 	objects.push_front(new_object) #将新对象添加到列表头部
 	# 此处不需要操作索引数，因为焦点本来就要往前移动一次到达新的第一个元素，而这与元素插入的数组索引移动现象相抵消
 	objects.resize(MAX_OBJECTS_COUNT) #截断列表末尾的超出长度上限的对象
+	print("UndoRedoServer_Array: 已添加新的撤销重做对象")
 
 ## 添加新撤消重做对象到列表头部，并移动焦点到列表头部
 ## 当试图添加null时会拒绝并报错
@@ -82,7 +85,7 @@ class UndoRedoObject extends RefCounted:
 	var layers_grids_data: Array[GridsData]
 	## 各图层的锁定数据，元素数量应与layers_count相符，每个元素的索引与图层序号对应
 	var layers_lock_data: Array[GridsData]
-	## 
+	##
 	func _init(new_layers_count: int, new_layer_grids: Array[GridsData], new_layer_lock: Array[GridsData]) -> void:
 		layers_count = new_layers_count
 		layers_grids_data = new_layer_grids

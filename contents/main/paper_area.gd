@@ -143,7 +143,7 @@ func _process(delta: float) -> void:
 				if (click_state.pressed_at_area != ClickState.AreaOfPaper.GRIDS): #如果鼠标按下位置不是答题网格
 					pass
 				elif (click_state.is_pressing()): #如果鼠标正按下，并且按下位置是答题网格
-					if (click_state.current_grid_pos != click_state.last_update_grid_pos): #如果本帧鼠标所在的网格坐标不与上一帧相同(即若鼠标指针未移动则不进行以下操作，用来节省性能)
+					if (click_state.current_grid_pos != click_state.last_update_grid_pos or click_state.is_just()): #如果本帧鼠标所在的网格坐标不与上一帧相同(即若鼠标指针未移动则不进行以下操作，用来节省性能)
 						match (Main.tools_detail_state.brush_mode): #匹配笔刷模式
 							ToolsDetailState.BrushMode.BRUSH: #画笔
 								HANDLERS[&"brush"]._process(click_state, temp_grids_map) #调用处理器的过程方法
@@ -168,13 +168,13 @@ func _process(delta: float) -> void:
 				if (click_state.pressed_at_area != ClickState.AreaOfPaper.GRIDS): #如果鼠标按下位置不是答题网格
 					pass
 				elif (click_state.is_pressing()): #如果鼠标正按下，并且按下位置是答题网格
-					match (Main.tools_detail_state.brush_mode): #匹配擦除模式
+					match (Main.tools_detail_state.eraser_mode): #匹配擦除模式
 						ToolsDetailState.EraserMode.DISHCLOTH: #抹布
 							HANDLERS[&"dishcloth"]._process(click_state, temp_grids_map) #调用处理器的过程方法
 						ToolsDetailState.EraserMode.ERASER: #橡皮
 							HANDLERS[&"eraser"]._process(click_state, temp_grids_map) #调用处理器的过程方法
 				elif (click_state.is_just()): #否则如果刚刚处于此状态(意思是刚刚松开)
-					match (Main.tools_detail_state.brush_mode): #匹配笔刷模式
+					match (Main.tools_detail_state.eraser_mode): #匹配笔刷模式
 						ToolsDetailState.EraserMode.DISHCLOTH: #抹布
 							HANDLERS[&"dishcloth"]._end(click_state, temp_grids_map, focus_grids_map) #调用处理器的结束方法
 							after_player_input() #执行玩家输入停止后的流程封装方法
@@ -194,8 +194,23 @@ func after_player_input() -> void:
 	UndoRedoServer_Array.insert_add(UndoRedoServer_Array.UndoRedoObject.new(Main.activiting_layers_count, layers_grids_map, layers_lock_map))
 	## /01
 	## 02将局面更新到砖瓦图节点
+	print(focus_grids_map.array)
 	focus_grids_node.fill_map_from_grids_data(focus_grids_map)
 	## /02
+	## 03清空临时图层
+	temp_grids_map.fill() #清空临时图层的内容，将被全部填充为0
+	## /03
+	if (Main.check_puzzle_win()): #如果游戏胜利
+		Main.puzzle_win()
+
+## 将所有答题网格剔除颜色
+func grids_cull_color() -> void:
+	for i in layers_grids_map.size(): #按索引遍历所有图层内容
+		layers_grids_map[i].replace([LayerGridsSlot.FILL_AUTOFILL, LayerGridsSlot.FILL_VERIFIED], LayerGridsSlot.FILL_NORMAL) #将有着色的实心块换成无着色的
+		layers_grids_map[i].replace([LayerGridsSlot.CROSS_AUTOFILL, LayerGridsSlot.CROSS_VERIFIED], LayerGridsSlot.CROSS_NORMAL) #将有着色的叉叉换成无着色的
+		if (i == 0): #如果i为0
+			n_base_grids.fill_map_from_grids_data(layers_grids_map[i]) #将基底图层剔除颜色
+		n_hover_grids[i - 1].fill_map_from_grids_data(layers_grids_map[i]) #将悬浮图层剔除颜色
 
 #region 系统级变更题纸的方法集
 ## 初始化所有图层填充内容(适用于只有一个基底图层的情况，调用此方法的同时请更改图层数量为只有基底图层，否则会发生空引用异常)
@@ -204,15 +219,27 @@ func init_all_layers(new_size: Vector2i) -> void:
 	layers_grids_map = [GridsData.new(new_size, LayerGridsSlot.EMPTY)] #重设图层内容列表为只容纳一个新GridsData的列表
 	layers_lock_map = [GridsData.new(new_size, LayerGridsSlot.EMPTY)] #重设锁定内容列表为只容纳一个新GridsData的列表
 
-## 清空基本题纸的内容
-func clear_base_grids() -> void:
-	if (n_base_grids == null):
-		push_error("PaperArea: 未能清空基本题纸，因为：解引用n_base_grids时返回null。")
-		return
-	elif (n_base_grids.n_edit_map == null):
-		push_error("PaperArea: 未能清空基本题纸，因为：解引用n_base_grids.n_edit_map时返回null。")
-		return
-	n_base_grids.n_edit_map.clear()
+## 清空全部题纸的内容
+func clear_all_grids() -> void:
+	var tasks: Array[EditableGrids] = n_hover_grids.duplicate() #创建一个列表用作遍历
+	tasks.append(n_base_grids) #将基底图层添加到遍历列表
+	for editable_grids in tasks: #遍历题纸网格节点列表
+		if (editable_grids == null): #如果当前的节点为null
+			push_error("PaperArea: 清空所有题纸时出现问题，因为：解引用某一EditableGrids节点时返回null。")
+			continue
+		editable_grids.n_edit_map_normal.clear() #清空无着色层
+		editable_grids.n_edit_map_autofill.clear() #清空自动填充层
+		editable_grids.n_edit_map_verified.clear() #清空已验证层
+
+## 清空基本题纸的内容(已废弃)
+#func clear_base_grids() -> void:
+	#if (n_base_grids == null):
+		#push_error("PaperArea: 未能清空基本题纸，因为：解引用n_base_grids时返回null。")
+		#return
+	#elif (n_base_grids.n_edit_map == null):
+		#push_error("PaperArea: 未能清空基本题纸，因为：解引用n_base_grids.n_edit_map时返回null。")
+		#return
+	#n_base_grids.n_edit_map.clear()
 
 ## 重设网格尺寸(不会影响题纸的内容，可能导致内容超出新的尺寸)
 ## 本方法在将来可能不再有用，请考虑重写一到两个新函数以实现对图层内容的尺寸修改和答题网格(EditableGrids)的尺寸修改

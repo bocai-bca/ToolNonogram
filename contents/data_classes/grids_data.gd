@@ -58,8 +58,8 @@ func be_merge_down(up_layer: GridsData) -> void:
 	if (grids_size != up_layer.get_size()): #尺寸不匹配
 		push_error("GridsData: 取消合并，因为：给定的GridsData实例与本实例的尺寸不匹配。")
 		return
-	for x in grids_size: #遍历X
-		for y in grids_size: #遍历Y
+	for x in grids_size.x: #遍历X
+		for y in grids_size.y: #遍历Y
 			var slot_value: int = up_layer.get_slot(Vector2i(x, y)) #合并方的当前坐标格子的值
 			if (slot_value != 0): #如果合并方该格子的值不为0
 				set_slot(Vector2i(x, y), slot_value) #将被合并方的该格子设为合并方该格子的值
@@ -73,6 +73,15 @@ func duplicate() -> GridsData:
 ## 以指定值覆盖填充所有格子
 func fill(slot_value: int = 0) -> void:
 	array.fill(slot_value)
+
+## 按顺序将每个值匹配a包含的任意一值的格子的值替换为b，采用PackedByteArray.has()进行匹配判断，并返回执行替换的次数
+func replace(a: PackedByteArray, b: int) -> int:
+	var successes: int = 0 #记录替换次数
+	for i in array: #按索引遍历每个格子
+		if (a.has(array[i])): #如果当前格子的值匹配a中任意一值
+			array[i] = b #将当前格子替换为b
+			successes += 1 #记录替换次数
+	return successes
 
 ## 转换到PuzzleData
 ## 相同GridsData转换出的PuzzleData的引用是不同的，若要对比PuzzleData是否相同可以使用PuzzleData.is_same()

@@ -34,7 +34,7 @@ func is_same(puzzle_data: PuzzleData) -> bool:
 	## /02
 	return true #检查成功
 
-## 
+##
 static func from_grids_data(grids_data: GridsData) -> PuzzleData:
 	var result: PuzzleData = PuzzleData.new()
 	var size: Vector2i = grids_data.get_size() #获取本局面数据的尺寸
