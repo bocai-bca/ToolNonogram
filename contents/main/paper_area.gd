@@ -147,8 +147,14 @@ func _process(delta: float) -> void:
 						match (Main.tools_detail_state.brush_mode): #匹配笔刷模式
 							ToolsDetailState.BrushMode.BRUSH: #画笔
 								HANDLERS[&"brush"]._process(click_state, temp_grids_map) #调用处理器的过程方法
+								var temp_merged_map: GridsData = focus_grids_map.duplicate() #创建一个临时合并图层内容
+								temp_grids_map.be_merge_down(temp_grids_map) #合并临时图层
+								focus_grids_node.fill_map_from_grids_data(temp_grids_map) #更新画面
 							ToolsDetailState.BrushMode.PENCIL: #铅笔
 								HANDLERS[&"pencil"]._process(click_state, temp_grids_map) #调用处理器的过程方法
+								var temp_merged_map: GridsData = focus_grids_map.duplicate() #创建一个临时合并图层内容
+								temp_grids_map.be_merge_down(temp_grids_map) #合并临时图层
+								focus_grids_node.fill_map_from_grids_data(temp_grids_map) #更新画面
 				elif (click_state.is_just()): #否则如果刚刚处于此状态(意思是刚刚松开)
 					match (Main.tools_detail_state.brush_mode): #匹配笔刷模式
 						ToolsDetailState.BrushMode.BRUSH: #画笔
@@ -168,11 +174,18 @@ func _process(delta: float) -> void:
 				if (click_state.pressed_at_area != ClickState.AreaOfPaper.GRIDS): #如果鼠标按下位置不是答题网格
 					pass
 				elif (click_state.is_pressing()): #如果鼠标正按下，并且按下位置是答题网格
-					match (Main.tools_detail_state.eraser_mode): #匹配擦除模式
-						ToolsDetailState.EraserMode.DISHCLOTH: #抹布
-							HANDLERS[&"dishcloth"]._process(click_state, temp_grids_map) #调用处理器的过程方法
-						ToolsDetailState.EraserMode.ERASER: #橡皮
-							HANDLERS[&"eraser"]._process(click_state, temp_grids_map) #调用处理器的过程方法
+					if (click_state.current_grid_pos != click_state.last_update_grid_pos or click_state.is_just()): #如果本帧鼠标所在的网格坐标不与上一帧相同(即若鼠标指针未移动则不进行以下操作，用来节省性能)
+						match (Main.tools_detail_state.eraser_mode): #匹配擦除模式
+							ToolsDetailState.EraserMode.DISHCLOTH: #抹布
+								HANDLERS[&"dishcloth"]._process(click_state, temp_grids_map) #调用处理器的过程方法
+								var temp_merged_map: GridsData = focus_grids_map.duplicate() #创建一个临时合并图层内容
+								temp_grids_map.be_merge_down(temp_grids_map) #合并临时图层
+								focus_grids_node.fill_map_from_grids_data(temp_grids_map) #更新画面
+							ToolsDetailState.EraserMode.ERASER: #橡皮
+								HANDLERS[&"eraser"]._process(click_state, temp_grids_map) #调用处理器的过程方法
+								var temp_merged_map: GridsData = focus_grids_map.duplicate() #创建一个临时合并图层内容
+								temp_grids_map.be_merge_down(temp_grids_map) #合并临时图层
+								focus_grids_node.fill_map_from_grids_data(temp_grids_map) #更新画面
 				elif (click_state.is_just()): #否则如果刚刚处于此状态(意思是刚刚松开)
 					match (Main.tools_detail_state.eraser_mode): #匹配笔刷模式
 						ToolsDetailState.EraserMode.DISHCLOTH: #抹布
@@ -194,13 +207,12 @@ func after_player_input() -> void:
 	UndoRedoServer_Array.insert_add(UndoRedoServer_Array.UndoRedoObject.new(Main.activiting_layers_count, layers_grids_map, layers_lock_map))
 	## /01
 	## 02将局面更新到砖瓦图节点
-	print(focus_grids_map.array)
 	focus_grids_node.fill_map_from_grids_data(focus_grids_map)
 	## /02
 	## 03清空临时图层
 	temp_grids_map.fill() #清空临时图层的内容，将被全部填充为0
 	## /03
-	if (Main.check_puzzle_win()): #如果游戏胜利
+	if (Main.game_mode == Main.GameMode.PUZZLE and Main.check_puzzle_win()): #如果当前游戏模式是解题模式并且游戏胜利
 		Main.puzzle_win()
 
 ## 将所有答题网格剔除颜色
@@ -284,19 +296,19 @@ func update_click_state() -> void:
 	## /00
 	## 01点击状态
 	if (click_state.press_state == ClickState.PressState.RELEASE or click_state.press_state == ClickState.PressState.JUST_RELEASED): #如果按下状态是松开或刚刚松开
-		if (Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)): #如果左键正被按下
+		if (Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and PopupManager.alive_popup_count == 0): #如果左键正被按下，并且画面上没有正在运行的弹窗
 			click_state.press_state = ClickState.PressState.JUST_PRESSED #更新按下状态为刚刚按下
 			## 记录网格抽象坐标
 			click_state.pressed_at_area = click_state.current_at_area
 			click_state.pressed_grid_pos = click_state.current_grid_pos
 			## 记录精确坐标
 			click_state.pressed_pos = click_state.current_pos
-		else: #否则(如果左键未被按下)
+		else: #否则(如果左键未被按下，并且画面上没有弹窗)
 			click_state.press_state = ClickState.PressState.RELEASE #更新按下状态为松开
 	else: #否则(按下状态是按下或刚刚按下)
-		if (not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)): #如果左键未被按下
+		if (not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) or PopupManager.alive_popup_count != 0): #如果左键未被按下，或者画面上有正在运行的弹窗
 			click_state.press_state = ClickState.PressState.JUST_RELEASED #更新按下状态为刚刚松开
-		else: #否则(如果左键正被按下)
+		else: #否则(如果左键正被按下，或者画面存在弹窗)
 			click_state.press_state = ClickState.PressState.PRESSING #更新按下状态为按下
 	## /01
 
